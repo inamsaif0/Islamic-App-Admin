@@ -545,7 +545,7 @@ const Header = () => {
                             <ul className="nav navbar-nav float-right">
                                 <li className={Profilebtn ? "dropdown dropdown-user nav-item show " : "dropdown dropdown-user nav-item"} onClick={profilebtnfun}>
                                     <a className="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
-                                        <span className="mr-1">Hello,
+                                        <span className="mr-1">
                                             <span className="user-name text-bold-700">{Name}</span>
                                         </span>
                                         <span className="avatar avatar-online">
