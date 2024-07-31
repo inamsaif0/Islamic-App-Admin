@@ -1,0 +1,76 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+body.vertical-layout.vertical-menu-modern.menu-collapsed .main-menu {
+  width: 60px;
+  transition: 300ms ease all;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+
+.bg-salmon {
+  background-color: red;
+}
+
+
+.header-navbar .navbar-header .navbar-brand .brand-logo {
+  /* width: 194px; */
+  width: 168px;
+  height: 46px;
+}
+.header-navbar .navbar-header .navbar-brand {
+  padding: 12px 22px;
+}
+
+
+
+
+/* html body.bg-full-screen-image {
+  background: url('/public/app-assets/images/logo/backgroundimage.jpg') ;
+  background-size: cover;
+  
+} */
+
+form.form-horizontal .form-group .label-control {
+  text-align: right;
+  align-self: center;
+}
+
