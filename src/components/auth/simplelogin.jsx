@@ -39,54 +39,56 @@ const Simplelogin = () => {
 
     const loginUser = () => {
 
-        Navigate('/dashboard')
-        // var formdata = new FormData();
-        // formdata.append("email", Email);
-        // formdata.append("password", Password);
+        // Navigate('/dashboard')
+        var formdata = new FormData();
+        formdata.append("email", Email);
+        formdata.append("password", Password);
+        formdata.append("device_token", '123');
 
-        // var requestOptions = {
-        //     method: 'POST',
-        //     headers: {
-        //         Accept: 'application/json'
-        //     },
-        //     body: formdata,
-        //     redirect: 'follow'
-        // };
-        // setLoader(true)
+        var requestOptions = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json'
+            },
+            body: formdata,
+            redirect: 'follow'
+        };
+        setLoader(true)
 
-        // fetch(`${Baseurl.baseUrl}/admin_login`, requestOptions)
-        //     .then(response => response.json())
-        //     .then(result =>
-        //         {
-        //             setLoader(false)
-        //             if (result.status == true) {
-        //                 console.log(result)
-        //                 localStorage.setItem('AdminToken', result.token);
-        //                 // localStorage.setItem('AdminData', JSON.stringify(result.data));
-        //                 console.log("status check==================", localStorage.getItem('AdminToken'))
+        fetch(`${Baseurl.baseUrl}api/auth/login`, requestOptions)
+            .then(response => response.json())
+            .then(result =>
+                {
+                    console.log('result',result)
+                    setLoader(false)
+                    if (result.status == true) {
+                        console.log(result)
+                        localStorage.setItem('AdminToken', result?.data?.token);
+                        // localStorage.setItem('AdminData', JSON.stringify(result.data));
+                        console.log("status check==================", localStorage.getItem('AdminToken'))
     
-        //                 Swal.fire({
-        //                     icon: 'success',
-        //                     title: result.message,
-        //                     showConfirmButton: false,
-        //                     timer: 2000,
-        //                 })
+                        Swal.fire({
+                            icon: 'success',
+                            title: result.message,
+                            showConfirmButton: false,
+                            timer: 2000,
+                        })
     
-        //                 Navigate('/dashboard')
+                        Navigate('/dashboard')
     
-        //             }
-        //             else {
-        //                 Swal.fire({
-        //                     title: "Oops",
-        //                     text: result.message,
-        //                     icon: "error",
-        //                     confirmButtonColor: "#29BF12",
-        //                 });
-        //             }
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Oops",
+                            text: result.message,
+                            icon: "error",
+                            confirmButtonColor: "#29BF12",
+                        });
+                    }
     
-        //         }
-        //          )
-        //     .catch(error => console.log('error', error));
+                }
+                 )
+            .catch(error => console.log('error', error));
 
     }
 
