@@ -9,7 +9,6 @@ const AddCoupen = () => {
     
     <>
     <Header />
-  
    <CoupenTable />
     <Footer />
 

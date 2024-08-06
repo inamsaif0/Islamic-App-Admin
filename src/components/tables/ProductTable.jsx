@@ -4,6 +4,7 @@ import MaterialTable from "material-table";
 import { forwardRef } from 'react';
 import Swal from "sweetalert2";
 import { Loader } from 'react-overlay-loader';
+import moment from 'moment';
 
 import './Productatble.css'
 
@@ -84,9 +85,10 @@ const ProductTable = () => {
     const handleShow2 = () => setShow2(true);
 
     const [name, Setname] = useState('')
+    const [brandname, Setbrandname] = useState('')
     const [description, Setdescription] = useState('')
     const [price, Setprice] = useState('')
-    const [discount, Setdiscount] = useState('')
+    const [sku, Setsku] = useState('')
     const [longdescription, Setlongdescription] = useState('')
     const [shortdescription, Setshortdescription] = useState('')
     const [categoryid, Setcategoryid] = useState('')
@@ -99,6 +101,7 @@ const ProductTable = () => {
     const [CategoryDropdown, SetCategoryDropdown] = useState([])
 
 
+    console.log('CategoryDropdown',CategoryDropdown)
 
 
 
@@ -136,7 +139,7 @@ const ProductTable = () => {
     useEffect(() => {
 
         GetproductData()
-        GetAllImages()
+        // GetAllImages()
 
     }, [])
 
@@ -144,23 +147,28 @@ const ProductTable = () => {
         var requestOptions = {
             method: 'GET',
             headers: {
-                Authorization: "Bearer " + Token
+                token: Token
             },
             redirect: 'follow'
         };
 
         setLoader(true)
 
-        fetch(`${Baseurl.baseUrl}/productsGet`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/products/get`, requestOptions)
 
             .then(response => response.json())
             .then(result => {
+                console.log('getProduct',result?.data)
                 setLoader(false)
                 // console.log("result ahmed",result)
-                SetproductData(result.data)
+                SetproductData(result?.data?.result)
             }
             )
-            .catch(error => console.log('error', error));
+            .catch(error =>{
+                setLoader(false)
+                console.log('error', error)
+            }
+                );
     }
 
     const AddProduct = () => {
@@ -169,14 +177,15 @@ const ProductTable = () => {
 
         var formdata = new FormData();
         formdata.append("name", name);
-        formdata.append("description", description);
+        formdata.append("brandName", brandname);
+        formdata.append("productType", 'productType');
         formdata.append("price", price);
-        formdata.append("discount", discount);
-        // formdata.append("longdescription", longdescription);
-        formdata.append("longdescription", convertedContent);
+        formdata.append("sku", sku);
+        formdata.append("description", 'hello World');
+        // formdata.append("description", convertedContent);
 
         
-        formdata.append("shortdescription", shortdescription);
+        // formdata.append("shortdescription", shortdescription);
         formdata.append("categoryid", CategoryName);
         // formdata.append("image", image);
         for (var i = 0; i < imagelist.length; i++) {
@@ -189,14 +198,14 @@ const ProductTable = () => {
         var requestOptions = {
             method: 'POST',
             headers: {
-                Authorization: "Bearer " + Token
+                token:Token
             },
             body: formdata,
             redirect: 'follow'
         };
         setLoader(true)
 
-        fetch(`${Baseurl.baseUrl}/productsAdd`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/products/create`, requestOptions)
             .then(response => response.json())
             .then(result => {
 
@@ -215,7 +224,7 @@ const ProductTable = () => {
                     Setname('')
                     Setdescription('')
                     Setprice('')
-                    Setdiscount('')
+                    Setsku('')
                     // Setlongdescription('')
                     setConvertedContent('')
                     Setshortdescription('')
@@ -271,41 +280,41 @@ const ProductTable = () => {
 
     //  },)
 
-    const GetAllImages = (id) => {
-        console.log("this baloch id of iamges ===>", id)
-        var requestOptions = {
-            method: 'GET',
-            headers: {
-                Authorization: "Bearer " + Token
-            },
-            redirect: 'follow'
-        };
-        setLoader(true)
+    // const GetAllImages = (id) => {
+    //     console.log("this baloch id of iamges ===>", id)
+    //     var requestOptions = {
+    //         method: 'GET',
+    //         headers: {
+    //             Authorization: "Bearer " + Token
+    //         },
+    //         redirect: 'follow'
+    //     };
+    //     setLoader(true)
 
-        fetch(`${Baseurl.baseUrl}/productImages?uid=${id}`, requestOptions)
+    //     fetch(`${Baseurl.baseUrl}/productImages?uid=${id}`, requestOptions)
 
-            .then(response => response.json())
-            .then(result => {
-                setLoader(false)
-                console.log("getting all images result", result.data)
-                SetimagelistData(result.data)
-            }
-            )
-            .catch(error => {
-                setLoader(false)
-                console.log('error', error)
-            }
-            );
-    }
+    //         .then(response => response.json())
+    //         .then(result => {
+    //             setLoader(false)
+    //             console.log("getting all images result", result.data)
+    //             SetimagelistData(result.data)
+    //         }
+    //         )
+    //         .catch(error => {
+    //             setLoader(false)
+    //             console.log('error', error)
+    //         }
+    //         );
+    // }
 
-    const ViewImages = (e) => {
-        console.log("rowdata of images id", e)
-        console.log("rowdata of images id", e.uid)
-        handleShow2()
+    // const ViewImages = (e) => {
+    //     console.log("rowdata of images id", e)
+    //     console.log("rowdata of images id", e.uid)
+    //     handleShow2()
 
-        GetAllImages(e.uid)
+    //     GetAllImages(e.uid)
 
-    }
+    // }
 
     const ConfirmDelete = (a) => {
 
@@ -322,7 +331,7 @@ const ProductTable = () => {
         // http://cnchub.pythonanywhere.com/webapi/login?SId=1"
         // `${BaseUrl.baseUrl}/login`
 
-        fetch(`${Baseurl.baseUrl}/deleteproduct?uid=${a}`, requestOptions)
+        fetch(`${Baseurl?.baseUrl}api/products/delete/id=${a}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status == true) {
@@ -389,25 +398,27 @@ const ProductTable = () => {
         var requestOptions = {
             method: 'GET',
             headers: {
-                Authorization: "Bearer " + Token
+                token:  Token
             },
             redirect: 'follow'
         };
         // setloader(true)
 
-        fetch(`${Baseurl.baseUrl}/Getcategory`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/categories/get`, requestOptions)
 
             .then(response => response.json())
             .then(result => {
+
+                console.log('resultGetCategories',result)
                 if (result.status == true) {
                     // setloader(false)
-                    SetCategoryDropdown(result.data)
+                    SetCategoryDropdown(result?.data?.result)
 
                 }
                 else {
                     // setLoader(true)
                     // setloader(false)
-                    console.log("result.message", result.message)
+                    console.log("result.message", result?.message)
                     Swal.fire({
                         title: "Oops",
                         text: result.message,
@@ -435,6 +446,10 @@ const ProductTable = () => {
             );
     }
 
+
+    function convertTimestamp(isoString, dateFormat = "YYYY-MM-DD HH:mm:ss") {
+        return moment(isoString).format(dateFormat);
+    }
 
 
     return (
@@ -487,27 +502,42 @@ const ProductTable = () => {
                             <MaterialTable
                                 icons={tableIcons}
                                 columns={[
-                                    { title: "Image", field: "Productimage", render: item => <img src={Baseurl.imgUrl + item.Productimage} alt="" border="3" height="100" width="100" /> },
-                                    { title: "Name", field: "name" },
+                                    { title: "Image", field: "media", render: item =>
+                                         <img src={Baseurl.baseUrl + item?.media[0]?.file} alt=""  border="3" height="50" width="100" />
+                                        //  <img src={Baseurl.baseUrl + item?.media[0]?.file} alt="" border="3" height="100" width="100" />
+                                        },
+                                    { title: "Title", field: "title" },
+                                    { title: "Brand Name", field: "brandName" },
                                     { title: "Description", field: "description" },
                                     { title: "Price", field: "price" },
-                                    { title: "Discount", field: "discount" },
-                                    // { title: "Long Description", field: "longdescription" },
-                                    { title: "Long Description", field: longdescription ,
+
+
+                                    { title: "Product Type", field: "productType" },
+                                    { title: "SKU", field: "sku" },
+                                    // { title: "Date", field: convertTimestamp(updatedAt) },
+                                //     { title: "Long Description", field: longdescription ,
+                                //     render: (row) => {
+                                //     return <span dangerouslySetInnerHTML={{__html: row.longdescription}} />
+                                //     },
+                                //   }, 
+                                     { title: "Date", field: 'createdAt' ,
                                     render: (row) => {
-                                    return <span dangerouslySetInnerHTML={{__html: row.longdescription}} />
+                                    return <span>{convertTimestamp(row,"YYYY-MM-DD")}</span>
+                                    // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
                                     },
                                   },         
-                                    { title: "Short Description", field: "shortdescription" },
-                                    { title: "Category", field: "CategoryName" },
+
+                                // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
+                                //     { title: "Short Description", field: "shortdescription" },
+                                    // { title: "Category", field: "CategoryName" },
                                     // { title: "categoryid", field: "categoryid" },
 
-                                    {
-                                        title: "View Images", field: "images", render: rowData =>
+                                    // {
+                                    //     title: "View Images", field: "images", render: rowData =>
 
-                                            <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages(rowData)}  >View </Button>
+                                    //         <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages(rowData)}  >View </Button>
 
-                                    },
+                                    // },
 
 
                                 ]}
@@ -537,7 +567,7 @@ const ProductTable = () => {
                                             onClick: (event, rowData) => {
                                                 console.log("rowdata of delete", rowData)
 
-                                                DeleteService(rowData.uid)
+                                                DeleteService(rowData?._id)
 
                                             }
                                         },
@@ -578,7 +608,7 @@ const ProductTable = () => {
 
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Name</Form.Label>
+                            <Form.Label>Title</Form.Label>
                             <Form.Control
                                 type="text"
                                 placeholder="Name"
@@ -592,14 +622,14 @@ const ProductTable = () => {
 
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Description</Form.Label>
+                            <Form.Label>Brand Name</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="Description"
+                                placeholder="Brand Name"
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setdescription(e.target.value)}
-                                value={description}
+                                onChange={(e) => Setbrandname(e.target.value)}
+                                value={brandname}
                             />
 
                         </Form.Group>
@@ -620,15 +650,15 @@ const ProductTable = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Discount</Form.Label>
+                            <Form.Label>sku</Form.Label>
                             <Form.Control
                                 type="number"
                                 min="0"
-                                placeholder="Discount"
+                                placeholder="Sku"
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setdiscount(e.target.value)}
-                                value={discount}
+                                onChange={(e) => Setsku(e.target.value)}
+                                value={sku}
                             />
 
                         </Form.Group>
@@ -670,7 +700,7 @@ const ProductTable = () => {
 
                                 </div>
                             </div>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                        {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Short Description</Form.Label>
                             <Form.Control
                                 type="text"
@@ -681,7 +711,7 @@ const ProductTable = () => {
                                 value={shortdescription}
                             />
 
-                        </Form.Group>
+                        </Form.Group> */}
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             {/* <Form.Label>Category ID</Form.Label>
                             <Form.Control
@@ -704,11 +734,11 @@ const ProductTable = () => {
                             >
                                 <option value="selectcatgory">Select Catogary</option>
                                 {
-                                    CategoryDropdown.map((a) => {
+                                    CategoryDropdown?.map((a) => {
                                         // console.log("safdar",a.name)
                                         return (
                                             <>
-                                                <option value={a.name}>{a.name}</option>
+                                                <option value={a._id}>{a.title}</option>
                                             </>
                                         )
                                     })

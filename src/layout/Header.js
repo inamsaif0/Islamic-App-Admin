@@ -61,7 +61,7 @@ const Header = () => {
 
     useEffect(()=>{
        
-        AdminDatafunction()
+        // AdminDatafunction()
          
     },[])
 
@@ -75,30 +75,30 @@ const Header = () => {
     
     //   },[])
 
-    const AdminDatafunction = () => {
+    // const AdminDatafunction = () => {
       
-        var requestOptions = {
-            method: 'GET',
-            headers: {
-                Authorization: "Bearer " + Token
-            },
-            redirect: 'follow'
-        };
+    //     var requestOptions = {
+    //         method: 'GET',
+    //         headers: {
+    //             Authorization: "Bearer " + Token
+    //         },
+    //         redirect: 'follow'
+    //     };
 
-        fetch(`${Baseurl.baseUrl}/GetAdminData`, requestOptions)
+    //     fetch(`${Baseurl.baseUrl}/GetAdminData`, requestOptions)
 
-            .then(response => response.json())
-            .then(result =>
-                {
-                    console.log("admin get detail",result.data[0].firstname)
-                    console.log("admin get detail",result.data.firstname)
-                    console.log("admin get detail of image",result.data[0].Profile)
-                    SetName(result.data[0].firstname)
-                    SetProfileImage(result.data[0].Profile)
-                }
-            )
-            .catch(error => console.log('error', error));
-    }
+    //         .then(response => response.json())
+    //         .then(result =>
+    //             {
+    //                 console.log("admin get detail",result.data[0].firstname)
+    //                 console.log("admin get detail",result.data.firstname)
+    //                 console.log("admin get detail of image",result.data[0].Profile)
+    //                 SetName(result.data[0].firstname)
+    //                 SetProfileImage(result.data[0].Profile)
+    //             }
+    //         )
+    //         .catch(error => console.log('error', error));
+    // }
 
     
 
@@ -769,7 +769,7 @@ const Header = () => {
                                 </Link>
                                 
                             </li>
-                            <li className=" nav-item">
+                            {/* <li className=" nav-item">
                                 <Link to={"/addcategory"} >
                                 <a >
                                     <i className="la la-tablet" />
@@ -779,7 +779,7 @@ const Header = () => {
                                 
                                 </Link>
                                 
-                            </li>
+                            </li> */}
                             <li className=" nav-item">
                                 <Link to={"/addproduct"} >
                                 <a >
@@ -796,13 +796,13 @@ const Header = () => {
                                 <a >
                                     <i className="la la-cart-arrow-down" />
                                 
-                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Coupon</span>
+                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Packages</span>
                                 </a>
                                 
                                 </Link>
                                 
                             </li>
-                            <li className=" nav-item">
+                            {/* <li className=" nav-item">
                                 <Link to={"/orders"} >
                                 <a >
                                     <i className="la la-support" />
@@ -812,8 +812,8 @@ const Header = () => {
                                 
                                 </Link>
                                 
-                            </li>
-                            <li className=" nav-item">
+                            </li> */}
+                            {/* <li className=" nav-item">
                                 <Link to={"/addcustomer"} >
                                 <a >
                                     <i className="la la-users" />
@@ -823,8 +823,8 @@ const Header = () => {
                                 
                                 </Link>
                                 
-                            </li>
-                            <li className=" nav-item">
+                            </li> */}
+                            {/* <li className=" nav-item">
                                 <Link to={"/profile"} >
                                 <a >
                                     <i className="la la-user" />
@@ -834,7 +834,7 @@ const Header = () => {
                                 
                                 </Link>
                                 
-                            </li>
+                            </li> */}
                             <li className=" nav-item">
                                 
                                 <a  onClick={logout} >
