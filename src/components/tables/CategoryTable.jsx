@@ -27,10 +27,11 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import CloseButton from 'react-bootstrap/CloseButton';
-
+import { DropzoneArea } from 'material-ui-dropzone';
 import { AiFillCloseCircle } from "react-icons/ai";
 import Baseurl from '../../Baseurl/Baseurl';
 import {Loader} from 'react-overlay-loader';
+import moment from 'moment';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -55,7 +56,9 @@ const tableIcons = {
 const CategoryTable = () => {
 
     const [CategoryData, SetCategoryData] = useState([])
-    const [name, Setname] = useState('')
+    const [title, Settitle] = useState('')
+
+    const [imagelist, Setimagelist] = useState([])
     const [description, Setdescription] = useState('')
 
     const [TabelId, SetTabelId] = useState('')
@@ -87,20 +90,20 @@ const CategoryTable = () => {
         var requestOptions = {
             method: 'GET',
             headers: {
-                Authorization: "Bearer " + Token
+                token: Token
             },
             redirect: 'follow'
         };
         setloader(true)
 
-        fetch(`${Baseurl.baseUrl}/Getcategory`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/categories/get`, requestOptions)
 
             .then(response => response.json())
             .then(result =>{
                 if(result.status == true)
                 {
                     setloader(false)
-                    SetCategoryData(result.data)
+                    SetCategoryData(result?.data?.result)
                 }
                 else {
                     // setLoader(true)
@@ -137,21 +140,24 @@ const CategoryTable = () => {
         handleClose()
 
         var formdata = new FormData();
-        formdata.append("name", name);
-        formdata.append("description", description);
+        formdata.append("title", title);
+        for (var i = 0; i < imagelist.length; i++) {
+            formdata.append("media", imagelist[i]);
+
+        }
 
         var requestOptions = {
             method: 'POST',
 
             headers: {
-                Authorization: "Bearer " + Token
+                token:Token
             },
             body: formdata,
             redirect: 'follow'
         };
         setloader(true)
         // "https://pyurelyecommerce.pythonanywhere.com/api/categorys"
-        fetch(`${Baseurl.baseUrl}/categoryAdd`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/categories/create`, requestOptions)
             .then(response => response.json())
             .then(result => {
 
@@ -168,7 +174,7 @@ const CategoryTable = () => {
                     });
                     // setProfileImage('')
                     // setSelectProfileImage('')
-                    Setname('')
+                    Settitle('')
                     Setdescription('')
                     setShow(false)
                     GetCategoryData()
@@ -224,21 +230,23 @@ const CategoryTable = () => {
 
 
         var formdata = new FormData();
-        formdata.append("uid", TabelId);
-        formdata.append("name", name);
-        formdata.append("description", description);
+        formdata.append("categoryId", TabelId);
+        formdata.append("title", title);
+        for (var i = 0; i < imagelist.length; i++) {
+            formdata.append("media", imagelist[i]);
+
+        }
 
         var requestOptions = {
-            method: 'PUT',
-
+            method: 'Post',
             headers: {
-                Authorization: "Bearer " + Token
+                token:Token
             },
             body: formdata,
             redirect: 'follow'
         };
 
-        fetch(`${Baseurl.baseUrl}/Updatecategory`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/categories/update`, requestOptions)
             .then(response => response.json())
             .then(result => {
 
@@ -319,16 +327,27 @@ const CategoryTable = () => {
 
         console.log("value of a==>", a)
 
+        const requestBody={
+            id:a
+        }
+        const requestBody2 = JSON.stringify(requestBody);
+
+        console.log('requestBody2',requestBody2)
+
+        var formdata = new FormData();
+        formdata.append("id", a);
+
         var requestOptions = {
-            method: 'DELETE',
+            method: 'Post',
             headers: {
-                Authorization: "Bearer " + Token
+                token: Token
             },
+            body: requestBody2,
             redirect: 'follow'
         };
 
 
-        fetch(`${Baseurl.baseUrl}/deletecategory?uid=${a}`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/categories/delete`, requestOptions)
             .then(response => response.json())
             .then(result => 
             //     {
@@ -367,6 +386,9 @@ const CategoryTable = () => {
 
     }
 
+    function convertTimestamp(isoString, dateFormat = "YYYY-MM-DD HH:mm:ss") {
+        return moment(isoString).format(dateFormat);
+    }
 
     return (
         <>
@@ -417,9 +439,17 @@ const CategoryTable = () => {
                             <MaterialTable
                                 icons={tableIcons}
                                 columns={[
-                                    { title: "Name", field: "name" },
-                                    { title: "Description", field: "description" },
-
+                                    { title: "Image", field: "media", render: item =>
+                                        <img src={Baseurl.baseUrl + item?.media[0]?.file} alt=""  border="3" height="50" width="100" />
+                                       //  <img src={Baseurl.baseUrl + item?.media[0]?.file} alt="" border="3" height="100" width="100" />
+                                       },
+                                   { title: "Title", field: "title" },
+                                   { title: "Date", field: 'createdAt' ,
+                                    render: (row) => {
+                                    return <span>{convertTimestamp(row,"YYYY-MM-DD")}</span>
+                                    // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
+                                    },
+                                  }, 
                                 ]}
                                 data={
                                     CategoryData
@@ -434,13 +464,13 @@ const CategoryTable = () => {
                                                 console.log("edit rowData ==>", rowData)
                                                 console.log("edit btn id ==>", rowData.uid)
                                                 console.log("edit btn name ==>", rowData.name)
-                                                Setname(rowData.name)
+                                                Settitle(rowData.title)
                                                 Setdescription(rowData.description)
                                                 // setFname2(rowData.Fname)
                                                 // setLname2(rowData.Lname)
                                                 // setContact2(rowData.ContactNo)
                                                 // setId2(rowData.id)
-                                                Edited(rowData.uid)
+                                                Edited(rowData._id)
                                                 // handleShow2()
                                             }
                                         },
@@ -451,7 +481,7 @@ const CategoryTable = () => {
                                             onClick: (event, rowData) => {
                                                 console.log("rowdata", rowData)
 
-                                                DeleteService(rowData.uid)
+                                                DeleteService(rowData._id)
 
                                             }
                                         },
@@ -489,25 +519,50 @@ const CategoryTable = () => {
 
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Name</Form.Label>
+                            <Form.Label>Title</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="Name"
+                                placeholder="Title"
                                 autoFocus
-                                onChange={(e) => handleInputChange(e, Setname)}
+                                onChange={(e) => handleInputChange(e, Settitle)}
                             />
 
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Description"
-                                autoFocus
-                                onChange={(e) => handleInputChange(e, Setdescription)}
-                            />
+                        <div className="row">
 
-                        </Form.Group>
+                            <div className='col-md-12 mb-2' >
+                                <DropzoneArea
+
+                                    acceptedFiles={['image/*']}
+                                    filesLimit={12}
+                                    // dropzoneText={"Drag and drop an image here or click"}
+                                    showAlerts={false}
+                                    onChange={
+                                        (files) => {
+
+
+                                            // setImage(e.target.files[0])
+                                            console.log('Files:', files)
+                                            Setimagelist(files)
+                                        }
+
+                                    }
+                                // onChange={handleimage}
+
+                                // initialFiles={
+                                //     [
+                                //     "https://images.pexels.com/photos/1909603/pexels-photo-1909603.jpeg"
+                                //   ]
+                                // }
+
+                                // initialFiles={imagelist || [] }
+
+                                />
+
+                            </div>
+
+
+                        </div>
 
 
                     </Form>
@@ -540,28 +595,54 @@ const CategoryTable = () => {
                     <Form>
 
 
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Name</Form.Label>
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Title</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="Name"
+                                placeholder="Title"
                                 autoFocus
-                                value={name}
-                                onChange={(e) => handleInputChange(e, Setname)}
+                                value={title}
+                                onChange={(e) => handleInputChange(e, Settitle)}
                             />
 
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Description"
-                                autoFocus
-                                value={description}
-                                onChange={(e) => handleInputChange(e, Setdescription)}
-                            />
+                        <div className="row">
 
-                        </Form.Group>
+                            <div className='col-md-12 mb-2' >
+                                <DropzoneArea
+
+                                    acceptedFiles={['image/*']}
+                                    filesLimit={12}
+                                    // dropzoneText={"Drag and drop an image here or click"}
+                                    showAlerts={false}
+                                    onChange={
+                                        (files) => {
+
+
+                                            // setImage(e.target.files[0])
+                                            console.log('Files:', files)
+                                            Setimagelist(files)
+                                        }
+
+                                    }
+                                // onChange={handleimage}
+
+                                // initialFiles={
+                                //     [
+                                //     "https://images.pexels.com/photos/1909603/pexels-photo-1909603.jpeg"
+                                //   ]
+                                // }
+
+                                // initialFiles={imagelist || [] }
+
+                                />
+
+                            </div>
+
+
+                        </div>
+
+                        
 
 
                     </Form>
