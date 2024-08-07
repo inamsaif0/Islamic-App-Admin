@@ -769,7 +769,7 @@ const Header = () => {
                                 </Link>
                                 
                             </li>
-                            {/* <li className=" nav-item">
+                            <li className=" nav-item">
                                 <Link to={"/addcategory"} >
                                 <a >
                                     <i className="la la-tablet" />
@@ -779,7 +779,7 @@ const Header = () => {
                                 
                                 </Link>
                                 
-                            </li> */}
+                            </li>
                             <li className=" nav-item">
                                 <Link to={"/addproduct"} >
                                 <a >
@@ -791,7 +791,7 @@ const Header = () => {
                                 </Link>
                                 
                             </li>
-                            <li className=" nav-item">
+                            {/* <li className=" nav-item">
                                 <Link to={"/addcoupen"} >
                                 <a >
                                     <i className="la la-cart-arrow-down" />
@@ -801,7 +801,7 @@ const Header = () => {
                                 
                                 </Link>
                                 
-                            </li>
+                            </li> */}
                             {/* <li className=" nav-item">
                                 <Link to={"/orders"} >
                                 <a >

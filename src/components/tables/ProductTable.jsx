@@ -90,9 +90,11 @@ const ProductTable = () => {
     const [price, Setprice] = useState('')
     const [sku, Setsku] = useState('')
     const [longdescription, Setlongdescription] = useState('')
-    const [shortdescription, Setshortdescription] = useState('')
+    const [ProductType, SetProductType] = useState('')
     const [categoryid, Setcategoryid] = useState('')
     const [imagelist, Setimagelist] = useState([])
+
+    console.log('imagelist',imagelist)
 
 
     const [CategoryName, setCategoryName] = useState('')
@@ -108,6 +110,8 @@ const ProductTable = () => {
     // const [ProductData,SetProductData]=useState([])
     const [productData, SetproductData] = useState([])
     const [Productimage, setProductimage] = useState('');
+
+    const [TabelId, SetTabelId] = useState('')
 
     const Token = localStorage.getItem("AdminToken")
 
@@ -175,21 +179,24 @@ const ProductTable = () => {
 
         handleClose()
 
+       if(TabelId){
+
+        
         var formdata = new FormData();
-        formdata.append("name", name);
+        formdata.append("title", name);
         formdata.append("brandName", brandname);
-        formdata.append("productType", 'productType');
+
         formdata.append("price", price);
         formdata.append("sku", sku);
-        formdata.append("description", 'hello World');
+        formdata.append("description", longdescription);
         // formdata.append("description", convertedContent);
 
         
-        // formdata.append("shortdescription", shortdescription);
-        formdata.append("categoryid", CategoryName);
-        // formdata.append("image", image);
+        formdata.append("productType", ProductType);
+        formdata.append("category", CategoryName);
+        formdata.append("productId", TabelId);
         for (var i = 0; i < imagelist.length; i++) {
-            formdata.append("image", imagelist[i]);
+            formdata.append("media", imagelist[i]);
 
         }
 
@@ -205,7 +212,7 @@ const ProductTable = () => {
         };
         setLoader(true)
 
-        fetch(`${Baseurl.baseUrl}api/products/create`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/products/update`, requestOptions)
             .then(response => response.json())
             .then(result => {
 
@@ -225,9 +232,8 @@ const ProductTable = () => {
                     Setdescription('')
                     Setprice('')
                     Setsku('')
-                    // Setlongdescription('')
                     setConvertedContent('')
-                    Setshortdescription('')
+                    SetProductType('')
                     setCategoryName('')
                     Setimagelist('')
 
@@ -270,6 +276,115 @@ const ProductTable = () => {
 
             );
 
+       } else{
+
+        
+        var formdata = new FormData();
+        formdata.append("title", name);
+        formdata.append("brandName", brandname);
+
+        formdata.append("price", price);
+        formdata.append("sku", sku);
+        formdata.append("description", longdescription);
+        // formdata.append("description", convertedContent);
+
+        
+        formdata.append("productType", ProductType);
+        formdata.append("category", CategoryName);
+        // formdata.append("image", image);
+        for (var i = 0; i < imagelist.length; i++) {
+            formdata.append("media", imagelist[i]);
+
+        }
+
+        console.log("value of image list is ", imagelist)
+
+        var requestOptions = {
+            method: 'POST',
+            headers: {
+                token:Token
+            },
+            body: formdata,
+            redirect: 'follow'
+        };
+        setLoader(true)
+
+        fetch(`${Baseurl.baseUrl}api/products/create`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+
+                if (result.status == true) {
+                    setLoader(false)
+
+
+
+                    console.log("add single file ===>", result)
+                    Swal.fire({
+                        title: "success",
+                        text: result.message,
+                        icon: "success",
+                        confirmButtonColor: "#29BF12",
+                    });
+                    Setname('')
+                    Setdescription('')
+                    Setprice('')
+                    Setsku('')
+                    setConvertedContent('')
+                    SetProductType('')
+                    setCategoryName('')
+                    Setimagelist('')
+
+                    setShow(false)
+                    GetproductData()
+
+                    // Navigate('/addcustomer')
+
+
+                }
+                else {
+                    // setLoader(true)
+                    setLoader(false)
+                    console.log("result.message", result.message)
+                    Swal.fire({
+                        title: "Oops",
+                        text: result.message,
+                        icon: "error",
+                        confirmButtonColor: "#29BF12",
+                    });
+
+                }
+
+
+
+            }
+
+            )
+            .catch(error => {
+                setLoader(false)
+                console.log('error', error)
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: error,
+                    confirmButtonColor: "#03bafe",
+                })
+
+            }
+
+            );
+
+       }
+
+        
+
+
+    }
+
+    const Edited = (e) => {
+        console.log("i am running")
+        console.log("value of rowdata id is ==>", e)
+        SetTabelId(e)
+        handleShow()
     }
 
     // useffect of images
@@ -320,18 +435,38 @@ const ProductTable = () => {
 
         console.log("value of rowdata delete id==>", a)
 
+        // var formdata = new FormData();
+        // formdata.append("id", a);
+
+        const requestBodydata={
+            id:a
+        }
+
+        const requestBody = JSON.stringify(requestBodydata);
+
+
+
+        console.log(requestBody,'requestBody')
+
         var requestOptions = {
-            method: 'DELETE',
+            method: 'POST',
             headers: {
-                Authorization: "Bearer " + Token
+                token:Token
             },
+            body:requestBody,
+            
             redirect: 'follow'
         };
+       
+        
+
+        console.log('requestOptions',requestOptions)
 
         // http://cnchub.pythonanywhere.com/webapi/login?SId=1"
         // `${BaseUrl.baseUrl}/login`
 
-        fetch(`${Baseurl?.baseUrl}api/products/delete/id=${a}`, requestOptions)
+        fetch(`${Baseurl?.baseUrl}api/products/delete`, requestOptions)
+        // fetch(`${Baseurl?.baseUrl}api/products/delete/${a}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status == true) {
@@ -434,12 +569,7 @@ const ProductTable = () => {
             .catch(error => {
                 // setloader(false)
                 console.log('error', error)
-                // Swal.fire({
-                //     icon: 'error',
-                //     title: 'Oops...',
-                //     text: error,
-                //     confirmButtonColor: "#03bafe",
-                // })
+                
 
             }
 
@@ -528,7 +658,7 @@ const ProductTable = () => {
                                   },         
 
                                 // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
-                                //     { title: "Short Description", field: "shortdescription" },
+                                //     { title: "Short Description", field: "ProductType" },
                                     // { title: "Category", field: "CategoryName" },
                                     // { title: "categoryid", field: "categoryid" },
 
@@ -546,20 +676,28 @@ const ProductTable = () => {
                                 }
                                 actions={
                                     [
-                                        // {
-                                        //     icon: Edit,
-                                        //     tooltip: 'Edit User',
-                                        //     onClick: (event, rowData) => {
-                                        //         // console.log("edit btn ==>", rowData.SId)
-                                        //         console.log("edit btn ==>", rowData)
-                                        //         // setFname2(rowData.Fname)
-                                        //         // setLname2(rowData.Lname)
-                                        //         // setContact2(rowData.ContactNo)
-                                        //         // setId2(rowData.id)
-                                        //         // Edited(rowData.SId)
-                                        //         // handleShow3()
-                                        //     }
-                                        // },
+                                        {
+                                            icon: Edit,
+                                            tooltip: 'Edit User',
+                                            onClick: (event, rowData) => {
+                                                // console.log("edit btn ==>", rowData.SId)
+                                                console.log("edit btn ==>", rowData)
+                                                Setname(rowData?.title)
+                                                Setbrandname(rowData?.brandName)
+                                                Setlongdescription(rowData?.description)
+                    Setprice(rowData?.price)
+                    Setsku(rowData?.sku)
+                    SetProductType(rowData?.productType)
+                    // setConvertedContent('')
+                    setCategoryName(rowData?.category)
+                    const existingImages = rowData?.media?.map((mediaItem) => `${Baseurl.baseUrl}${mediaItem.file}`);
+                    // Setimagelist(existingImages)
+                    // Setimagelist( `${rowData?.media[0].file} ` )
+                                                // setId2(rowData.id)
+                                                Edited(rowData._id)
+                                                // handleShow3()
+                                            }
+                                        },
                                         {
 
                                             icon: DeleteIcon,
@@ -590,7 +728,7 @@ const ProductTable = () => {
 
 
             {/* add Product modal */}
-            <Modal show={show} onHide={handleClose}>
+            {show && (<Modal show={show} onHide={handleClose}>
                 {/* <Modal.Header closeButton>
                     <Modal.Title>Change Password </Modal.Title>
 
@@ -598,7 +736,7 @@ const ProductTable = () => {
                 <Modal.Header >
                     {/* <i className='fa fa-close'>baloch</i>
                     <AiFillCloseCircle fontSize={20} /> */}
-                    <Modal.Title>Add Product </Modal.Title>
+                    <Modal.Title>{ TabelId ? 'Update Product' :'Add Product' }</Modal.Title>
                     <AiFillCloseCircle onClick={handleClose} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
 
                 </Modal.Header>
@@ -662,21 +800,21 @@ const ProductTable = () => {
                             />
 
                         </Form.Group>
-                        {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Long Description</Form.Label>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Description</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="Long Description"
+                                placeholder="Description"
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setLname2)}
                                 onChange={(e) => Setlongdescription(e.target.value)}
                                 value={longdescription}
                             />
 
-                        </Form.Group> */}
+                        </Form.Group>
                         
-                        <div className="col-md-12 col-sm-6">
-                                <div className="form-group">
+                        {/* <div className="col-md-12 col-sm-6">
+                                <div className="form-group"> */}
                                     {/* <TextField id="standard-basic" label="Description" variant="outlined"
                                         fullWidth
                                         multiline
@@ -684,7 +822,7 @@ const ProductTable = () => {
                                         value={Description} onChange={(e) => {
                                             Description(e.target.value)
                                         }} /> */}
-                                    <Editor
+                                    {/* <Editor
                                         editorState={editorState}
                                         onEditorStateChange={handleEditorChange}
                                         wrapperClassName="wrapper-class"
@@ -695,23 +833,24 @@ const ProductTable = () => {
                                             padding: 15,
                                             minHeight: 350,
                                         }}
-                                    />
+                                    /> */}
                                      {/* <div className="preview" dangerouslySetInnerHTML={createMarkup(convertedContent)}></div> */}
 
-                                </div>
-                            </div>
-                        {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Short Description</Form.Label>
+                                {/* </div>
+                            </div> */}
+                            
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Product Type</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="Short Description"
+                                placeholder="Product Type"
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setshortdescription(e.target.value)}
-                                value={shortdescription}
+                                onChange={(e) => SetProductType(e.target.value)}
+                                value={ProductType}
                             />
 
-                        </Form.Group> */}
+                        </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             {/* <Form.Label>Category ID</Form.Label>
                             <Form.Control
@@ -725,7 +864,7 @@ const ProductTable = () => {
                             <Form.Label>Category ID</Form.Label>
                             <Form.Control
                                 as="select"
-                                // value={type}
+                                value={CategoryName}
                                 onChange={e => {
                                     console.log("e.target.value", e.target.value);
                                     setCategoryName(e.target.value);
@@ -796,6 +935,8 @@ const ProductTable = () => {
                                 //   ]
                                 // }
 
+                                // initialFiles={imagelist || [] }
+
                                 />
 
                             </div>
@@ -811,10 +952,12 @@ const ProductTable = () => {
                         Close
                     </Button>
                     <Button variant="primary" onClick={AddProduct} >
-                        Add Product
+                    { TabelId ? 'Update Product' :'Add Product' }
                     </Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal>)}
+
+            
 
 
             {/* images modal */}
