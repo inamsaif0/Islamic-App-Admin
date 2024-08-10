@@ -418,24 +418,59 @@ const CategoryTable = () => {
 
       const [Loading2,setLoading2]=useState(false)
 
-      const handleEdit2 = async (rowData) => {
-        setLoading2(true);  // Start loading
-        Settitle(rowData.title)
-        Edited(rowData._id);
+    //   const handleEdit2 = async (rowData) => {
+    //     setLoading2(true);  // Start loading
+    //     Settitle(rowData.title)
+    //     Edited(rowData._id);
     
         
         
-        const existingImages = rowData?.media?.map(async (mediaItem) => {
-          const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
-          const blob = await response.blob();
-          return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
-        });
+    //     const existingImages = rowData?.media?.map(async (mediaItem) => {
+    //       const response = await fetch(`${Baseurl.baseUrl}${mediaItem?.file}`);
+
+          
+    //       const blob = await response?.blob();
+    //       return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
+    //     });
         
-        const filesArray = await Promise.all(existingImages);
-        Setimagelist(filesArray);
-        setLoading2(false); // Stop loading when files are set
+    //     const filesArray = await Promise.all(existingImages);
+    //     Setimagelist(filesArray);
+    //     setLoading2(false); 
         
-      };
+    //   };
+
+    const handleEdit2 = async (rowData) => {
+        setLoading2(true);  // Start loading
+        
+        try {
+            // Set initial state
+            Settitle(rowData.title);
+            Edited(rowData._id);
+    
+            // Fetch all images
+            const existingImagesPromises = rowData?.media?.map(async (mediaItem) => {
+                const response = await fetch(`${Baseurl?.baseUrl}${mediaItem?.file}`);
+                
+                if (!response?.ok) {
+                    throw new Error('Failed to fetch image');
+                }
+    
+                const blob = await response.blob();
+                return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
+            });
+    
+            const existingImages = await Promise.all(existingImagesPromises);
+    
+            Setimagelist(existingImages); // Set the list of images
+    
+        } catch (error) {
+            console.error("Error fetching images:", error);
+            // Optionally, set some error state here if needed
+    
+        } finally {
+            setLoading2(false);  // Stop loading when files are set or error occurs
+        }
+    };
 
     return (
         <>
@@ -655,7 +690,7 @@ const CategoryTable = () => {
                                 <DropzoneArea
                 key={imagelist.length} // Ensures re-render
                 acceptedFiles={['image/*']}
-                filesLimit={12}
+                filesLimit={1}
                 initialFiles={imagelist &&imagelist}
                 showAlerts={false}
                 onChange={(uploadedFiles) => {

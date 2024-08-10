@@ -67,6 +67,8 @@ const PackagesTable = () => {
 
     const [ADDselectedProducts, setADDselectedProducts] = useState([]);
 
+    const [Loading2,setLoading2]=useState(false)
+
     console.log('selectedProducts', selectedProducts)
 
     // Handle checkbox change
@@ -599,34 +601,84 @@ const PackagesTable = () => {
     //     return imageFiles;
     //   };
 
-    const [Loading2,setLoading2]=useState(false)
+  
+// old working code
+    // const handleEdit2 = async (rowData) => {
+    //     console.log('rowData',rowData)
+    //     setLoading2(true);  // Start loading
+    //     Settitle(rowData.title)
+    //     Setdescription(rowData.description)
+    //     SetTabelId(rowData._id)
+    //     SetUpdatedProductsData(rowData.products)
 
-    const handleEdit2 = async (rowData) => {
-        console.log('rowData',rowData)
-        setLoading2(true);  // Start loading
-        Settitle(rowData.title)
-        Setdescription(rowData.description)
-        SetTabelId(rowData._id)
-        SetUpdatedProductsData(rowData.products)
-
-         setCheckedProduct(rowData.products)
+    //      setCheckedProduct(rowData.products)
 
 
-        Edited(rowData._id);
+    //     Edited(rowData._id);
     
         
         
-        const existingImages = rowData?.media?.map(async (mediaItem) => {
-          const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
-          const blob = await response.blob();
-          return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
-        });
+    //     const existingImages = rowData?.media?.map(async (mediaItem) => {
+    //       const response = await fetch(`${Baseurl.baseUrl}${mediaItem?.file}`);
+    //       if(response){
+    //         setLoading2(false);
+    //       }
+    //       console.log('response',response)
+    //       const blob = await response?.blob();
+    //       console.log('blob',blob)
+    //       return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
+    //     });
+
+    //     console.log('existingImages',existingImages)
         
-        const filesArray = await Promise.all(existingImages);
-        Setimagelist(filesArray);
-        setLoading2(false); // Stop loading when files are set
+    //     const filesArray = await Promise.all(existingImages);
+    //     console.log('filesArray',filesArray)
+    //     Setimagelist(filesArray);
+    //     // Stop loading when files are set
         
-      };
+    //   };
+
+      const handleEdit2 = async (rowData) => {
+        try {
+            setLoading2(true);  // Start loading
+            Settitle(rowData.title)
+            Setdescription(rowData.description)
+            SetTabelId(rowData._id)
+            SetUpdatedProductsData(rowData.products)
+    
+             setCheckedProduct(rowData.products)
+    
+    
+            Edited(rowData._id);
+            
+            // Fetch all images
+            const existingImages = await Promise.all(
+                rowData?.media?.map(async (mediaItem) => {
+                    const response = await fetch(`${Baseurl?.baseUrl}${mediaItem?.file}`);
+                    console.log('response',response)
+                    if (response?.ok) {
+                        setLoading2(false);
+                        // throw new Error('Failed to fetch image');
+                    }
+                    
+                    const blob = await response.blob();
+                    return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
+                })
+            );
+            if(existingImages)
+            {
+                setLoading2(false);
+            }
+            setLoading2(false);
+            Setimagelist(existingImages); // Set the list of images
+    
+        } catch (error) {
+            console.error("Error fetching images:", error);
+            // Optionally, set some error state here if needed
+        } finally {
+            setLoading2(false);  // Stop loading when files are set or error occurs
+        }
+    };
 
 
     //   const handleRemoveProduct = (productId) => {

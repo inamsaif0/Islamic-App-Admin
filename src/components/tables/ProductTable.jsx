@@ -451,48 +451,51 @@ const ProductTable = () => {
        
 //       };
 
-const handleEdit2 = async (rowData) => {
-    setLoading2(true);  // Start loading
-    Edited(rowData._id);
-    Setname(rowData?.title);
-    Setbrandname(rowData?.brandName);
-    Setlongdescription(rowData?.description);
-    Setprice(rowData?.price);
-    Setsku(rowData?.sku);
-    SetProductType(rowData?.productType);
-    setCategoryName(rowData?.category);
+// const handleEdit2 = async (rowData) => {
+//     console.log('rowData==>',rowData)
+//     setLoading2(true);  // Start loading
+//     Edited(rowData._id);
+//     Setname(rowData?.title);
+//     Setbrandname(rowData?.brandName);
+//     Setlongdescription(rowData?.description);
+//     Setprice(rowData?.price);
+//     Setsku(rowData?.sku);
+//     SetProductType(rowData?.productType);
+//     setCategoryName(rowData?.category);
 
-    // Fetch media and handle duplicates
-    const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
-        const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
-        const blob = await response.blob();
-        const file = new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
+//     // Fetch media and handle duplicates
+//     const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+//         const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+//         const blob = await response.blob();
+//         const file = new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
         
-        return { file, id: mediaItem._id }; // Return file with its ID
-    }));
+//         return { file, id: mediaItem._id }; // Return file with its ID
+//     }));
 
-    // Create a map to keep track of unique files by name
-    const fileMap = new Map();
-    existingImages.forEach(item => {
-        if (!fileMap.has(item.file.name)) {
-            fileMap.set(item.file.name, item); // Add unique file to map
-        }
-    });
+//     console.log('existingImages',existingImages)
 
-    // Extract unique files and their IDs
-    const uniqueImages = Array.from(fileMap.values());
-    const filesArray = uniqueImages.map(item => item.file);
-    Setimagelist(filesArray);
+//     // Create a map to keep track of unique files by name
+//     const fileMap = new Map();
+//     existingImages.forEach(item => {
+//         if (!fileMap.has(item.file.name)) {
+//             fileMap.set(item.file.name, item); // Add unique file to map
+//         }
+//     });
 
-    const newImageMap = {};
-    uniqueImages.forEach(item => {
-        newImageMap[item.file.name] = item.id; // Map filename to ID
-    });
+//     // Extract unique files and their IDs
+//     const uniqueImages = Array.from(fileMap.values());
+//     const filesArray = uniqueImages.map(item => item.file);
+//     Setimagelist(filesArray);
 
-    setImageMap(newImageMap);
+//     const newImageMap = {};
+//     uniqueImages.forEach(item => {
+//         newImageMap[item.file.name] = item.id; // Map filename to ID
+//     });
 
-    setLoading2(false); // Stop loading when files are set
-};
+//     setImageMap(newImageMap);
+
+//     setLoading2(false); // Stop loading when files are set
+// };
 
     // useffect of images
 
@@ -679,14 +682,92 @@ const handleEdit2 = async (rowData) => {
         return moment(isoString).format(dateFormat);
     }
 
+    // const handleDelete = (deletedFile) => {
+
+    //     console.log('deletedFile',deletedFile)
+
+    //     const deletedFileName = deletedFile.name;
+    //     const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
+
+    //     console.log('deletedImageId',deletedImageId)
+    
+    //     setDeletedImageIds((prevIds) => [...prevIds, deletedImageId]); // Store deleted IDs
+    //     console.log('Deleted Image ID:', deletedImageId);
+    //   };
+
+    
+    const handleEdit2 = async (rowData) => {
+        console.log('rowData==>', rowData);
+        setLoading2(true);  // Start loading
+    
+        // Set product details
+        Edited(rowData._id);
+        Setname(rowData?.title);
+        Setbrandname(rowData?.brandName);
+        Setlongdescription(rowData?.description);
+        Setprice(rowData?.price);
+        Setsku(rowData?.sku);
+        SetProductType(rowData?.productType);
+        setCategoryName(rowData?.category);
+    
+        // Fetch media and handle uniqueness
+        const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+            const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+            const blob = await response.blob();
+            const fileName = mediaItem.file.split('/').pop(); // Use original file name
+            const file = new File([blob], fileName, { type: blob.type });
+            
+            return { file, id: mediaItem._id }; // Return file with its ID
+        }));
+    
+        console.log('existingImages', existingImages);
+    
+        // Ensure no duplicate files are added
+        const fileMap = new Map();
+        existingImages.forEach(item => {
+            if (!fileMap.has(item.id)) {
+                fileMap.set(item.id, item);
+            }
+        });
+    
+        // Extract unique files and their IDs
+        const uniqueImages = Array.from(fileMap.values());
+        const filesArray = uniqueImages.map(item => item.file);
+        Setimagelist(filesArray);
+    
+        const newImageMap = {};
+        uniqueImages.forEach(item => {
+            newImageMap[item.file.name] = item.id; // Map filename to ID
+        });
+    
+        setImageMap(newImageMap);
+        setLoading2(false); // Stop loading when files are set
+    };
+    
     const handleDelete = (deletedFile) => {
+        console.log('deletedFile', deletedFile);
+    
         const deletedFileName = deletedFile.name;
         const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
     
-        setDeletedImageIds((prevIds) => [...prevIds, deletedImageId]); // Store deleted IDs
-        console.log('Deleted Image ID:', deletedImageId);
-      };
-
+        if (deletedImageId) {
+            console.log('deletedImageId', deletedImageId);
+    
+            // Store deleted IDs
+            setDeletedImageIds(prevIds => [...prevIds, deletedImageId]);
+            console.log('Deleted Image ID:', deletedImageId);
+    
+            // Remove the file from imagelist to prevent re-adding it
+            Setimagelist(prevFiles => prevFiles.filter(file => file.name !== deletedFileName));
+    
+            // Optionally remove from imageMap if you want to prevent further operations on it
+            setImageMap(prevMap => {
+                const newMap = { ...prevMap };
+                delete newMap[deletedFileName];
+                return newMap;
+            });
+        }
+    };
 
     return (
         <>
@@ -786,28 +867,6 @@ const handleEdit2 = async (rowData) => {
                                             icon: Edit,
                                             tooltip: 'Edit User',
                                             onClick: (event, rowData) => handleEdit2(rowData)
-                    //                         onClick: (event, rowData) => {
-                    //                             // console.log("edit btn ==>", rowData.SId)
-                    //                             console.log("edit btn ==>", rowData)
-                    //                             Setname(rowData?.title)
-                    //                             Setbrandname(rowData?.brandName)
-                    //                             Setlongdescription(rowData?.description)
-                    // Setprice(rowData?.price)
-                    // Setsku(rowData?.sku)
-                    // SetProductType(rowData?.productType)
-                    // setCategoryName(rowData?.category)
-                    // Edited(rowData._id)
-                    // const existingImages = rowData?.media?.map(async (mediaItem) => {
-                    //     const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
-                    //     const blob = await response.blob();
-                    //     return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
-                    //   });
-                  
-                    //   // Resolve all promises and set the files
-                    //   Promise.all(existingImages).then((filesArray) => {
-                    //     Setimagelist(filesArray);
-                    //   });
-                    //                         }
                                         },
                                         {
 
@@ -1203,9 +1262,9 @@ const handleEdit2 = async (rowData) => {
 
 
                         <div className="row">
-                        {Loading2 ? (
-            <p>Loading images...</p>
-          ) : ( <div className='col-md-12 mb-2' >
+                        {
+                            Loading2 == true ? (<Loader fullPage loading />)
+           : ( <div className='col-md-12 mb-2' >
             <DropzoneArea
                 acceptedFiles={['image/*']}
                 filesLimit={5}
