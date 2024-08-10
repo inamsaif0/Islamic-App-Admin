@@ -513,7 +513,7 @@ const CoupenTable = () => {
                         <div className="content-header-left col-md-6 col-12 mb-2 breadcrumb-new">
                             <h3 className="content-header-title mb-0 d-inline-block">
                                 {/* {Role == "addcustomer" ? "Add Customer" : "Upload File"} */}
-                                Add Coupon
+                                Add Couponw
                             </h3>
                             {/* <div className="row breadcrumbs-top d-inline-block">
                                 <div className="breadcrumb-wrapper col-12">

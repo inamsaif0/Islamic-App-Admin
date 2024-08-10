@@ -119,7 +119,7 @@ const Simplelogin = () => {
                                                 </div>
                                             </div>
                                             <h6 className="card-subtitle line-on-side text-muted text-center font-small-3 pt-2">
-                                                <span>Login with Islamic App</span>
+                                                <span>Login with Ooridoo</span>
                                             </h6>
                                         </div>
                                         <div className="card-content pb-5">

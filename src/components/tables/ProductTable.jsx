@@ -5,10 +5,7 @@ import { forwardRef } from 'react';
 import Swal from "sweetalert2";
 import { Loader } from 'react-overlay-loader';
 import moment from 'moment';
-
 import './Productatble.css'
-
-
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -84,6 +81,14 @@ const ProductTable = () => {
     const handleClose2 = () => setShow2(false);
     const handleShow2 = () => setShow2(true);
 
+
+    const [show3, setShow3] = useState(false);
+
+    const handleClose3 = () => setShow3(false);
+    const handleShow3 = () => setShow3(true);
+
+
+
     const [name, Setname] = useState('')
     const [brandname, Setbrandname] = useState('')
     const [description, Setdescription] = useState('')
@@ -101,12 +106,6 @@ const ProductTable = () => {
 
 
     const [CategoryDropdown, SetCategoryDropdown] = useState([])
-
-
-    console.log('CategoryDropdown',CategoryDropdown)
-
-
-
     // const [ProductData,SetProductData]=useState([])
     const [productData, SetproductData] = useState([])
     const [Productimage, setProductimage] = useState('');
@@ -118,6 +117,11 @@ const ProductTable = () => {
     const [imagelistData, SetimagelistData] = useState([])
 
     const [loader, setLoader] = useState(false)
+
+    const [imageMap, setImageMap] = useState({});
+    const [deletedImageIds, setDeletedImageIds] = useState([]);
+
+    console.log('deletedImageIds',deletedImageIds)
 
 
     // text ediot
@@ -179,104 +183,6 @@ const ProductTable = () => {
 
         handleClose()
 
-       if(TabelId){
-
-        
-        var formdata = new FormData();
-        formdata.append("title", name);
-        formdata.append("brandName", brandname);
-
-        formdata.append("price", price);
-        formdata.append("sku", sku);
-        formdata.append("description", longdescription);
-        // formdata.append("description", convertedContent);
-
-        
-        formdata.append("productType", ProductType);
-        formdata.append("category", CategoryName);
-        formdata.append("productId", TabelId);
-        for (var i = 0; i < imagelist.length; i++) {
-            formdata.append("media", imagelist[i]);
-
-        }
-
-        console.log("value of image list is ", imagelist)
-
-        var requestOptions = {
-            method: 'POST',
-            headers: {
-                token:Token
-            },
-            body: formdata,
-            redirect: 'follow'
-        };
-        setLoader(true)
-
-        fetch(`${Baseurl.baseUrl}api/products/update`, requestOptions)
-            .then(response => response.json())
-            .then(result => {
-
-                if (result.status == true) {
-                    setLoader(false)
-
-
-
-                    console.log("add single file ===>", result)
-                    Swal.fire({
-                        title: "success",
-                        text: result.message,
-                        icon: "success",
-                        confirmButtonColor: "#29BF12",
-                    });
-                    Setname('')
-                    Setdescription('')
-                    Setprice('')
-                    Setsku('')
-                    setConvertedContent('')
-                    SetProductType('')
-                    setCategoryName('')
-                    Setimagelist('')
-
-                    setShow(false)
-                    GetproductData()
-
-                    // Navigate('/addcustomer')
-
-
-                }
-                else {
-                    // setLoader(true)
-                    setLoader(false)
-                    console.log("result.message", result.message)
-                    Swal.fire({
-                        title: "Oops",
-                        text: result.message,
-                        icon: "error",
-                        confirmButtonColor: "#29BF12",
-                    });
-
-                }
-
-
-
-            }
-
-            )
-            .catch(error => {
-                setLoader(false)
-                console.log('error', error)
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: error,
-                    confirmButtonColor: "#03bafe",
-                })
-
-            }
-
-            );
-
-       } else{
 
         
         var formdata = new FormData();
@@ -373,19 +279,220 @@ const ProductTable = () => {
 
             );
 
-       }
+       
 
         
 
 
     }
 
-    const Edited = (e) => {
-        console.log("i am running")
-        console.log("value of rowdata id is ==>", e)
-        SetTabelId(e)
-        handleShow()
+    const UpdateProduct = () => {
+
+        handleClose()
+
+        console.log('imagelist==>Update',imagelist)
+        
+        var formdata = new FormData();
+        formdata.append("title", name);
+        formdata.append("brandName", brandname);
+
+        formdata.append("price", price);
+        formdata.append("sku", sku);
+        formdata.append("description", longdescription);
+
+        formdata.append("productType", ProductType);
+        formdata.append("category", CategoryName);
+        formdata.append("productId", TabelId);
+
+          for (var i = 0; i < deletedImageIds.length; i++) {
+            formdata.append(`deleteImages[${i}]`, deletedImageIds[i]);
+        }
+
+        for (var i = 0; i < imagelist.length; i++) {
+            formdata.append("media", imagelist[i]);
+        }
+
+        console.log("value of image list is ", imagelist)
+
+        var requestOptions = {
+            method: 'POST',
+            headers: {
+                token:Token
+            },
+            body: formdata,
+            redirect: 'follow'
+        };
+        setLoader(true)
+
+        fetch(`${Baseurl.baseUrl}api/products/update`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+
+                if (result.status == true) {
+                    setLoader(false)
+
+
+
+                    console.log("add single file ===>", result)
+                    Swal.fire({
+                        title: "success",
+                        text: result.message,
+                        icon: "success",
+                        confirmButtonColor: "#29BF12",
+                    });
+                    Setname('')
+                    Setdescription('')
+                    Setprice('')
+                    Setsku('')
+                    setConvertedContent('')
+                    SetProductType('')
+                    setCategoryName('')
+                    Setimagelist([]); // Clear the imagelist
+                setDeletedImageIds([]); // Clear the deleted image IDs
+
+                    setShow3(false)
+                    GetproductData()
+
+                    // Navigate('/addcustomer')
+
+
+                }
+                else {
+                    // setLoader(true)
+                    setLoader(false)
+                    console.log("result.message", result.message)
+                    Swal.fire({
+                        title: "Oops",
+                        text: result.message,
+                        icon: "error",
+                        confirmButtonColor: "#29BF12",
+                    });
+
+                }
+
+
+
+            }
+
+            )
+            .catch(error => {
+                setLoader(false)
+                console.log('error', error)
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: error,
+                    confirmButtonColor: "#03bafe",
+                })
+
+            }
+
+            );
+
+       
+       
+
+        
+
+
     }
+
+    const [Loading2,setLoading2]=useState(false)
+    const Edited = (e) => {
+        SetTabelId(e)
+        handleShow3()
+    }
+
+//     const handleEdit2 = async (rowData) => {
+//         setLoading2(true);  // Start loading
+//         Edited(rowData._id);
+//         Setname(rowData?.title)
+//         Setbrandname(rowData?.brandName)
+//         Setlongdescription(rowData?.description)
+// Setprice(rowData?.price)
+// Setsku(rowData?.sku)
+// SetProductType(rowData?.productType)
+// setCategoryName(rowData?.category)
+
+// // 
+// const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+//     const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+//     const blob = await response.blob();
+//     const file = new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
+    
+//     return { file, id: mediaItem._id }; // Return file with its ID
+//   }));
+
+//   const filesArray = existingImages.map(item => item.file);
+//   Setimagelist(filesArray);
+
+//   const newImageMap = {};
+//   existingImages.forEach(item => {
+//     newImageMap[item.file.name] = item.id; // Map filename to ID
+//   });
+
+//   setImageMap(newImageMap);
+  
+//   setLoading2(false); // Stop loading when files are set
+
+
+
+
+// // 
+
+        
+//         // const existingImages = rowData?.media?.map(async (mediaItem) => {
+//         //   const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+//         //   const blob = await response.blob();
+//         //   return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
+//         // });
+    
+//         // const filesArray = await Promise.all(existingImages);
+       
+//       };
+
+const handleEdit2 = async (rowData) => {
+    setLoading2(true);  // Start loading
+    Edited(rowData._id);
+    Setname(rowData?.title);
+    Setbrandname(rowData?.brandName);
+    Setlongdescription(rowData?.description);
+    Setprice(rowData?.price);
+    Setsku(rowData?.sku);
+    SetProductType(rowData?.productType);
+    setCategoryName(rowData?.category);
+
+    // Fetch media and handle duplicates
+    const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+        const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+        const blob = await response.blob();
+        const file = new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
+        
+        return { file, id: mediaItem._id }; // Return file with its ID
+    }));
+
+    // Create a map to keep track of unique files by name
+    const fileMap = new Map();
+    existingImages.forEach(item => {
+        if (!fileMap.has(item.file.name)) {
+            fileMap.set(item.file.name, item); // Add unique file to map
+        }
+    });
+
+    // Extract unique files and their IDs
+    const uniqueImages = Array.from(fileMap.values());
+    const filesArray = uniqueImages.map(item => item.file);
+    Setimagelist(filesArray);
+
+    const newImageMap = {};
+    uniqueImages.forEach(item => {
+        newImageMap[item.file.name] = item.id; // Map filename to ID
+    });
+
+    setImageMap(newImageMap);
+
+    setLoading2(false); // Stop loading when files are set
+};
 
     // useffect of images
 
@@ -432,26 +539,17 @@ const ProductTable = () => {
     // }
 
     const ConfirmDelete = (a) => {
-
-        console.log("value of rowdata delete id==>", a)
-
-        // var formdata = new FormData();
-        // formdata.append("id", a);
-
         const requestBodydata={
             id:a
         }
-
         const requestBody = JSON.stringify(requestBodydata);
-
-
-
         console.log(requestBody,'requestBody')
 
         var requestOptions = {
             method: 'POST',
             headers: {
-                token:Token
+                token:Token,
+                "Content-Type":"application/json"
             },
             body:requestBody,
             
@@ -581,6 +679,14 @@ const ProductTable = () => {
         return moment(isoString).format(dateFormat);
     }
 
+    const handleDelete = (deletedFile) => {
+        const deletedFileName = deletedFile.name;
+        const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
+    
+        setDeletedImageIds((prevIds) => [...prevIds, deletedImageId]); // Store deleted IDs
+        console.log('Deleted Image ID:', deletedImageId);
+      };
+
 
     return (
         <>
@@ -679,24 +785,29 @@ const ProductTable = () => {
                                         {
                                             icon: Edit,
                                             tooltip: 'Edit User',
-                                            onClick: (event, rowData) => {
-                                                // console.log("edit btn ==>", rowData.SId)
-                                                console.log("edit btn ==>", rowData)
-                                                Setname(rowData?.title)
-                                                Setbrandname(rowData?.brandName)
-                                                Setlongdescription(rowData?.description)
-                    Setprice(rowData?.price)
-                    Setsku(rowData?.sku)
-                    SetProductType(rowData?.productType)
-                    // setConvertedContent('')
-                    setCategoryName(rowData?.category)
-                    const existingImages = rowData?.media?.map((mediaItem) => `${Baseurl.baseUrl}${mediaItem.file}`);
-                    // Setimagelist(existingImages)
-                    // Setimagelist( `${rowData?.media[0].file} ` )
-                                                // setId2(rowData.id)
-                                                Edited(rowData._id)
-                                                // handleShow3()
-                                            }
+                                            onClick: (event, rowData) => handleEdit2(rowData)
+                    //                         onClick: (event, rowData) => {
+                    //                             // console.log("edit btn ==>", rowData.SId)
+                    //                             console.log("edit btn ==>", rowData)
+                    //                             Setname(rowData?.title)
+                    //                             Setbrandname(rowData?.brandName)
+                    //                             Setlongdescription(rowData?.description)
+                    // Setprice(rowData?.price)
+                    // Setsku(rowData?.sku)
+                    // SetProductType(rowData?.productType)
+                    // setCategoryName(rowData?.category)
+                    // Edited(rowData._id)
+                    // const existingImages = rowData?.media?.map(async (mediaItem) => {
+                    //     const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+                    //     const blob = await response.blob();
+                    //     return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
+                    //   });
+                  
+                    //   // Resolve all promises and set the files
+                    //   Promise.all(existingImages).then((filesArray) => {
+                    //     Setimagelist(filesArray);
+                    //   });
+                    //                         }
                                         },
                                         {
 
@@ -736,8 +847,210 @@ const ProductTable = () => {
                 <Modal.Header >
                     {/* <i className='fa fa-close'>baloch</i>
                     <AiFillCloseCircle fontSize={20} /> */}
-                    <Modal.Title>{ TabelId ? 'Update Product' :'Add Product' }</Modal.Title>
+                    <Modal.Title>{ 'Add Product' }</Modal.Title>
                     <AiFillCloseCircle onClick={handleClose} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
+
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+
+
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Title</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Name"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setFname2)}
+                                onChange={(e) => Setname(e.target.value)}
+                                
+                            />
+                        </Form.Group>
+
+
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Brand Name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Brand Name"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => Setbrandname(e.target.value)}
+                                
+                            />
+
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Price</Form.Label>
+                            <Form.Control
+                                type="number"
+                                min="0"
+                                placeholder="Price"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => Setprice(e.target.value)}
+                                
+
+                            />
+
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>sku</Form.Label>
+                            <Form.Control
+                                type="number"
+                                min="0"
+                                placeholder="Sku"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => Setsku(e.target.value)}
+                                
+                            />
+
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Description</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Description"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => Setlongdescription(e.target.value)}
+                                
+                            />
+
+                        </Form.Group>
+                        
+                        {/* <div className="col-md-12 col-sm-6">
+                                <div className="form-group"> */}
+                                    {/* <TextField id="standard-basic" label="Description" variant="outlined"
+                                        fullWidth
+                                        multiline
+                                        defaultValue={Description}
+                                        value={Description} onChange={(e) => {
+                                            Description(e.target.value)
+                                        }} /> */}
+                                    {/* <Editor
+                                        editorState={editorState}
+                                        onEditorStateChange={handleEditorChange}
+                                        wrapperClassName="wrapper-class"
+                                        editorClassName="editor-class"
+                                        toolbarClassName="toolbar-class"
+                                        editorStyle={{
+                                            border: "1px solid #F0F0F0",
+                                            padding: 15,
+                                            minHeight: 350,
+                                        }}
+                                    /> */}
+                                     {/* <div className="preview" dangerouslySetInnerHTML={createMarkup(convertedContent)}></div> */}
+
+                                {/* </div>
+                            </div> */}
+                            
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Product Type</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Product Type"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => SetProductType(e.target.value)}
+                                
+                            />
+
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            {/* <Form.Label>Category ID</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="categoryid"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => Setcategoryid(e.target.value)}
+                                value={categoryid}
+                            /> */}
+                            <Form.Label>Category ID</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={CategoryName}
+                                onChange={e => {
+                                    console.log("e.target.value", e.target.value);
+                                    setCategoryName(e.target.value);
+                                }}
+                            // value={categoryid}
+                            >
+                                <option value="selectcatgory">Select Catogary</option>
+                                {
+                                    CategoryDropdown?.map((a) => {
+                                        // console.log("safdar",a.name)
+                                        return (
+                                            <>
+                                                <option value={a._id}>{a.title}</option>
+                                            </>
+                                        )
+                                    })
+                                }
+                            </Form.Control>
+
+
+
+                        </Form.Group>
+
+
+                        <div className="row">
+          
+          <div className='col-md-12 mb-2' >
+            <DropzoneArea
+                acceptedFiles={['image/*']}
+                filesLimit={5}
+                showAlerts={false}
+                // initialFiles={imagelist &&imagelist}
+                onDelete={handleDelete}
+                onChange={
+                    (files) => {
+                        console.log('Files:', files)
+                        Setimagelist(files)
+                    }
+                }
+            />
+
+        </div>
+    
+    
+
+                            
+
+
+                        </div>
+
+
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={AddProduct} >
+                    { 'Add Product' }
+                    </Button>
+                </Modal.Footer>
+            </Modal>)}
+
+
+{/* update Product Modal */}
+            {show3 && (<Modal show={show3} onHide={handleClose3}>
+                {/* <Modal.Header closeButton>
+                    <Modal.Title>Change Password </Modal.Title>
+
+                </Modal.Header> */}
+                <Modal.Header >
+                    {/* <i className='fa fa-close'>baloch</i>
+                    <AiFillCloseCircle fontSize={20} /> */}
+                    <Modal.Title>{'Update Product'}</Modal.Title>
+                    <AiFillCloseCircle onClick={handleClose3} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
 
                 </Modal.Header>
                 <Modal.Body>
@@ -882,12 +1195,6 @@ const ProductTable = () => {
                                         )
                                     })
                                 }
-                                {/*                                 
-                                <option value="PLANNERS">PLANNERS</option>
-                                <option value="BRIEFCASES">BRIEF CASES</option>
-                                <option value="PENS">PENS</option>
-                                <option value="ACCESSORIES">ACCESSORIES</option> */}
-
                             </Form.Control>
 
 
@@ -895,51 +1202,27 @@ const ProductTable = () => {
                         </Form.Group>
 
 
-                        {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Image</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Image"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setimage(e.target.value)}
-                                value={image}
-                            />
-
-                        </Form.Group> */}
-
-
                         <div className="row">
+                        {Loading2 ? (
+            <p>Loading images...</p>
+          ) : ( <div className='col-md-12 mb-2' >
+            <DropzoneArea
+                acceptedFiles={['image/*']}
+                filesLimit={5}
+                showAlerts={false}
+                initialFiles={imagelist &&imagelist}
+                onDelete={handleDelete}
+                onChange={
+                    (files) => {
+                        console.log('Files:', files)
+                        Setimagelist(files)
+                    }
+                }
+            />
 
-                            <div className='col-md-12 mb-2' >
-                                <DropzoneArea
-                                    acceptedFiles={['image/*']}
-                                    filesLimit={12}
-                                    // dropzoneText={"Drag and drop an image here or click"}
-                                    showAlerts={false}
-                                    onChange={
-                                        (files) => {
+        </div>)}
 
-
-                                            // setImage(e.target.files[0])
-                                            console.log('Files:', files)
-                                            Setimagelist(files)
-                                        }
-
-                                    }
-                                // onChange={handleimage}
-
-                                // initialFiles={
-                                //     [
-                                //     "https://images.pexels.com/photos/1909603/pexels-photo-1909603.jpeg"
-                                //   ]
-                                // }
-
-                                // initialFiles={imagelist || [] }
-
-                                />
-
-                            </div>
+                            
 
 
                         </div>
@@ -948,11 +1231,11 @@ const ProductTable = () => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={handleClose3}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={AddProduct} >
-                    { TabelId ? 'Update Product' :'Add Product' }
+                    <Button variant="primary" onClick={UpdateProduct} >
+                    { 'Update Product'}
                     </Button>
                 </Modal.Footer>
             </Modal>)}

@@ -221,8 +221,11 @@ const CategoryTable = () => {
     const Edited = (e) => {
         console.log("i am running")
         console.log("value of rowdata id is ==>", e)
+   
         SetTabelId(e)
         handleShow2()
+
+       
     }
 
 
@@ -340,7 +343,8 @@ const CategoryTable = () => {
         var requestOptions = {
             method: 'Post',
             headers: {
-                token: Token
+                token: Token,
+                "Content-Type":"application/json"
             },
             body: requestBody2,
             redirect: 'follow'
@@ -389,6 +393,49 @@ const CategoryTable = () => {
     function convertTimestamp(isoString, dateFormat = "YYYY-MM-DD HH:mm:ss") {
         return moment(isoString).format(dateFormat);
     }
+
+    const handleEdit = (rowData) => {
+            Settitle(rowData.title)
+            Edited(rowData._id);
+        
+        
+        // Convert the media files to Blob/File objects for the DropzoneArea
+        const existingImages = rowData?.media?.map(async (mediaItem) => {
+          const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+          const blob = await response.blob();
+          return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
+        });
+
+        console.log('existingImages',existingImages)
+    
+        // Resolve all promises and set the files
+        Promise.all(existingImages).then((filesArray) => {
+            Setimagelist(filesArray);
+        });
+    
+        
+      };
+
+      const [Loading2,setLoading2]=useState(false)
+
+      const handleEdit2 = async (rowData) => {
+        setLoading2(true);  // Start loading
+        Settitle(rowData.title)
+        Edited(rowData._id);
+    
+        
+        
+        const existingImages = rowData?.media?.map(async (mediaItem) => {
+          const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+          const blob = await response.blob();
+          return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
+        });
+        
+        const filesArray = await Promise.all(existingImages);
+        Setimagelist(filesArray);
+        setLoading2(false); // Stop loading when files are set
+        
+      };
 
     return (
         <>
@@ -459,20 +506,22 @@ const CategoryTable = () => {
                                         {
                                             icon: Edit,
                                             tooltip: 'Edit Category',
-                                            onClick: (event, rowData) => {
-                                                // console.log("edit btn ==>", rowData.SId)
-                                                console.log("edit rowData ==>", rowData)
-                                                console.log("edit btn id ==>", rowData.uid)
-                                                console.log("edit btn name ==>", rowData.name)
-                                                Settitle(rowData.title)
-                                                Setdescription(rowData.description)
-                                                // setFname2(rowData.Fname)
-                                                // setLname2(rowData.Lname)
-                                                // setContact2(rowData.ContactNo)
-                                                // setId2(rowData.id)
-                                                Edited(rowData._id)
-                                                // handleShow2()
-                                            }
+                                            // onClick: (event, rowData) => handleEdit(rowData)
+                                            onClick: (event, rowData) => handleEdit2(rowData)
+                                            // onClick: (event, rowData) => {
+                                            //     // console.log("edit btn ==>", rowData.SId)
+                                            //     console.log("edit rowData ==>", rowData)
+                                            //     console.log("edit btn id ==>", rowData.uid)
+                                            //     console.log("edit btn name ==>", rowData.name)
+                                            //     Settitle(rowData.title)
+                                            //     Setdescription(rowData.description)
+                                            //     // setFname2(rowData.Fname)
+                                            //     // setLname2(rowData.Lname)
+                                            //     // setContact2(rowData.ContactNo)
+                                            //     // setId2(rowData.id)
+                                            //     Edited(rowData._id)
+                                            //     // handleShow2()
+                                            // }
                                         },
                                         {
 
@@ -502,7 +551,7 @@ const CategoryTable = () => {
 
 
             {/* add category modal */}
-            <Modal show={show} onHide={handleClose}>
+           {show && (<Modal show={show} onHide={handleClose}>
                 {/* <Modal.Header closeButton>
                     <Modal.Title>Change Password </Modal.Title>
 
@@ -534,7 +583,8 @@ const CategoryTable = () => {
                                 <DropzoneArea
 
                                     acceptedFiles={['image/*']}
-                                    filesLimit={12}
+                                    filesLimit={1}
+                                    // initialFiles={imagelist}
                                     // dropzoneText={"Drag and drop an image here or click"}
                                     showAlerts={false}
                                     onChange={
@@ -547,16 +597,6 @@ const CategoryTable = () => {
                                         }
 
                                     }
-                                // onChange={handleimage}
-
-                                // initialFiles={
-                                //     [
-                                //     "https://images.pexels.com/photos/1909603/pexels-photo-1909603.jpeg"
-                                //   ]
-                                // }
-
-                                // initialFiles={imagelist || [] }
-
                                 />
 
                             </div>
@@ -575,11 +615,12 @@ const CategoryTable = () => {
                         Add Category
                     </Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal>)} 
+            
 
 
             {/* edit category modal 2 */}
-            <Modal show={show2} onHide={handleClose2}>
+            {show2 && (<Modal show={show2} onHide={handleClose2}>
                 {/* <Modal.Header closeButton>
                     <Modal.Title>Change Password </Modal.Title>
 
@@ -609,33 +650,37 @@ const CategoryTable = () => {
                         <div className="row">
 
                             <div className='col-md-12 mb-2' >
+                        {
+                            Loading2 == true ? (<Loader fullPage loading />) : (
                                 <DropzoneArea
+                key={imagelist.length} // Ensures re-render
+                acceptedFiles={['image/*']}
+                filesLimit={12}
+                initialFiles={imagelist &&imagelist}
+                showAlerts={false}
+                onChange={(uploadedFiles) => {
+                  Setimagelist(uploadedFiles);
+                  console.log('Files:', uploadedFiles);
+                }}
+              />
+
+                            )
+                        }
+
+                                {/* <DropzoneArea
 
                                     acceptedFiles={['image/*']}
                                     filesLimit={12}
-                                    // dropzoneText={"Drag and drop an image here or click"}
                                     showAlerts={false}
+                                    initialFiles={imagelist &&imagelist}
                                     onChange={
                                         (files) => {
-
-
-                                            // setImage(e.target.files[0])
                                             console.log('Files:', files)
                                             Setimagelist(files)
                                         }
 
-                                    }
-                                // onChange={handleimage}
-
-                                // initialFiles={
-                                //     [
-                                //     "https://images.pexels.com/photos/1909603/pexels-photo-1909603.jpeg"
-                                //   ]
-                                // }
-
-                                // initialFiles={imagelist || [] }
-
-                                />
+                                    }                                
+                                /> */}
 
                             </div>
 
@@ -655,7 +700,9 @@ const CategoryTable = () => {
                         Update
                     </Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal>)}
+
+            
 
 
 
