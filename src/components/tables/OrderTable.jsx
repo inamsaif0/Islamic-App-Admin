@@ -222,41 +222,37 @@ const OrderTable = () => {
                             <MaterialTable
                             icons={tableIcons}
                                 columns={[
-                                    // { title: "name", field: "name" },
-                                    { title: "Total", field: "totalprice" },
-                                    { title: "Discount Percentage", field: "discout" },
-                                    { title: "Discount Price", field: "discounted_price" },
+                                    { title: "User Name", field: "name" },
+                                    { title: "Price", field: "totalprice" },
+                                    { title: "Time", field: "discout" },
+                                    { title: "Payment Method", field: "discounted_price" },
+                                    { title: "View Details", field: "discounted_price" },
+                                    { title: "Status", field: "discounted_price" },
 
                                     
-                                    { title: "Coupon Name", field: "CoupanName" },
-                                    { title: "Coupon Status", field: "coupan_status",render:rowData=>
+                            //         { title: "Coupon Name", field: "CoupanName" },
+                            //         { title: "Coupon Status", field: "coupan_status",render:rowData=>
                                 
-                                    <>
-                                    {
-                                        rowData.coupan_status == true ?  "Active " : "Deactive"
-                                    }
+                            //         <>
+                            //         {
+                            //             rowData.coupan_status == true ?  "Active " : "Deactive"
+                            //         }
                                     
-                                    </>
+                            //         </>
 
                                 
-                            },
+                            // },
                                     // { title: "Quantity", field: "quantity" },
                                     // { title: "Payment Method", field: "paymentmethod" },
-                                    {
-                                        title: "Order Details", field: "orderdetails", render: rowData =>
+                                    // {
+                                    //     title: "Order Details", field: "orderdetails", render: rowData =>
 
-                                            <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages(rowData)}  >View </Button>
-                                            // <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages(rowData)}  >View </Button>
-
-                                    },
-                                    {
-                                        title: "Order Information", field: "order", render: rowData =>
-                                        
-
-                                            <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages2(rowData)}  >View </Button>
-                                            // <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages(rowData)}  >View </Button>
-
-                                    }
+                                    //         <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages(rowData)}  >View </Button>
+                                    // },
+                                    // {
+                                    //     title: "Order Information", field: "order", render: rowData =>
+                                    //         <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages2(rowData)}  >View </Button>
+                                    // }
                                     // { title: "Payment Token", field: "paymenttoken" },
                                     // { title: "lastname", field: "lastname" },
                                    

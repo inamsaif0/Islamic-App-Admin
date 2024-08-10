@@ -15,3 +15,104 @@
     padding: 1rem;
     margin-top: 1rem;
   } */
+
+  .flexlistColumn{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    
+  }
+
+  /* General container styling */
+.product-list-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  overflow-y: scroll;
+  max-height: 300px;
+
+
+}
+
+/* Style for each product item */
+.product-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease;
+}
+
+/* Product image styling */
+.product-item img {
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+/* Product details container */
+.product-details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* Product title styling */
+.product-details h2 {
+  font-size: 18px;
+  margin: 0;
+  color: #333;
+}
+
+/* Product price styling */
+.product-details p {
+  font-size: 16px;
+  color: #666;
+  margin: 5px 0 0;
+}
+
+/* Checkbox container styling */
+.product-checkbox {
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+}
+
+/* Hover effect for product item */
+.product-item:hover {
+  background-color: #e6f7ff;
+}
+
+/* Styling for selected products list */
+.selected-products-container {
+  margin-top: 30px;
+}
+
+.selected-products-container h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+ul.product_ul {
+  list-style: none;
+  padding: 0 !important;
+}
+
+.selected-products-container li {
+  font-size: 16px;
+  color: #444;
+  padding: 5px 0;
+}
+
+  
+
+  

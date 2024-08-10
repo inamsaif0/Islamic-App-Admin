@@ -66,14 +66,14 @@ const Header = () => {
     },[])
 
     
-    // useEffect(()=>{
+    useEffect(()=>{
 
-    //     if(Token === null)
-    //     {
-    //       Navigate('/')
-    //     }
+        if(Token === null)
+        {
+          Navigate('/')
+        }
     
-    //   },[])
+      },[])
 
     // const AdminDatafunction = () => {
       
@@ -298,7 +298,6 @@ const Header = () => {
 
 
     const logout = () => {
-        // alert("hello world")
         localStorage.removeItem("AdminToken");
         Navigate("/");
     }
@@ -556,7 +555,8 @@ const Header = () => {
                                             
                                     </a>
                                     <div className={Profilebtn ? "dropdown-menu dropdown-menu-right show" : "dropdown-menu dropdown-menu-right"}>
-                                    <Link to={"/profile"} >
+                                    {/* <Link to={"/profile"} > */}
+                                    <Link to={"#"} >
                                     <a className="dropdown-item" ><i className="ft-user" /> Edit Profile</a>
                                     </Link>  
                                      
@@ -791,8 +791,8 @@ const Header = () => {
                                 </Link>
                                 
                             </li>
-                            {/* <li className=" nav-item">
-                                <Link to={"/addcoupen"} >
+                            <li className=" nav-item">
+                                <Link to={"/addpackage"} >
                                 <a >
                                     <i className="la la-cart-arrow-down" />
                                 
@@ -801,8 +801,8 @@ const Header = () => {
                                 
                                 </Link>
                                 
-                            </li> */}
-                            {/* <li className=" nav-item">
+                            </li>
+                            <li className=" nav-item">
                                 <Link to={"/orders"} >
                                 <a >
                                     <i className="la la-support" />
@@ -812,7 +812,7 @@ const Header = () => {
                                 
                                 </Link>
                                 
-                            </li> */}
+                            </li>
                             {/* <li className=" nav-item">
                                 <Link to={"/addcustomer"} >
                                 <a >

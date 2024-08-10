@@ -74,3 +74,13 @@ form.form-horizontal .form-group .label-control {
   align-self: center;
 }
 
+::-webkit-scrollbar {
+  width: 4px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffbb0c;
+  border-radius: 0;
+}
+
