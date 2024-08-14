@@ -136,7 +136,8 @@ const CategoryTable = () => {
             );
     }
 
-    const addCategory = () => {
+    const addCategory = (e) => {
+        e.preventDefault()
         handleClose()
 
         var formdata = new FormData();
@@ -599,7 +600,7 @@ const CategoryTable = () => {
 
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form onSubmit={(e) => e.preventDefault()}>
 
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -646,7 +647,7 @@ const CategoryTable = () => {
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={addCategory} >
+                    <Button variant="primary" type='button' onClick={(e)=>{ addCategory(e)}} >
                         Add Category
                     </Button>
                 </Modal.Footer>
@@ -668,7 +669,7 @@ const CategoryTable = () => {
 
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form onSubmit={(e) => e.preventDefault()}>
 
 
                     <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">

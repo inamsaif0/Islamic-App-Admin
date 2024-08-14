@@ -40,7 +40,8 @@ import { Room } from '@material-ui/icons';
 import { ContentState, convertFromHTML, EditorState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import { convertToHTML } from 'draft-convert';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+// import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+// "react-draft-wysiwyg": "^1.15.0",
 // import { convertToHTML } from 'draft-convert';
 import DOMPurify from 'dompurify';
 
@@ -911,7 +912,7 @@ const ProductTable = () => {
 
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form onSubmit={(e) => e.preventDefault()}>
 
 
 
@@ -1113,7 +1114,7 @@ const ProductTable = () => {
 
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form onSubmit={(e) => e.preventDefault()}>
 
 
 
