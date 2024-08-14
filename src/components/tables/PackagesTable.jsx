@@ -24,14 +24,16 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import { Form, InputGroup } from 'react-bootstrap';
+// import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import CloseButton from 'react-bootstrap/CloseButton';
 import { DropzoneArea } from 'material-ui-dropzone';
-import { AiFillCloseCircle } from "react-icons/ai";
+import { AiFillCloseCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import Baseurl from '../../Baseurl/Baseurl';
 import { Loader } from 'react-overlay-loader';
 import moment from 'moment';
+// import { InputGroup } from 'react-bootstrap';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -67,9 +69,22 @@ const PackagesTable = () => {
 
     const [ADDselectedProducts, setADDselectedProducts] = useState([]);
 
-    const [Loading2,setLoading2]=useState(false)
+    const [Loading2, setLoading2] = useState(false)
 
     console.log('selectedProducts', selectedProducts)
+
+   
+
+    const [searchText, setSearchText] = useState('');
+    const [filteredResults, setFilteredResults] = useState([]);
+
+    const handleSearchInputChange = (e) => {
+        setSearchText(e.target.value);
+    };
+
+    const clearSearch = () => {
+        setSearchText('');
+    };
 
     // Handle checkbox change
     //   const handleCheckboxChange = (productId) => {
@@ -88,20 +103,20 @@ const PackagesTable = () => {
     const [ProductsData, SetProductsData] = useState([])
 
     console.log('ProductsData', ProductsData)
- 
+
     const [UpdatedProductsData, SetUpdatedProductsData] = useState([])
 
     const [CheckedProduct, setCheckedProduct] = useState([])
 
-    console.log('CheckedProduct',CheckedProduct)
+    console.log('CheckedProduct', CheckedProduct)
 
-    console.log('UpdatedProductsData',UpdatedProductsData)
+    console.log('UpdatedProductsData', UpdatedProductsData)
 
     const [title, Settitle] = useState('')
 
     const [imagelist, Setimagelist] = useState([])
 
-    console.log('imagelist',imagelist)
+    console.log('imagelist', imagelist)
     const [description, Setdescription] = useState('')
 
     const [TabelId, SetTabelId] = useState('')
@@ -131,7 +146,7 @@ const PackagesTable = () => {
     }, [])
 
 
-    
+
 
     const AddhandleCheckboxChange = (product) => {
         setADDselectedProducts(prevSelected => {
@@ -150,9 +165,9 @@ const PackagesTable = () => {
     };
     const handleCheckboxChange = (product) => {
         const isAlreadySelected = UpdatedProductsData.find(p => p._id === product._id);
-        
+
         let updatedSelectedProducts;
-    
+
         if (isAlreadySelected) {
             // Uncheck - remove the product
             updatedSelectedProducts = UpdatedProductsData.filter(p => p._id !== product._id);
@@ -160,7 +175,7 @@ const PackagesTable = () => {
             // Check - add the product
             updatedSelectedProducts = [...UpdatedProductsData, product];
         }
-    
+
         SetUpdatedProductsData(updatedSelectedProducts);
     };
 
@@ -212,6 +227,23 @@ const PackagesTable = () => {
 
             );
     }
+
+    useEffect(() => {
+        // Debounce the search function
+        const timer = setTimeout(() => {
+            if (searchText) {
+                const searchValue = searchText.toLowerCase();
+                let results = ProductsData?.filter((product) => 
+                    product?.title?.toLowerCase().includes(searchValue)
+                );
+                setFilteredResults(results);
+            } else {
+                setFilteredResults(ProductsData); // Show all results if searchText is empty
+            }
+        }, 300); // 300ms delay
+
+        return () => clearTimeout(timer);
+    }, [searchText]);
 
     const GetPackagesData = () => {
         var requestOptions = {
@@ -277,7 +309,7 @@ const PackagesTable = () => {
 
         }
 
-        
+
 
         var requestOptions = {
             method: 'POST',
@@ -360,34 +392,34 @@ const PackagesTable = () => {
 
     const EditCategory = () => {
 
-        console.log('selectedProducts',selectedProducts)
+        console.log('selectedProducts', selectedProducts)
 
 
         var formdata = new FormData();
         formdata.append("title", title);
         formdata.append("description", description);
         formdata.append("packageId", TabelId);
-        
+
         for (var i = 0; i < imagelist.length; i++) {
             formdata.append("media", imagelist[i]);
 
         }
 
 
-        let UniqueProductId=UpdatedProductsData.filter((obj,index,self)=>index === self.findIndex((t)=> t._id === obj._id)
+        let UniqueProductId = UpdatedProductsData.filter((obj, index, self) => index === self.findIndex((t) => t._id === obj._id)
         )
 
         // UpdatedProductsData
-        let newArrayDelete =[]
-          
+        let newArrayDelete = []
 
-        console.log('ADDselectedProductsUniqueProductId',ADDselectedProducts)
-         
-        console.log('UniqueProductId',UniqueProductId)
+
+        console.log('ADDselectedProductsUniqueProductId', ADDselectedProducts)
+
+        console.log('UniqueProductId', UniqueProductId)
 
         const isProductInArray = UniqueProductId.some(product => product._id === ADDselectedProducts._id);
 
-        console.log('isProductInArraynewArray',isProductInArray)
+        console.log('isProductInArraynewArray', isProductInArray)
 
         if (!isProductInArray) {
             // If the product is not in the array, add it to newArray
@@ -395,9 +427,9 @@ const PackagesTable = () => {
 
         }
 
-        console.log('newArray',newArrayDelete)
-        console.log('newArray',newArrayDelete?.length)
-          
+        console.log('newArray', newArrayDelete)
+        console.log('newArray', newArrayDelete?.length)
+
 
 
 
@@ -408,15 +440,12 @@ const PackagesTable = () => {
         }
 
 
-        if(newArrayDelete && newArrayDelete?.length > 0){
+        if (newArrayDelete && newArrayDelete?.length > 0) {
             for (var i = 0; i < newArrayDelete?.length; i++) {
                 formdata.append(`deletedProducts[${i}]`, newArrayDelete[i]?._id);
-    
+
             }
         }
-
-       
-
 
         var requestOptions = {
             method: 'Post',
@@ -575,15 +604,15 @@ const PackagesTable = () => {
     }
 
     const handleDelete = (deletedFile) => {
-        console.log('deletedFile',deletedFile)
+        console.log('deletedFile', deletedFile)
         // const deletedFileName = deletedFile.name;
         // const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
-    
+
         // setDeletedImageIds((prevIds) => [...prevIds, deletedImageId]); // Store deleted IDs
         // console.log('Deleted Image ID:', deletedImageId);
-      };
+    };
 
-      
+
 
 
     //   const fetchImages = async (imageUrls) => {
@@ -593,7 +622,7 @@ const PackagesTable = () => {
     //         const response = await fetch(`${Baseurl.baseUrl}${url.file}`);
     //         console.log('')
     //         const blob = await response.blob();
-            
+
     //         const fileName = url.split('/').pop();
     //         return new File([blob], fileName, { type: blob.type });
     //       })
@@ -601,8 +630,8 @@ const PackagesTable = () => {
     //     return imageFiles;
     //   };
 
-  
-// old working code
+
+    // old working code
     // const handleEdit2 = async (rowData) => {
     //     console.log('rowData',rowData)
     //     setLoading2(true);  // Start loading
@@ -615,9 +644,9 @@ const PackagesTable = () => {
 
 
     //     Edited(rowData._id);
-    
-        
-        
+
+
+
     //     const existingImages = rowData?.media?.map(async (mediaItem) => {
     //       const response = await fetch(`${Baseurl.baseUrl}${mediaItem?.file}`);
     //       if(response){
@@ -630,48 +659,47 @@ const PackagesTable = () => {
     //     });
 
     //     console.log('existingImages',existingImages)
-        
+
     //     const filesArray = await Promise.all(existingImages);
     //     console.log('filesArray',filesArray)
     //     Setimagelist(filesArray);
     //     // Stop loading when files are set
-        
+
     //   };
 
-      const handleEdit2 = async (rowData) => {
+    const handleEdit2 = async (rowData) => {
         try {
             setLoading2(true);  // Start loading
             Settitle(rowData.title)
             Setdescription(rowData.description)
             SetTabelId(rowData._id)
             SetUpdatedProductsData(rowData.products)
-    
-             setCheckedProduct(rowData.products)
-    
-    
+
+            setCheckedProduct(rowData.products)
+
+
             Edited(rowData._id);
-            
+
             // Fetch all images
             const existingImages = await Promise.all(
                 rowData?.media?.map(async (mediaItem) => {
                     const response = await fetch(`${Baseurl?.baseUrl}${mediaItem?.file}`);
-                    console.log('response',response)
+                    console.log('response', response)
                     if (response?.ok) {
                         setLoading2(false);
                         // throw new Error('Failed to fetch image');
                     }
-                    
+
                     const blob = await response.blob();
                     return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
                 })
             );
-            if(existingImages)
-            {
+            if (existingImages) {
                 setLoading2(false);
             }
             setLoading2(false);
             Setimagelist(existingImages); // Set the list of images
-    
+
         } catch (error) {
             console.error("Error fetching images:", error);
             // Optionally, set some error state here if needed
@@ -685,7 +713,7 @@ const PackagesTable = () => {
     //     // Remove product from ProductsData
     //     const updatedProducts = ProductsData.filter(product => product._id !== productId);
     //     setProductsData(updatedProducts);
-    
+
     //     // Also, remove from selectedProducts if it was selected
     //     const updatedSelectedProducts = selectedProducts.filter(product => product._id !== productId);
     //     setSelectedProducts(updatedSelectedProducts);
@@ -801,7 +829,7 @@ const PackagesTable = () => {
 
                     </Modal.Header>
                     <Modal.Body>
-                        <Form>
+                        <Form onSubmit={(e) => e.preventDefault()}>
 
 
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -815,7 +843,7 @@ const PackagesTable = () => {
 
                             </Form.Group>
 
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                 <Form.Label>Description</Form.Label>
                                 <Form.Control
                                     type="text"
@@ -824,15 +852,61 @@ const PackagesTable = () => {
                                     onChange={(e) => handleInputChange(e, Setdescription)}
                                 />
 
+                            </Form.Group> */}
+
+                            <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    placeholder="Description"
+                                    rows="6" cols="50"
+                                    autoFocus
+                                    onChange={(e) => handleInputChange(e, Setdescription)}
+                                />
                             </Form.Group>
+
+
+                            <div className="row">
+                                <div className='col-md-12 mb-2' >
+                                    <DropzoneArea
+
+                                        acceptedFiles={['image/*']}
+                                        filesLimit={1}
+                                        showAlerts={false}
+                                        onChange={
+                                            (files) => {
+                                                console.log('Files:', files)
+                                                Setimagelist(files)
+                                            }
+                                        }
+                                    />
+                                </div>
+                            </div>
 
                             {/* product list */}
 
 
+                            <h1>Product List</h1>
+                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                <InputGroup>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Search Product here"
+                                        autoFocus
+                                        value={searchText}
+                                        onChange={handleSearchInputChange}
+                                    />
+                                    {searchText && (
+                                        <InputGroup.Text onClick={clearSearch} style={{ cursor: 'pointer' }}>
+                                            <AiOutlineCloseCircle />
+                                        </InputGroup.Text>
+                                    )}
+                                </InputGroup>
+                            </Form.Group>
+
                             <div className="product-list-container">
-                                <h1>Product List</h1>
                                 <ul className='product_ul' >
-                                    {ProductsData?.map(product => (
+                                    {filteredResults?.map(product => (
                                         <li key={product._id} className="product-item">
                                             <img src={Baseurl.baseUrl + product?.media[0]?.file} alt={product.title} />
                                             <div className="product-details">
@@ -855,37 +929,7 @@ const PackagesTable = () => {
                                     ))}
                                 </ul>
                             </div>
-
-
-
-
                             {/*  */}
-
-
-
-
-                            <div className="row">
-
-                                <div className='col-md-12 mb-2' >
-                                    <DropzoneArea
-
-                                        acceptedFiles={['image/*']}
-                                        filesLimit={1}
-                                        showAlerts={false}
-                                        onChange={
-                                            (files) => {
-                                                console.log('Files:', files)
-                                                Setimagelist(files)
-                                            }
-
-                                        }
-                                    />
-
-                                </div>
-
-
-                            </div>
-
 
                         </Form>
                     </Modal.Body>
@@ -917,7 +961,7 @@ const PackagesTable = () => {
 
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form onSubmit={(e) => e.preventDefault()}>
 
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -932,22 +976,52 @@ const PackagesTable = () => {
 
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Description"
-                                autoFocus
-                                onChange={(e) => handleInputChange(e, Setdescription)}
-                                value={description}
-                            />
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    placeholder="Description"
+                                    rows="6" cols="50"
+                                    autoFocus
+                                    onChange={(e) => handleInputChange(e, Setdescription)}
+                                    value={description}
+                                />
+                            </Form.Group>
 
-                        </Form.Group>
+
+
+
+                        <div className="row">
+
+<div className='col-md-12 mb-2' >
+    {
+        Loading2 == true ? (<Loader fullPage loading />) : (
+            <DropzoneArea
+                key={imagelist.length} // Ensures re-render
+                acceptedFiles={['image/*']}
+                filesLimit={1}
+                initialFiles={imagelist && imagelist}
+                showAlerts={false}
+                onChange={(uploadedFiles) => {
+                    Setimagelist(uploadedFiles);
+                    console.log('Files:', uploadedFiles);
+                }}
+            />
+
+        )
+    }
+
+</div>
+
+
+</div>
+
+                        
 
                         {/* product list */}
 
 
-                        <div className="product-list-container">
+                        {/* <div className="product-list-container">
                             <h1>Product List</h1>
                             <ul className='product_ul' >
                                 {ProductsData?.map(product => (
@@ -961,7 +1035,6 @@ const PackagesTable = () => {
                                             <label>
                                                 <input
                                                     type="checkbox"
-                                                    // checked={UpdatedProductsData.find(p => p._id === product._id)}
                                                     checked={!!UpdatedProductsData.find(p => p._id === product._id)}
                                                     onChange={() => handleCheckboxChange(product)}
                                                 />
@@ -970,7 +1043,52 @@ const PackagesTable = () => {
                                     </li>
                                 ))}
                             </ul>
-                        </div>
+                        </div> */}
+
+
+                        <h1>Product List</h1>
+                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                <InputGroup>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Search Product here"
+                                        autoFocus
+                                        value={searchText}
+                                        onChange={handleSearchInputChange}
+                                    />
+                                    {searchText && (
+                                        <InputGroup.Text onClick={clearSearch} style={{ cursor: 'pointer' }}>
+                                            <AiOutlineCloseCircle />
+                                        </InputGroup.Text>
+                                    )}
+                                </InputGroup>
+                            </Form.Group>
+
+                            <div className="product-list-container">
+                                <ul className='product_ul' >
+                                    {filteredResults?.map(product => (
+                                        <li key={product._id} className="product-item">
+                                            <img src={Baseurl.baseUrl + product?.media[0]?.file} alt={product.title} />
+                                            <div className="product-details">
+                                                <h2>{product?.title}</h2>
+                                                <p>Price: ${product.price}</p>
+                                            </div>
+                                            <div className="product-checkbox">
+                                                <label>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={ADDselectedProducts.some(p => p._id === product._id)}
+                                                        onChange={() => AddhandleCheckboxChange(product)}
+                                                    />
+                                                </label>
+                                            </div>
+                                            {/* <div className="product-remove">
+                        <span onClick={() => handleRemoveProduct(product._id)} className="remove-icon">✖</span>
+                    </div> */}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
 
 
 
@@ -980,30 +1098,7 @@ const PackagesTable = () => {
 
 
 
-                        <div className="row">
-
-                            <div className='col-md-12 mb-2' >
-                            {
-                            Loading2 == true ? (<Loader fullPage loading />) : (
-                                <DropzoneArea
-                key={imagelist.length} // Ensures re-render
-                acceptedFiles={['image/*']}
-                filesLimit={1}
-                initialFiles={imagelist &&imagelist}
-                showAlerts={false}
-                onChange={(uploadedFiles) => {
-                  Setimagelist(uploadedFiles);
-                  console.log('Files:', uploadedFiles);
-                }}
-              />
-
-                            )
-                        }
-
-                            </div>
-
-
-                        </div>
+                    
 
 
                     </Form>
