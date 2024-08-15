@@ -68,7 +68,8 @@ const CategoryTable = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-
+    const [imageMap, setImageMap] = useState({});
+    const [deletedImageIds, setDeletedImageIds] = useState([]);
 
     const [show2, setShow2] = useState(false);
 
@@ -157,7 +158,6 @@ const CategoryTable = () => {
             redirect: 'follow'
         };
         setloader(true)
-        // "https://pyurelyecommerce.pythonanywhere.com/api/categorys"
         fetch(`${Baseurl.baseUrl}api/categories/create`, requestOptions)
             .then(response => response.json())
             .then(result => {
@@ -447,22 +447,55 @@ const CategoryTable = () => {
             // Set initial state
             Settitle(rowData.title);
             Edited(rowData._id);
+
+             // Fetch media and handle uniqueness
+        const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+            const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+            const blob = await response.blob();
+            const fileName = mediaItem.file.split('/').pop(); // Use original file name
+            const file = new File([blob], fileName, { type: blob.type });
+            
+            return { file, id: mediaItem._id }; // Return file with its ID
+        }));
     
-            // Fetch all images
-            const existingImagesPromises = rowData?.media?.map(async (mediaItem) => {
-                const response = await fetch(`${Baseurl?.baseUrl}${mediaItem?.file}`);
+        console.log('existingImages', existingImages);
+    
+        // Ensure no duplicate files are added
+        const fileMap = new Map();
+        existingImages.forEach(item => {
+            if (!fileMap.has(item.id)) {
+                fileMap.set(item.id, item);
+            }
+        });
+    
+        // Extract unique files and their IDs
+        const uniqueImages = Array.from(fileMap.values());
+        const filesArray = uniqueImages.map(item => item.file);
+        Setimagelist(filesArray);
+    
+        const newImageMap = {};
+        uniqueImages.forEach(item => {
+            newImageMap[item.file.name] = item.id; // Map filename to ID
+        });
+    
+        setImageMap(newImageMap);
+        setLoading2(false); // Stop loading when files are set
+    
+            // // Fetch all images
+            // const existingImagesPromises = rowData?.media?.map(async (mediaItem) => {
+            //     const response = await fetch(`${Baseurl?.baseUrl}${mediaItem?.file}`);
                 
-                if (!response?.ok) {
-                    throw new Error('Failed to fetch image');
-                }
+            //     if (!response?.ok) {
+            //         throw new Error('Failed to fetch image');
+            //     }
     
-                const blob = await response.blob();
-                return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
-            });
+            //     const blob = await response.blob();
+            //     return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
+            // });
     
-            const existingImages = await Promise.all(existingImagesPromises);
+            // const existingImages = await Promise.all(existingImagesPromises);
     
-            Setimagelist(existingImages); // Set the list of images
+            // Setimagelist(existingImages); // Set the list of images
     
         } catch (error) {
             console.error("Error fetching images:", error);
@@ -470,6 +503,31 @@ const CategoryTable = () => {
     
         } finally {
             setLoading2(false);  // Stop loading when files are set or error occurs
+        }
+    };
+
+    const handleDelete = (deletedFile) => {
+        console.log('deletedFile', deletedFile);
+    
+        const deletedFileName = deletedFile.name;
+        const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
+    
+        if (deletedImageId) {
+            console.log('deletedImageId', deletedImageId);
+    
+            // Store deleted IDs
+            setDeletedImageIds(prevIds => [...prevIds, deletedImageId]);
+            console.log('Deleted Image ID:', deletedImageId);
+    
+            // Remove the file from imagelist to prevent re-adding it
+            Setimagelist(prevFiles => prevFiles.filter(file => file.name !== deletedFileName));
+    
+            // Optionally remove from imageMap if you want to prevent further operations on it
+            setImageMap(prevMap => {
+                const newMap = { ...prevMap };
+                delete newMap[deletedFileName];
+                return newMap;
+            });
         }
     };
 
@@ -523,13 +581,13 @@ const CategoryTable = () => {
                                 icons={tableIcons}
                                 columns={[
                                     { title: "Image", field: "media", render: item =>
-                                        <img src={Baseurl.baseUrl + item?.media[0]?.file} alt=""  border="3" height="50" width="100" />
+                                        <img src={item?.media[0]?.file ? Baseurl.baseUrl + item?.media[0]?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg' } alt="" border="3" height="50" width="100" />
                                        //  <img src={Baseurl.baseUrl + item?.media[0]?.file} alt="" border="3" height="100" width="100" />
                                        },
                                    { title: "Title", field: "title" },
                                    { title: "Date", field: 'createdAt' ,
                                     render: (row) => {
-                                    return <span>{convertTimestamp(row,"YYYY-MM-DD")}</span>
+                                    return <span>{convertTimestamp(row?.createdAt,"YYYY-MM-DD")}</span>
                                     // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
                                     },
                                   }, 
@@ -692,6 +750,7 @@ const CategoryTable = () => {
                 key={imagelist.length} // Ensures re-render
                 acceptedFiles={['image/*']}
                 filesLimit={1}
+                onDelete={handleDelete}
                 initialFiles={imagelist &&imagelist}
                 showAlerts={false}
                 onChange={(uploadedFiles) => {

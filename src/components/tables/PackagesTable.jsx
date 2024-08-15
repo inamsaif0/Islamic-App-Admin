@@ -68,6 +68,10 @@ const PackagesTable = () => {
 
 
     const [ADDselectedProducts, setADDselectedProducts] = useState([]);
+    const [imageMap, setImageMap] = useState({});
+    const [deletedImageIds, setDeletedImageIds] = useState([]);
+
+    console.log('deletedImageIds',deletedImageIds)
 
     const [Loading2, setLoading2] = useState(false)
 
@@ -243,7 +247,7 @@ const PackagesTable = () => {
         }, 300); // 300ms delay
 
         return () => clearTimeout(timer);
-    }, [searchText]);
+    }, [searchText,ProductsData]);
 
     const GetPackagesData = () => {
         var requestOptions = {
@@ -403,6 +407,10 @@ const PackagesTable = () => {
         for (var i = 0; i < imagelist.length; i++) {
             formdata.append("media", imagelist[i]);
 
+        }
+
+        for (var i = 0; i < deletedImageIds.length; i++) {
+            formdata.append(`deleteImages[${i}]`, deletedImageIds[i]);
         }
 
 
@@ -600,16 +608,45 @@ const PackagesTable = () => {
     }
 
     function convertTimestamp(isoString, dateFormat = "YYYY-MM-DD HH:mm:ss") {
+        console.log('ahmedisoString',isoString)
+        console.log('ahmeddateFormat',dateFormat)
         return moment(isoString).format(dateFormat);
     }
 
-    const handleDelete = (deletedFile) => {
-        console.log('deletedFile', deletedFile)
-        // const deletedFileName = deletedFile.name;
-        // const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
+    
 
-        // setDeletedImageIds((prevIds) => [...prevIds, deletedImageId]); // Store deleted IDs
-        // console.log('Deleted Image ID:', deletedImageId);
+    // const handleDelete = (deletedFile) => {
+    //     console.log('deletedFile', deletedFile)
+    //     // const deletedFileName = deletedFile.name;
+    //     // const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
+
+    //     // setDeletedImageIds((prevIds) => [...prevIds, deletedImageId]); // Store deleted IDs
+    //     // console.log('Deleted Image ID:', deletedImageId);
+    // };
+
+    const handleDelete = (deletedFile) => {
+        console.log('deletedFile', deletedFile);
+    
+        const deletedFileName = deletedFile.name;
+        const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
+    
+        if (deletedImageId) {
+            console.log('deletedImageId', deletedImageId);
+    
+            // Store deleted IDs
+            setDeletedImageIds(prevIds => [...prevIds, deletedImageId]);
+            console.log('Deleted Image ID:', deletedImageId);
+    
+            // Remove the file from imagelist to prevent re-adding it
+            Setimagelist(prevFiles => prevFiles.filter(file => file.name !== deletedFileName));
+    
+            // Optionally remove from imageMap if you want to prevent further operations on it
+            setImageMap(prevMap => {
+                const newMap = { ...prevMap };
+                delete newMap[deletedFileName];
+                return newMap;
+            });
+        }
     };
 
 
@@ -680,25 +717,58 @@ const PackagesTable = () => {
 
             Edited(rowData._id);
 
-            // Fetch all images
-            const existingImages = await Promise.all(
-                rowData?.media?.map(async (mediaItem) => {
-                    const response = await fetch(`${Baseurl?.baseUrl}${mediaItem?.file}`);
-                    console.log('response', response)
-                    if (response?.ok) {
-                        setLoading2(false);
-                        // throw new Error('Failed to fetch image');
-                    }
+            // // Fetch all images
+            // const existingImages = await Promise.all(
+            //     rowData?.media?.map(async (mediaItem) => {
+            //         const response = await fetch(`${Baseurl?.baseUrl}${mediaItem?.file}`);
+            //         console.log('response', response)
+            //         if (response?.ok) {
+            //             setLoading2(false);
+            //             // throw new Error('Failed to fetch image');
+            //         }
 
-                    const blob = await response.blob();
-                    return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
-                })
-            );
-            if (existingImages) {
-                setLoading2(false);
+            //         const blob = await response.blob();
+            //         return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
+            //     })
+            // );
+            // if (existingImages) {
+            //     setLoading2(false);
+            // }
+            // setLoading2(false);
+            // Setimagelist(existingImages); // Set the list of images
+
+             // Fetch media and handle uniqueness
+        const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+            const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+            const blob = await response.blob();
+            const fileName = mediaItem.file.split('/').pop(); // Use original file name
+            const file = new File([blob], fileName, { type: blob.type });
+            
+            return { file, id: mediaItem._id }; // Return file with its ID
+        }));
+    
+        console.log('existingImages', existingImages);
+    
+        // Ensure no duplicate files are added
+        const fileMap = new Map();
+        existingImages.forEach(item => {
+            if (!fileMap.has(item.id)) {
+                fileMap.set(item.id, item);
             }
-            setLoading2(false);
-            Setimagelist(existingImages); // Set the list of images
+        });
+    
+        // Extract unique files and their IDs
+        const uniqueImages = Array.from(fileMap.values());
+        const filesArray = uniqueImages.map(item => item.file);
+        Setimagelist(filesArray);
+    
+        const newImageMap = {};
+        uniqueImages.forEach(item => {
+            newImageMap[item.file.name] = item.id; // Map filename to ID
+        });
+    
+        setImageMap(newImageMap);
+        setLoading2(false); // Stop loading when files are set
 
         } catch (error) {
             console.error("Error fetching images:", error);
@@ -718,6 +788,41 @@ const PackagesTable = () => {
     //     const updatedSelectedProducts = selectedProducts.filter(product => product._id !== productId);
     //     setSelectedProducts(updatedSelectedProducts);
     // };
+
+    const TRUNCATE_LENGTH = 20; // Maximum length of the truncated description
+
+
+    const ReadMore = ({ text }) => {
+        const [isExpanded, setIsExpanded] = useState(false);
+    
+        // Toggle the expansion state
+        const toggleReadMore = () => {
+            setIsExpanded(!isExpanded);
+        };
+    
+        // Check if the text length exceeds the truncate length
+        const isLongText = text.length > TRUNCATE_LENGTH;
+    
+        return (
+            <div>
+                {isLongText ? (
+                    // If the text is long, render a truncated version with a toggle option
+                    <>
+                        {isExpanded ? text : `${text.substring(0, TRUNCATE_LENGTH)}...`}
+                        <span
+                            style={{ color: 'blue', cursor: 'pointer', marginLeft: '5px' }}
+                            onClick={toggleReadMore}
+                        >
+                            {isExpanded ? 'Read Less' : 'Read More'}
+                        </span>
+                    </>
+                ) : (
+                    // If the text is short, render it as is without the toggle option
+                    text
+                )}
+            </div>
+        );
+    };
 
     return (
         <>
@@ -763,16 +868,22 @@ const PackagesTable = () => {
                                 icons={tableIcons}
                                 columns={[
                                     {
+                                        // src="http://5.104.83.184:9000/uploads/users/Application-Software-1--12-1723751136495.jpg
                                         title: "Image", field: "media", render: item =>
-                                            <img src={Baseurl.baseUrl + item?.media[0]?.file} alt="" border="3" height="50" width="100" />
+                                            <img src={item?.media[0]?.file ? Baseurl.baseUrl + item?.media[0]?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg' } alt="" border="3" height="50" width="100" />
                                         //  <img src={Baseurl.baseUrl + item?.media[0]?.file} alt="" border="3" height="100" width="100" />
                                     },
                                     { title: "Title", field: "title" },
-                                    { title: "Description", field: "description" },
+                                    // { title: "Description", field: "description" },
+                                    {
+                                        title: "Description",
+                                        field: "description",
+                                        render: item => <ReadMore text={item?.description} />,
+                                      },
                                     {
                                         title: "Date", field: 'createdAt',
                                         render: (row) => {
-                                            return <span>{convertTimestamp(row, "YYYY-MM-DD")}</span>
+                                            return <span>{convertTimestamp(row?.createdAt, "YYYY-MM-DD")}</span>
                                         },
                                     },
                                 ]}
@@ -919,6 +1030,7 @@ const PackagesTable = () => {
                                                         type="checkbox"
                                                         checked={ADDselectedProducts.some(p => p._id === product._id)}
                                                         onChange={() => AddhandleCheckboxChange(product)}
+                                                      
                                                     />
                                                 </label>
                                             </div>
@@ -956,7 +1068,7 @@ const PackagesTable = () => {
                 <Modal.Header >
                     {/* <i className='fa fa-close'>baloch</i>
                     <AiFillCloseCircle fontSize={20} /> */}
-                    <Modal.Title>Edit Category </Modal.Title>
+                    <Modal.Title>Edit Package </Modal.Title>
                     <AiFillCloseCircle onClick={handleClose2} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
 
                 </Modal.Header>
@@ -1001,6 +1113,7 @@ const PackagesTable = () => {
                 acceptedFiles={['image/*']}
                 filesLimit={1}
                 initialFiles={imagelist && imagelist}
+                onDelete={handleDelete}
                 showAlerts={false}
                 onChange={(uploadedFiles) => {
                     Setimagelist(uploadedFiles);
@@ -1077,8 +1190,10 @@ const PackagesTable = () => {
                                                 <label>
                                                     <input
                                                         type="checkbox"
-                                                        checked={ADDselectedProducts.some(p => p._id === product._id)}
-                                                        onChange={() => AddhandleCheckboxChange(product)}
+                                                        // checked={ADDselectedProducts.some(p => p._id === product._id)}
+                                                        // onChange={() => AddhandleCheckboxChange(product)}
+                                                        checked={!!UpdatedProductsData.find(p => p._id === product._id)}
+                                                        onChange={() => handleCheckboxChange(product)}
                                                     />
                                                 </label>
                                             </div>
