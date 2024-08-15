@@ -167,10 +167,27 @@ const ProductTable = () => {
 
             .then(response => response.json())
             .then(result => {
-                console.log('getProduct',result?.data)
-                setLoader(false)
-                // console.log("result ahmed",result)
-                SetproductData(result?.data?.result)
+
+                if (result.status == true) {
+                    setLoader(false)
+                    SetproductData(result?.data?.result)
+                }
+                else {
+                    // setLoader(true)
+                    setLoader(false)
+                    console.log("result.message", result.message)
+                    Swal.fire({
+                        title: "Oops",
+                        text: result.message,
+                        icon: "error",
+                        confirmButtonColor: "#29BF12",
+                    });
+
+                }
+                // console.log('getProduct',result?.data)
+                // setLoader(false)
+                // // console.log("result ahmed",result)
+                // SetproductData(result?.data?.result)
             }
             )
             .catch(error =>{
@@ -770,6 +787,41 @@ const ProductTable = () => {
         }
     };
 
+    const TRUNCATE_LENGTH = 20; // Maximum length of the truncated description
+
+
+    const ReadMore = ({ text }) => {
+        const [isExpanded, setIsExpanded] = useState(false);
+    
+        // Toggle the expansion state
+        const toggleReadMore = () => {
+            setIsExpanded(!isExpanded);
+        };
+    
+        // Check if the text length exceeds the truncate length
+        const isLongText = text.length > TRUNCATE_LENGTH;
+    
+        return (
+            <div>
+                {isLongText ? (
+                    // If the text is long, render a truncated version with a toggle option
+                    <>
+                        {isExpanded ? text : `${text.substring(0, TRUNCATE_LENGTH)}...`}
+                        <span
+                            style={{ color: 'blue', cursor: 'pointer', marginLeft: '5px' }}
+                            onClick={toggleReadMore}
+                        >
+                            {isExpanded ? 'Read Less' : 'Read More'}
+                        </span>
+                    </>
+                ) : (
+                    // If the text is short, render it as is without the toggle option
+                    text
+                )}
+            </div>
+        );
+    };
+
     return (
         <>
             {loader == true ?
@@ -821,12 +873,16 @@ const ProductTable = () => {
                                 icons={tableIcons}
                                 columns={[
                                     { title: "Image", field: "media", render: item =>
-                                         <img src={Baseurl.baseUrl + item?.media[0]?.file} alt=""  border="3" height="50" width="100" />
+                                         <img src={item?.media[0]?.file ? Baseurl.baseUrl + item?.media[0]?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg'} alt=""  border="3" height="50" width="100" />
                                         //  <img src={Baseurl.baseUrl + item?.media[0]?.file} alt="" border="3" height="100" width="100" />
                                         },
                                     { title: "Title", field: "title" },
                                     { title: "Brand Name", field: "brandName" },
-                                    { title: "Description", field: "description" },
+                                    {
+                                        title: "Description",
+                                        field: "description",
+                                        render: item => <ReadMore text={item?.description} />,
+                                      },
                                     { title: "Price", field: "price" },
 
 
@@ -840,7 +896,7 @@ const ProductTable = () => {
                                 //   }, 
                                      { title: "Date", field: 'createdAt' ,
                                     render: (row) => {
-                                    return <span>{convertTimestamp(row,"YYYY-MM-DD")}</span>
+                                    return <span>{convertTimestamp(row?.createdAt,"YYYY-MM-DD")}</span>
                                     // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
                                     },
                                   },         
@@ -971,7 +1027,7 @@ const ProductTable = () => {
                             />
 
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                        {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Description</Form.Label>
                             <Form.Control
                                 type="text"
@@ -982,7 +1038,17 @@ const ProductTable = () => {
                                 
                             />
 
-                        </Form.Group>
+                        </Form.Group> */}
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    placeholder="Description"
+                                    rows="6" cols="50"
+                                    autoFocus
+                                    onChange={(e) => Setlongdescription(e.target.value)}
+                                />
+                            </Form.Group>
                         
                         {/* <div className="col-md-12 col-sm-6">
                                 <div className="form-group"> */}
@@ -1173,7 +1239,7 @@ const ProductTable = () => {
                             />
 
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                        {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Description</Form.Label>
                             <Form.Control
                                 type="text"
@@ -1184,7 +1250,21 @@ const ProductTable = () => {
                                 value={longdescription}
                             />
 
-                        </Form.Group>
+                        </Form.Group> */}
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    placeholder="Description"
+                                    rows="6" cols="50"
+                                    autoFocus
+                                    onChange={(e) => Setlongdescription(e.target.value)}
+                                value={longdescription}
+                                />
+                            </Form.Group>
+
+                        
                         
                         {/* <div className="col-md-12 col-sm-6">
                                 <div className="form-group"> */}
