@@ -100,7 +100,7 @@ const ProductTable = () => {
     const [categoryid, Setcategoryid] = useState('')
     const [imagelist, Setimagelist] = useState([])
 
-    console.log('imagelist',imagelist)
+    console.log('imagelist', imagelist)
 
 
     const [CategoryName, setCategoryName] = useState('')
@@ -117,12 +117,16 @@ const ProductTable = () => {
 
     const [imagelistData, SetimagelistData] = useState([])
 
+    const [ViewimagelistData, SetViewimagelistData] = useState([])
+
+    console.log('ViewimagelistData',ViewimagelistData)
+
     const [loader, setLoader] = useState(false)
 
     const [imageMap, setImageMap] = useState({});
     const [deletedImageIds, setDeletedImageIds] = useState([]);
 
-    console.log('deletedImageIds',deletedImageIds)
+    console.log('deletedImageIds', deletedImageIds)
 
 
     // text ediot
@@ -140,10 +144,10 @@ const ProductTable = () => {
     }
 
     const createMarkup = (html) => {
-        return  {
-          __html: DOMPurify.sanitize(html)
+        return {
+            __html: DOMPurify.sanitize(html)
         }
-      }
+    }
 
     useEffect(() => {
 
@@ -190,11 +194,11 @@ const ProductTable = () => {
                 // SetproductData(result?.data?.result)
             }
             )
-            .catch(error =>{
+            .catch(error => {
                 setLoader(false)
                 console.log('error', error)
             }
-                );
+            );
     }
 
     const AddProduct = () => {
@@ -202,7 +206,7 @@ const ProductTable = () => {
         handleClose()
 
 
-        
+
         var formdata = new FormData();
         formdata.append("title", name);
         formdata.append("brandName", brandname);
@@ -212,7 +216,7 @@ const ProductTable = () => {
         formdata.append("description", longdescription);
         // formdata.append("description", convertedContent);
 
-        
+
         formdata.append("productType", ProductType);
         formdata.append("category", CategoryName);
         // formdata.append("image", image);
@@ -226,7 +230,7 @@ const ProductTable = () => {
         var requestOptions = {
             method: 'POST',
             headers: {
-                token:Token
+                token: Token
             },
             body: formdata,
             redirect: 'follow'
@@ -297,9 +301,9 @@ const ProductTable = () => {
 
             );
 
-       
 
-        
+
+
 
 
     }
@@ -308,8 +312,8 @@ const ProductTable = () => {
 
         handleClose()
 
-        console.log('imagelist==>Update',imagelist)
-        
+        console.log('imagelist==>Update', imagelist)
+
         var formdata = new FormData();
         formdata.append("title", name);
         formdata.append("brandName", brandname);
@@ -322,7 +326,7 @@ const ProductTable = () => {
         formdata.append("category", CategoryName);
         formdata.append("productId", TabelId);
 
-          for (var i = 0; i < deletedImageIds.length; i++) {
+        for (var i = 0; i < deletedImageIds.length; i++) {
             formdata.append(`deleteImages[${i}]`, deletedImageIds[i]);
         }
 
@@ -335,7 +339,7 @@ const ProductTable = () => {
         var requestOptions = {
             method: 'POST',
             headers: {
-                token:Token
+                token: Token
             },
             body: formdata,
             redirect: 'follow'
@@ -366,7 +370,7 @@ const ProductTable = () => {
                     SetProductType('')
                     setCategoryName('')
                     Setimagelist([]); // Clear the imagelist
-                setDeletedImageIds([]); // Clear the deleted image IDs
+                    setDeletedImageIds([]); // Clear the deleted image IDs
 
                     setShow3(false)
                     GetproductData()
@@ -407,113 +411,117 @@ const ProductTable = () => {
 
             );
 
-       
-       
 
-        
+
+
+
 
 
     }
 
-    const [Loading2,setLoading2]=useState(false)
+    const [Loading2, setLoading2] = useState(false)
+
+    const [ImageLoader, setImageLoader] = useState(false)
+
+
     const Edited = (e) => {
         SetTabelId(e)
         handleShow3()
     }
 
-//     const handleEdit2 = async (rowData) => {
-//         setLoading2(true);  // Start loading
-//         Edited(rowData._id);
-//         Setname(rowData?.title)
-//         Setbrandname(rowData?.brandName)
-//         Setlongdescription(rowData?.description)
-// Setprice(rowData?.price)
-// Setsku(rowData?.sku)
-// SetProductType(rowData?.productType)
-// setCategoryName(rowData?.category)
+    //     const handleEdit2 = async (rowData) => {
+    //         setLoading2(true);  // Start loading
+    //         Edited(rowData._id);
+    //         Setname(rowData?.title)
+    //         Setbrandname(rowData?.brandName)
+    //         Setlongdescription(rowData?.description)
+    // Setprice(rowData?.price)
+    // Setsku(rowData?.sku)
+    // SetProductType(rowData?.productType)
+    // setCategoryName(rowData?.category)
 
-// // 
-// const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
-//     const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
-//     const blob = await response.blob();
-//     const file = new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
-    
-//     return { file, id: mediaItem._id }; // Return file with its ID
-//   }));
+    // // 
+    // const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+    //     const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+    //     const blob = await response.blob();
+    //     const file = new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
 
-//   const filesArray = existingImages.map(item => item.file);
-//   Setimagelist(filesArray);
+    //     return { file, id: mediaItem._id }; // Return file with its ID
+    //   }));
 
-//   const newImageMap = {};
-//   existingImages.forEach(item => {
-//     newImageMap[item.file.name] = item.id; // Map filename to ID
-//   });
+    //   const filesArray = existingImages.map(item => item.file);
+    //   Setimagelist(filesArray);
 
-//   setImageMap(newImageMap);
-  
-//   setLoading2(false); // Stop loading when files are set
+    //   const newImageMap = {};
+    //   existingImages.forEach(item => {
+    //     newImageMap[item.file.name] = item.id; // Map filename to ID
+    //   });
 
+    //   setImageMap(newImageMap);
 
+    //   setLoading2(false); // Stop loading when files are set
 
 
-// // 
 
-        
-//         // const existingImages = rowData?.media?.map(async (mediaItem) => {
-//         //   const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
-//         //   const blob = await response.blob();
-//         //   return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
-//         // });
-    
-//         // const filesArray = await Promise.all(existingImages);
-       
-//       };
 
-// const handleEdit2 = async (rowData) => {
-//     console.log('rowData==>',rowData)
-//     setLoading2(true);  // Start loading
-//     Edited(rowData._id);
-//     Setname(rowData?.title);
-//     Setbrandname(rowData?.brandName);
-//     Setlongdescription(rowData?.description);
-//     Setprice(rowData?.price);
-//     Setsku(rowData?.sku);
-//     SetProductType(rowData?.productType);
-//     setCategoryName(rowData?.category);
+    // // 
 
-//     // Fetch media and handle duplicates
-//     const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
-//         const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
-//         const blob = await response.blob();
-//         const file = new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
-        
-//         return { file, id: mediaItem._id }; // Return file with its ID
-//     }));
 
-//     console.log('existingImages',existingImages)
+    //         // const existingImages = rowData?.media?.map(async (mediaItem) => {
+    //         //   const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+    //         //   const blob = await response.blob();
+    //         //   return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
+    //         // });
 
-//     // Create a map to keep track of unique files by name
-//     const fileMap = new Map();
-//     existingImages.forEach(item => {
-//         if (!fileMap.has(item.file.name)) {
-//             fileMap.set(item.file.name, item); // Add unique file to map
-//         }
-//     });
+    //         // const filesArray = await Promise.all(existingImages);
 
-//     // Extract unique files and their IDs
-//     const uniqueImages = Array.from(fileMap.values());
-//     const filesArray = uniqueImages.map(item => item.file);
-//     Setimagelist(filesArray);
+    //       };
 
-//     const newImageMap = {};
-//     uniqueImages.forEach(item => {
-//         newImageMap[item.file.name] = item.id; // Map filename to ID
-//     });
+    // const handleEdit2 = async (rowData) => {
+    //     console.log('rowData==>',rowData)
+    //     setLoading2(true);  // Start loading
+    //     Edited(rowData._id);
+    //     Setname(rowData?.title);
+    //     Setbrandname(rowData?.brandName);
+    //     Setlongdescription(rowData?.description);
+    //     Setprice(rowData?.price);
+    //     Setsku(rowData?.sku);
+    //     SetProductType(rowData?.productType);
+    //     setCategoryName(rowData?.category);
 
-//     setImageMap(newImageMap);
+    //     // Fetch media and handle duplicates
+    //     const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+    //         const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+    //         const blob = await response.blob();
+    //         const file = new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
 
-//     setLoading2(false); // Stop loading when files are set
-// };
+    //         return { file, id: mediaItem._id }; // Return file with its ID
+    //     }));
+
+    //     console.log('existingImages',existingImages)
+
+    //     // Create a map to keep track of unique files by name
+    //     const fileMap = new Map();
+    //     existingImages.forEach(item => {
+    //         if (!fileMap.has(item.file.name)) {
+    //             fileMap.set(item.file.name, item); // Add unique file to map
+    //         }
+    //     });
+
+    //     // Extract unique files and their IDs
+    //     const uniqueImages = Array.from(fileMap.values());
+    //     const filesArray = uniqueImages.map(item => item.file);
+    //     Setimagelist(filesArray);
+
+    //     const newImageMap = {};
+    //     uniqueImages.forEach(item => {
+    //         newImageMap[item.file.name] = item.id; // Map filename to ID
+    //     });
+
+    //     setImageMap(newImageMap);
+
+    //     setLoading2(false); // Stop loading when files are set
+    // };
 
     // useffect of images
 
@@ -523,69 +531,136 @@ const ProductTable = () => {
 
     //  },)
 
-    // const GetAllImages = (id) => {
-    //     console.log("this baloch id of iamges ===>", id)
-    //     var requestOptions = {
-    //         method: 'GET',
-    //         headers: {
-    //             Authorization: "Bearer " + Token
-    //         },
-    //         redirect: 'follow'
-    //     };
-    //     setLoader(true)
+    const GetAllImages = (id) => {
+        console.log("this baloch id of iamges ===>", id)
 
-    //     fetch(`${Baseurl.baseUrl}/productImages?uid=${id}`, requestOptions)
+        console.log('this baloch id of iamges ===> productData', productData)
 
-    //         .then(response => response.json())
-    //         .then(result => {
-    //             setLoader(false)
-    //             console.log("getting all images result", result.data)
-    //             SetimagelistData(result.data)
-    //         }
-    //         )
-    //         .catch(error => {
-    //             setLoader(false)
-    //             console.log('error', error)
-    //         }
-    //         );
-    // }
 
-    // const ViewImages = (e) => {
-    //     console.log("rowdata of images id", e)
-    //     console.log("rowdata of images id", e.uid)
-    //     handleShow2()
+        // let filterImages = productData?.filter((a) => a._id == id)
 
-    //     GetAllImages(e.uid)
+        // console.log('filterImages==>', filterImages)
 
-    // }
 
-    const ConfirmDelete = (a) => {
-        const requestBodydata={
-            id:a
+        // SetViewimagelistData(filterImages)
+
+
+        const requestBodydata = {
+            productId: id
         }
         const requestBody = JSON.stringify(requestBodydata);
-        console.log(requestBody,'requestBody')
+        console.log(requestBody, 'requestBody')
 
         var requestOptions = {
             method: 'POST',
             headers: {
-                token:Token,
-                "Content-Type":"application/json"
+                token: Token,
+                "Content-Type": "application/json"
             },
-            body:requestBody,
-            
+            body: requestBody,
+
             redirect: 'follow'
         };
-       
-        
 
-        console.log('requestOptions',requestOptions)
+        console.log('requestOptions', requestOptions)
+        setImageLoader(true)
+
+        fetch(`${Baseurl.baseUrl}api/products/get-product-images`, requestOptions)
+
+            .then(response => response.json())
+            .then(result => {
+
+                if (result.status == true) {
+                    console.log('resultget==>of==>images',result?.data)
+                    setImageLoader(false)
+                    SetViewimagelistData(result?.data)
+                }
+                else {
+                    // setLoader(true)
+                    // setLoader(false)
+                    console.log("result.message", result.message)
+                   
+
+                }
+                // console.log('getProduct',result?.data)
+                // setLoader(false)
+                // // console.log("result ahmed",result)
+                // SetproductData(result?.data?.result)
+            }
+            )
+            .catch(error => {
+                setImageLoader(false)
+                console.log('error', error)
+            }
+            );
+
+
+
+
+
+
+        // var requestOptions = {
+        //     method: 'GET',
+        //     headers: {
+        //         Authorization: "Bearer " + Token
+        //     },
+        //     redirect: 'follow'
+        // };
+        // setLoader(true)
+
+        // fetch(`${Baseurl.baseUrl}/productImages?uid=${id}`, requestOptions)
+
+        //     .then(response => response.json())
+        //     .then(result => {
+        //         setLoader(false)
+        //         console.log("getting all images result", result.data)
+        //         SetimagelistData(result.data)
+        //     }
+        //     )
+        //     .catch(error => {
+        //         setLoader(false)
+        //         console.log('error', error)
+        //     }
+        //     );
+    }
+
+    const ViewImages = (e) => {
+        console.log("rowdata of images id", e)
+        console.log("rowdata of images id", e?._id)
+        handleShow2()
+
+        GetAllImages(e?._id)
+
+    }
+
+    const ConfirmDelete = (a) => {
+
+        const requestBodydata = {
+            id: a
+        }
+        const requestBody = JSON.stringify(requestBodydata);
+        console.log(requestBody, 'requestBody')
+
+        var requestOptions = {
+            method: 'POST',
+            headers: {
+                token: Token,
+                "Content-Type": "application/json"
+            },
+            body: requestBody,
+
+            redirect: 'follow'
+        };
+
+
+
+        console.log('requestOptions', requestOptions)
 
         // http://cnchub.pythonanywhere.com/webapi/login?SId=1"
         // `${BaseUrl.baseUrl}/login`
 
         fetch(`${Baseurl?.baseUrl}api/products/delete`, requestOptions)
-        // fetch(`${Baseurl?.baseUrl}api/products/delete/${a}`, requestOptions)
+            // fetch(`${Baseurl?.baseUrl}api/products/delete/${a}`, requestOptions)
             .then(response => response.json())
             .then(result => {
                 if (result.status == true) {
@@ -652,7 +727,7 @@ const ProductTable = () => {
         var requestOptions = {
             method: 'GET',
             headers: {
-                token:  Token
+                token: Token
             },
             redirect: 'follow'
         };
@@ -663,7 +738,7 @@ const ProductTable = () => {
             .then(response => response.json())
             .then(result => {
 
-                console.log('resultGetCategories',result)
+                console.log('resultGetCategories', result)
                 if (result.status == true) {
                     // setloader(false)
                     SetCategoryDropdown(result?.data?.result)
@@ -688,7 +763,7 @@ const ProductTable = () => {
             .catch(error => {
                 // setloader(false)
                 console.log('error', error)
-                
+
 
             }
 
@@ -708,16 +783,16 @@ const ProductTable = () => {
     //     const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
 
     //     console.log('deletedImageId',deletedImageId)
-    
+
     //     setDeletedImageIds((prevIds) => [...prevIds, deletedImageId]); // Store deleted IDs
     //     console.log('Deleted Image ID:', deletedImageId);
     //   };
 
-    
+
     const handleEdit2 = async (rowData) => {
         console.log('rowData==>', rowData);
         setLoading2(true);  // Start loading
-    
+
         // Set product details
         Edited(rowData._id);
         Setname(rowData?.title);
@@ -727,19 +802,19 @@ const ProductTable = () => {
         Setsku(rowData?.sku);
         SetProductType(rowData?.productType);
         setCategoryName(rowData?.category);
-    
+
         // Fetch media and handle uniqueness
         const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
             const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
             const blob = await response.blob();
             const fileName = mediaItem.file.split('/').pop(); // Use original file name
             const file = new File([blob], fileName, { type: blob.type });
-            
+
             return { file, id: mediaItem._id }; // Return file with its ID
         }));
-    
+
         console.log('existingImages', existingImages);
-    
+
         // Ensure no duplicate files are added
         const fileMap = new Map();
         existingImages.forEach(item => {
@@ -747,37 +822,37 @@ const ProductTable = () => {
                 fileMap.set(item.id, item);
             }
         });
-    
+
         // Extract unique files and their IDs
         const uniqueImages = Array.from(fileMap.values());
         const filesArray = uniqueImages.map(item => item.file);
         Setimagelist(filesArray);
-    
+
         const newImageMap = {};
         uniqueImages.forEach(item => {
             newImageMap[item.file.name] = item.id; // Map filename to ID
         });
-    
+
         setImageMap(newImageMap);
         setLoading2(false); // Stop loading when files are set
     };
-    
+
     const handleDelete = (deletedFile) => {
         console.log('deletedFile', deletedFile);
-    
+
         const deletedFileName = deletedFile.name;
         const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
-    
+
         if (deletedImageId) {
             console.log('deletedImageId', deletedImageId);
-    
+
             // Store deleted IDs
             setDeletedImageIds(prevIds => [...prevIds, deletedImageId]);
             console.log('Deleted Image ID:', deletedImageId);
-    
+
             // Remove the file from imagelist to prevent re-adding it
             Setimagelist(prevFiles => prevFiles.filter(file => file.name !== deletedFileName));
-    
+
             // Optionally remove from imageMap if you want to prevent further operations on it
             setImageMap(prevMap => {
                 const newMap = { ...prevMap };
@@ -792,15 +867,15 @@ const ProductTable = () => {
 
     const ReadMore = ({ text }) => {
         const [isExpanded, setIsExpanded] = useState(false);
-    
+
         // Toggle the expansion state
         const toggleReadMore = () => {
             setIsExpanded(!isExpanded);
         };
-    
+
         // Check if the text length exceeds the truncate length
         const isLongText = text.length > TRUNCATE_LENGTH;
-    
+
         return (
             <div>
                 {isLongText ? (
@@ -872,46 +947,48 @@ const ProductTable = () => {
                             <MaterialTable
                                 icons={tableIcons}
                                 columns={[
-                                    { title: "Image", field: "media", render: item =>
-                                         <img src={item?.media[0]?.file ? Baseurl.baseUrl + item?.media[0]?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg'} alt=""  border="3" height="50" width="100" />
+                                    {
+                                        title: "Image", field: "media", render: item =>
+                                            <img src={item?.media[0]?.file ? Baseurl.baseUrl + item?.media[0]?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg'} alt="" border="3" height="50" width="100" />
                                         //  <img src={Baseurl.baseUrl + item?.media[0]?.file} alt="" border="3" height="100" width="100" />
-                                        },
+                                    },
                                     { title: "Title", field: "title" },
                                     { title: "Brand Name", field: "brandName" },
                                     {
                                         title: "Description",
                                         field: "description",
                                         render: item => <ReadMore text={item?.description} />,
-                                      },
+                                    },
                                     { title: "Price", field: "price" },
 
 
                                     { title: "Product Type", field: "productType" },
                                     { title: "SKU", field: "sku" },
                                     // { title: "Date", field: convertTimestamp(updatedAt) },
-                                //     { title: "Long Description", field: longdescription ,
-                                //     render: (row) => {
-                                //     return <span dangerouslySetInnerHTML={{__html: row.longdescription}} />
-                                //     },
-                                //   }, 
-                                     { title: "Date", field: 'createdAt' ,
-                                    render: (row) => {
-                                    return <span>{convertTimestamp(row?.createdAt,"YYYY-MM-DD")}</span>
-                                    // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
+                                    //     { title: "Long Description", field: longdescription ,
+                                    //     render: (row) => {
+                                    //     return <span dangerouslySetInnerHTML={{__html: row.longdescription}} />
+                                    //     },
+                                    //   }, 
+                                    {
+                                        title: "Date", field: 'createdAt',
+                                        render: (row) => {
+                                            return <span>{convertTimestamp(row?.createdAt, "YYYY-MM-DD")}</span>
+                                            // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
+                                        },
                                     },
-                                  },         
 
-                                // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
-                                //     { title: "Short Description", field: "ProductType" },
+                                    // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
+                                    //     { title: "Short Description", field: "ProductType" },
                                     // { title: "Category", field: "CategoryName" },
                                     // { title: "categoryid", field: "categoryid" },
 
-                                    // {
-                                    //     title: "View Images", field: "images", render: rowData =>
+                                    {
+                                        title: "View Images", field: "images", render: rowData =>
 
-                                    //         <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages(rowData)}  >View </Button>
+                                            <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages(rowData)}  >View </Button>
 
-                                    // },
+                                    },
 
 
                                 ]}
@@ -963,7 +1040,7 @@ const ProductTable = () => {
                 <Modal.Header >
                     {/* <i className='fa fa-close'>baloch</i>
                     <AiFillCloseCircle fontSize={20} /> */}
-                    <Modal.Title>{ 'Add Product' }</Modal.Title>
+                    <Modal.Title>{'Add Product'}</Modal.Title>
                     <AiFillCloseCircle onClick={handleClose} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
 
                 </Modal.Header>
@@ -980,7 +1057,7 @@ const ProductTable = () => {
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setFname2)}
                                 onChange={(e) => Setname(e.target.value)}
-                                
+
                             />
                         </Form.Group>
 
@@ -994,7 +1071,7 @@ const ProductTable = () => {
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setLname2)}
                                 onChange={(e) => Setbrandname(e.target.value)}
-                                
+
                             />
 
                         </Form.Group>
@@ -1008,7 +1085,7 @@ const ProductTable = () => {
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setLname2)}
                                 onChange={(e) => Setprice(e.target.value)}
-                                
+
 
                             />
 
@@ -1023,7 +1100,7 @@ const ProductTable = () => {
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setLname2)}
                                 onChange={(e) => Setsku(e.target.value)}
-                                
+
                             />
 
                         </Form.Group>
@@ -1040,26 +1117,26 @@ const ProductTable = () => {
 
                         </Form.Group> */}
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                                <Form.Label>Description</Form.Label>
-                                <Form.Control
-                                    as="textarea"
-                                    placeholder="Description"
-                                    rows="6" cols="50"
-                                    autoFocus
-                                    onChange={(e) => Setlongdescription(e.target.value)}
-                                />
-                            </Form.Group>
-                        
+                            <Form.Label>Description</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                placeholder="Description"
+                                rows="6" cols="50"
+                                autoFocus
+                                onChange={(e) => Setlongdescription(e.target.value)}
+                            />
+                        </Form.Group>
+
                         {/* <div className="col-md-12 col-sm-6">
                                 <div className="form-group"> */}
-                                    {/* <TextField id="standard-basic" label="Description" variant="outlined"
+                        {/* <TextField id="standard-basic" label="Description" variant="outlined"
                                         fullWidth
                                         multiline
                                         defaultValue={Description}
                                         value={Description} onChange={(e) => {
                                             Description(e.target.value)
                                         }} /> */}
-                                    {/* <Editor
+                        {/* <Editor
                                         editorState={editorState}
                                         onEditorStateChange={handleEditorChange}
                                         wrapperClassName="wrapper-class"
@@ -1071,11 +1148,11 @@ const ProductTable = () => {
                                             minHeight: 350,
                                         }}
                                     /> */}
-                                     {/* <div className="preview" dangerouslySetInnerHTML={createMarkup(convertedContent)}></div> */}
+                        {/* <div className="preview" dangerouslySetInnerHTML={createMarkup(convertedContent)}></div> */}
 
-                                {/* </div>
+                        {/* </div>
                             </div> */}
-                            
+
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Product Type</Form.Label>
                             <Form.Control
@@ -1084,7 +1161,7 @@ const ProductTable = () => {
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setLname2)}
                                 onChange={(e) => SetProductType(e.target.value)}
-                                
+
                             />
 
                         </Form.Group>
@@ -1127,27 +1204,27 @@ const ProductTable = () => {
 
 
                         <div className="row">
-          
-          <div className='col-md-12 mb-2' >
-            <DropzoneArea
-                acceptedFiles={['image/*']}
-                filesLimit={5}
-                showAlerts={false}
-                // initialFiles={imagelist &&imagelist}
-                onDelete={handleDelete}
-                onChange={
-                    (files) => {
-                        console.log('Files:', files)
-                        Setimagelist(files)
-                    }
-                }
-            />
 
-        </div>
-    
-    
+                            <div className='col-md-12 mb-2' >
+                                <DropzoneArea
+                                    acceptedFiles={['image/*']}
+                                    filesLimit={5}
+                                    showAlerts={false}
+                                    // initialFiles={imagelist &&imagelist}
+                                    onDelete={handleDelete}
+                                    onChange={
+                                        (files) => {
+                                            console.log('Files:', files)
+                                            Setimagelist(files)
+                                        }
+                                    }
+                                />
 
-                            
+                            </div>
+
+
+
+
 
 
                         </div>
@@ -1160,13 +1237,13 @@ const ProductTable = () => {
                         Close
                     </Button>
                     <Button variant="primary" onClick={AddProduct} >
-                    { 'Add Product' }
+                        {'Add Product'}
                     </Button>
                 </Modal.Footer>
             </Modal>)}
 
 
-{/* update Product Modal */}
+            {/* update Product Modal */}
             {show3 && (<Modal show={show3} onHide={handleClose3}>
                 {/* <Modal.Header closeButton>
                     <Modal.Title>Change Password </Modal.Title>
@@ -1253,29 +1330,29 @@ const ProductTable = () => {
                         </Form.Group> */}
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                                <Form.Label>Description</Form.Label>
-                                <Form.Control
-                                    as="textarea"
-                                    placeholder="Description"
-                                    rows="6" cols="50"
-                                    autoFocus
-                                    onChange={(e) => Setlongdescription(e.target.value)}
+                            <Form.Label>Description</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                placeholder="Description"
+                                rows="6" cols="50"
+                                autoFocus
+                                onChange={(e) => Setlongdescription(e.target.value)}
                                 value={longdescription}
-                                />
-                            </Form.Group>
+                            />
+                        </Form.Group>
 
-                        
-                        
+
+
                         {/* <div className="col-md-12 col-sm-6">
                                 <div className="form-group"> */}
-                                    {/* <TextField id="standard-basic" label="Description" variant="outlined"
+                        {/* <TextField id="standard-basic" label="Description" variant="outlined"
                                         fullWidth
                                         multiline
                                         defaultValue={Description}
                                         value={Description} onChange={(e) => {
                                             Description(e.target.value)
                                         }} /> */}
-                                    {/* <Editor
+                        {/* <Editor
                                         editorState={editorState}
                                         onEditorStateChange={handleEditorChange}
                                         wrapperClassName="wrapper-class"
@@ -1287,11 +1364,11 @@ const ProductTable = () => {
                                             minHeight: 350,
                                         }}
                                     /> */}
-                                     {/* <div className="preview" dangerouslySetInnerHTML={createMarkup(convertedContent)}></div> */}
+                        {/* <div className="preview" dangerouslySetInnerHTML={createMarkup(convertedContent)}></div> */}
 
-                                {/* </div>
+                        {/* </div>
                             </div> */}
-                            
+
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Product Type</Form.Label>
                             <Form.Control
@@ -1343,26 +1420,26 @@ const ProductTable = () => {
 
 
                         <div className="row">
-                        {
-                            Loading2 == true ? (<Loader fullPage loading />)
-           : ( <div className='col-md-12 mb-2' >
-            <DropzoneArea
-                acceptedFiles={['image/*']}
-                filesLimit={5}
-                showAlerts={false}
-                initialFiles={imagelist &&imagelist}
-                onDelete={handleDelete}
-                onChange={
-                    (files) => {
-                        console.log('Files:', files)
-                        Setimagelist(files)
-                    }
-                }
-            />
+                            {
+                                Loading2 == true ? (<Loader fullPage loading />)
+                                    : (<div className='col-md-12 mb-2' >
+                                        <DropzoneArea
+                                            acceptedFiles={['image/*']}
+                                            filesLimit={5}
+                                            showAlerts={false}
+                                            initialFiles={imagelist && imagelist}
+                                            onDelete={handleDelete}
+                                            onChange={
+                                                (files) => {
+                                                    console.log('Files:', files)
+                                                    Setimagelist(files)
+                                                }
+                                            }
+                                        />
 
-        </div>)}
+                                    </div>)}
 
-                            
+
 
 
                         </div>
@@ -1375,12 +1452,12 @@ const ProductTable = () => {
                         Close
                     </Button>
                     <Button variant="primary" onClick={UpdateProduct} >
-                    { 'Update Product'}
+                        {'Update Product'}
                     </Button>
                 </Modal.Footer>
             </Modal>)}
 
-            
+
 
 
             {/* images modal */}
@@ -1398,52 +1475,126 @@ const ProductTable = () => {
                 </Modal.Header>
                 <Modal.Body>
 
-                    <div className="row">
-
-
+                    {/* {ImageLoader == 'true' ? <Loader fullPage loading /> : null  } */}
+                    {ImageLoader ?
+                     (<Loader fullPage loading />):(
+                        <div className="row">
                         {
-
-                            imagelistData.map((result, key) => {
-                                return (
-                                    <>
-                                        < div className='col-md-6' >
-
-                                            {/* <h1 key={key} >{result.image}</h1> */}
-                                            <img style={{ marginBottom: 20 }} width={200} height={200} key={key} src={Baseurl.imgUrl + result.image} />
+        ViewimagelistData?.media?.length > 0 ? (
+            ViewimagelistData.media.map((item, itemIndex) => (
+                <div className='col-md-6' key={itemIndex}>
+                    <img
+                        style={{ marginBottom: 20 }}
+                        width={200}
+                        height={200}
+                        src={Baseurl.baseUrl + item?.file}
+                        alt="Image not found" // Optional: Add an alt attribute for accessibility
+                        onError={(e) => { e.target.src = '/path-to-placeholder.png'; }} // Fallback image on error
+                    />
+                </div>
+            ))
+        ) : (
+            <div className="col-12">
+                <p>No images found for this entry.</p>
+            </div>
+        )
+    }
+    
+    
+                       
+    
+    
+                            {/* {
+    
+                                ViewimagelistData?.map((result, key) => {
+    
+                                    result?.media.map((item)=>{
+                                        return (
+                                            <>
+                                                < div className='col-md-6' >
+                                                    <img style={{ marginBottom: 20 }} width={200} height={200} key={key} src={Baseurl.imgUrl + item?.file} />
+                                                </div>
+                                            </>
+                                        )
+                                    })
+                                    
+                                })
+                            }
+    
+    } */}
+                            
+    
+                            {/* 
+                            // {
+    
+                            //     ViewimagelistData?.map((result, key) => {
+    
+                            //         result?.media.map((item)=>{
+                            //             return (
+                            //                 <>
+                            //                     < div className='col-md-6' >
+                            //                         <img style={{ marginBottom: 20 }} width={200} height={200} key={key} src={Baseurl.imgUrl + item?.file} />
+                            //                     </div>
+                            //                 </>
+                            //             )
+                            //         })
+                                    
+                            //     })
+                            // }
+                             */}
+    
+                            {/* {ViewimagelistData?.map((result, resultIndex) => {
+                                return result?.media.length > 0 ? (
+                                    result?.media.map((item, itemIndex) => (
+                                        <div className='col-md-6' key={`${resultIndex}-${itemIndex}`}>
+                                            <img
+                                                style={{ marginBottom: 20 }}
+                                                width={200}
+                                                height={200}
+                                                src={Baseurl.baseUrl + item?.file}
+                                                alt="Image not found" // Optional: Add an alt attribute for accessibility 
+                                                onError={(e) => { e.target.src = '/path-to-placeholder.png'; }} // Fallback image on error
+                                            />
                                         </div>
-                                    </>
-                                )
-                            })
-
-
-
-                        }
-
-
-
-
-                        {/* <div className="col-md-12 image-holder">
-                            <div className="panel panel-default">
-                                <div className="panel-body">
-                                    <a
-                                        href="#"
-                                        className="zoom"
-                                        data-toggle="modal"
-                                        data-target="#lightbox"
-                                    >
-                                        <img
-                                            src="https://raw.githubusercontent.com/yuliya5/image-modal-responsive/master/images/mountains1.jpg"
-                                            alt="..."
-                                        />
-                                        <span className="overlay">
-                                            <i className="glyphicon glyphicon-fullscreen" />
-                                        </span>
-                                    </a>
+                                    ))
+                                ) : (
+                                    <div key={resultIndex} className="col-12">
+                                        <p>No images found for this entry.</p>
+                                    </div>
+                                );
+                            })} */}
+    
+    
+    
+    
+                            {/* <div className="col-md-12 image-holder">
+                                <div className="panel panel-default">
+                                    <div className="panel-body">
+                                        <a
+                                            href="#"
+                                            className="zoom"
+                                            data-toggle="modal"
+                                            data-target="#lightbox"
+                                        >
+                                            <img
+                                                src="https://raw.githubusercontent.com/yuliya5/image-modal-responsive/master/images/mountains1.jpg"
+                                                alt="..."
+                                            />
+                                            <span className="overlay">
+                                                <i className="glyphicon glyphicon-fullscreen" />
+                                            </span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
+                            <section></section> */}
                         </div>
-                        <section></section> */}
-                    </div>
+                     )
+                    
+                     }
+                    
+
+                   
 
 
                     {/* <Form>
