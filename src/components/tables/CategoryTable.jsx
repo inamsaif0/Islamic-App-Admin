@@ -55,6 +55,10 @@ const tableIcons = {
 
 const CategoryTable = () => {
 
+    const [errorFlag,SeterrorFlag]=useState(false)
+
+    console.log('errorFlag==>',errorFlag)
+
     const [CategoryData, SetCategoryData] = useState([])
     const [title, Settitle] = useState('')
 
@@ -65,7 +69,9 @@ const CategoryTable = () => {
 
     const [show, setShow] = useState(false);
 
-    const handleClose = () => setShow(false);
+    const handleClose = () => { 
+         setShow(false); SeterrorFlag(false); Settitle(''); 
+         }
     const handleShow = () => setShow(true);
 
     const [imageMap, setImageMap] = useState({});
@@ -73,7 +79,9 @@ const CategoryTable = () => {
 
     const [show2, setShow2] = useState(false);
 
-    const handleClose2 = () => setShow2(false);
+    const handleClose2 = () => {
+        setShow2(false); SeterrorFlag(false); 
+    }
     const handleShow2 = () => setShow2(true);
 
     const Token = localStorage.getItem("AdminToken")
@@ -139,7 +147,15 @@ const CategoryTable = () => {
 
     const addCategory = (e) => {
         e.preventDefault()
-        handleClose()
+  
+        if(!imagelist.length > 0 || !title){
+            SeterrorFlag(true)
+            return
+        }
+         
+
+
+     
 
         var formdata = new FormData();
         formdata.append("title", title);
@@ -176,10 +192,10 @@ const CategoryTable = () => {
                     // setProfileImage('')
                     // setSelectProfileImage('')
                     Settitle('')
-                    Setdescription('')
+                    // Setdescription('')
                     setShow(false)
                     GetCategoryData()
-
+                    handleClose()
                     // Navigate('/addcustomer')
 
 
@@ -194,12 +210,10 @@ const CategoryTable = () => {
                     });
 
                 }
-
-
-
             }
             )
             .catch(error => {
+                setloader(false)
                 console.log('error', error)
                 Swal.fire({
                     icon: 'error',
@@ -215,23 +229,21 @@ const CategoryTable = () => {
 
     const handleInputChange = (event, func) => {
         func(event.target.value);
-        // setDisable(false);
-        console.log('dis')
     }
 
     const Edited = (e) => {
         console.log("i am running")
         console.log("value of rowdata id is ==>", e)
-   
         SetTabelId(e)
         handleShow2()
-
-       
     }
 
 
     const EditCategory = () => {
-
+        if(!imagelist.length > 0 || !title){
+            SeterrorFlag(true)
+            return
+        }
 
         var formdata = new FormData();
         formdata.append("categoryId", TabelId);
@@ -670,7 +682,10 @@ const CategoryTable = () => {
                                 onChange={(e) => handleInputChange(e, Settitle)}
                             />
 
+                      {errorFlag && !title  && (<p style={{color:'red',marginTop:'10px'}} >{'Title is Required'}</p>) }
                         </Form.Group>
+
+
                         <div className="row">
 
                             <div className='col-md-12 mb-2' >
@@ -692,6 +707,10 @@ const CategoryTable = () => {
 
                                     }
                                 />
+
+{errorFlag && !imagelist.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Image are Required'}</p>) }
+
+                                
 
                             </div>
 
@@ -715,13 +734,7 @@ const CategoryTable = () => {
 
             {/* edit category modal 2 */}
             {show2 && (<Modal show={show2} onHide={handleClose2}>
-                {/* <Modal.Header closeButton>
-                    <Modal.Title>Change Password </Modal.Title>
-
-                </Modal.Header> */}
                 <Modal.Header >
-                    {/* <i className='fa fa-close'>baloch</i>
-                    <AiFillCloseCircle fontSize={20} /> */}
                     <Modal.Title>Edit Category </Modal.Title>
                     <AiFillCloseCircle onClick={handleClose2} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
 
@@ -739,6 +752,8 @@ const CategoryTable = () => {
                                 value={title}
                                 onChange={(e) => handleInputChange(e, Settitle)}
                             />
+
+{errorFlag && !title  && (<p style={{color:'red',marginTop:'10px'}} >{'Title is Required'}</p>) }
 
                         </Form.Group>
                         <div className="row">
@@ -761,22 +776,7 @@ const CategoryTable = () => {
 
                             )
                         }
-
-                                {/* <DropzoneArea
-
-                                    acceptedFiles={['image/*']}
-                                    filesLimit={12}
-                                    showAlerts={false}
-                                    initialFiles={imagelist &&imagelist}
-                                    onChange={
-                                        (files) => {
-                                            console.log('Files:', files)
-                                            Setimagelist(files)
-                                        }
-
-                                    }                                
-                                /> */}
-
+                        {errorFlag && !imagelist.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Image are Required'}</p>) }
                             </div>
 
 
@@ -796,12 +796,6 @@ const CategoryTable = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>)}
-
-            
-
-
-
-
         </>
     )
 }

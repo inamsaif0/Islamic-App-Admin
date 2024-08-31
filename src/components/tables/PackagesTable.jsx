@@ -64,10 +64,15 @@ const PackagesTable = () => {
         // Add more products as needed
     ]);
 
+    const [errorFlag,SeterrorFlag]=useState(false)
+
+    console.log('errorFlag==>',errorFlag)
+
     const [selectedProducts, setSelectedProducts] = useState([]);
 
 
     const [ADDselectedProducts, setADDselectedProducts] = useState([]);
+    console.log('ADDselectedProducts',ADDselectedProducts)
     const [imageMap, setImageMap] = useState({});
     const [deletedImageIds, setDeletedImageIds] = useState([]);
 
@@ -76,7 +81,11 @@ const PackagesTable = () => {
     const [Loading2, setLoading2] = useState(false)
 
     console.log('selectedProducts', selectedProducts)
+    const [ViewimagelistData, SetViewimagelistData] = useState([])
+    const [ImageLoader, setImageLoader] = useState(false)
 
+
+    console.log('ViewimagelistData',ViewimagelistData)
    
 
     const [searchText, setSearchText] = useState('');
@@ -127,7 +136,7 @@ const PackagesTable = () => {
 
     const [show, setShow] = useState(false);
 
-    const handleClose = () => setShow(false);
+    const handleClose = () => {  setShow(false); SeterrorFlag(false); setADDselectedProducts([]); }
     const handleShow = () => setShow(true);
 
 
@@ -136,6 +145,12 @@ const PackagesTable = () => {
 
     const handleClose2 = () => setShow2(false);
     const handleShow2 = () => setShow2(true);
+
+    const [ViewimageModal, setViewimageModal] = useState(false);
+
+    const ViewimageModalclosed = () => setViewimageModal(false);
+    const ViewimageModalopen = () => setViewimageModal(true);
+
 
     const Token = localStorage.getItem("AdminToken")
 
@@ -299,7 +314,12 @@ const PackagesTable = () => {
     }
 
     const addPackage = () => {
-        handleClose()
+
+        if(!ADDselectedProducts.length > 0 ||!imagelist.length > 0 || !title || !description){
+            SeterrorFlag(true)
+            return
+        }
+     
 
         var formdata = new FormData();
         formdata.append("title", title);
@@ -344,6 +364,8 @@ const PackagesTable = () => {
                     // setSelectProfileImage('')
                     Settitle('')
                     Setdescription('')
+                    setADDselectedProducts([])
+                    handleClose()
                     setShow(false)
                     GetPackagesData()
 
@@ -382,13 +404,9 @@ const PackagesTable = () => {
 
     const handleInputChange = (event, func) => {
         func(event.target.value);
-        // setDisable(false);
-        console.log('dis')
     }
 
     const Edited = (e) => {
-        console.log("i am running")
-        console.log("value of rowdata id is ==>", e)
         SetTabelId(e)
         handleShow2()
     }
@@ -398,6 +416,10 @@ const PackagesTable = () => {
 
         console.log('selectedProducts', selectedProducts)
 
+        if(!UpdatedProductsData.length > 0 ||!imagelist.length > 0 || !title || !description){
+            SeterrorFlag(true)
+            return
+        }
 
         var formdata = new FormData();
         formdata.append("title", title);
@@ -544,16 +566,12 @@ const PackagesTable = () => {
 
 
     const ConfirmDelete = (a) => {
-
         console.log("value of a==>", a)
-
         const requestBody = {
             id: a
         }
         const requestBody2 = JSON.stringify(requestBody);
-
         console.log('requestBody2', requestBody2)
-
         var formdata = new FormData();
         formdata.append("id", a);
 
@@ -778,6 +796,20 @@ const PackagesTable = () => {
         }
     };
 
+    // useEffect(()=>{
+
+    //     setTimeout(()=>{
+
+    //         setImageLoader(true)
+
+    //     },4000)
+
+    //     return (()=>{
+    //         setImageLoader(false)
+    //     })
+
+    // },[ViewimagelistData])
+
 
     //   const handleRemoveProduct = (productId) => {
     //     // Remove product from ProductsData
@@ -823,6 +855,121 @@ const PackagesTable = () => {
             </div>
         );
     };
+
+    // const GetAllImages = (id) => {
+    //     console.log("this baloch id of iamges ===>", id)
+
+        
+
+
+    //     // let filterImages = productData?.filter((a) => a._id == id)
+
+    //     // console.log('filterImages==>', filterImages)
+
+
+    //     // SetViewimagelistData(filterImages)
+
+
+    //     const requestBodydata = {
+    //         productId: id
+    //     }
+    //     const requestBody = JSON.stringify(requestBodydata);
+    //     console.log(requestBody, 'requestBody')
+
+    //     var requestOptions = {
+    //         method: 'POST',
+    //         headers: {
+    //             token: Token,
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: requestBody,
+
+    //         redirect: 'follow'
+    //     };
+
+    //     console.log('requestOptions', requestOptions)
+    //     setImageLoader(true)
+
+    //     fetch(`${Baseurl.baseUrl}api/products/get-product-images`, requestOptions)
+
+    //         .then(response => response.json())
+    //         .then(result => {
+
+    //             if (result.status == true) {
+    //                 console.log('resultget==>of==>images',result?.data)
+    //                 setImageLoader(false)
+    //                 SetViewimagelistData(result?.data)
+    //             }
+    //             else {
+    //                 // setLoader(true)
+    //                 // setLoader(false)
+    //                 console.log("result.message", result.message)
+                   
+
+    //             }
+    //             // console.log('getProduct',result?.data)
+    //             // setLoader(false)
+    //             // // console.log("result ahmed",result)
+    //             // SetproductData(result?.data?.result)
+    //         }
+    //         )
+    //         .catch(error => {
+    //             setImageLoader(false)
+    //             console.log('error', error)
+    //         }
+    //         );
+
+
+
+
+
+
+    //     // var requestOptions = {
+    //     //     method: 'GET',
+    //     //     headers: {
+    //     //         Authorization: "Bearer " + Token
+    //     //     },
+    //     //     redirect: 'follow'
+    //     // };
+    //     // setLoader(true)
+
+    //     // fetch(`${Baseurl.baseUrl}/productImages?uid=${id}`, requestOptions)
+
+    //     //     .then(response => response.json())
+    //     //     .then(result => {
+    //     //         setLoader(false)
+    //     //         console.log("getting all images result", result.data)
+    //     //         SetimagelistData(result.data)
+    //     //     }
+    //     //     )
+    //     //     .catch(error => {
+    //     //         setLoader(false)
+    //     //         console.log('error', error)
+    //     //     }
+    //     //     );
+    // }
+
+    const ViewImages = (e) => {
+        console.log("rowdata of images id", e)
+        console.log("rowdata of images view product", e?._id)
+
+        setImageLoader(true);
+        let filterImages = PackagesData?.filter((a) => a._id == e?._id)
+
+        // console.log('filterDataProduct==>', filterImages.map((a)=>a.products).map)
+
+        //  SetViewimagelistData(filterImages)
+
+         setTimeout(() => {
+            // Update the image list data
+            SetViewimagelistData(filterImages);
+    
+            // Stop the loading indicator once the data is set
+            setImageLoader(false);
+        }, 1500); // 500ms delay
+
+        ViewimageModalopen()
+    }
 
     return (
         <>
@@ -886,6 +1033,12 @@ const PackagesTable = () => {
                                             return <span>{convertTimestamp(row?.createdAt, "YYYY-MM-DD")}</span>
                                         },
                                     },
+                                    {
+                                        title: "View Images", field: "images", render: rowData =>
+
+                                            <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ViewImages(rowData)}  >View </Button>
+
+                                    },
                                 ]}
                                 data={
                                     PackagesData
@@ -928,13 +1081,7 @@ const PackagesTable = () => {
 
             {show && (
                 <Modal show={show} onHide={handleClose}>
-                    {/* <Modal.Header closeButton>
-     <Modal.Title>Change Password </Modal.Title>
-
- </Modal.Header> */}
                     <Modal.Header >
-                        {/* <i className='fa fa-close'>baloch</i>
-     <AiFillCloseCircle fontSize={20} /> */}
                         <Modal.Title>Add package </Modal.Title>
                         <AiFillCloseCircle onClick={handleClose} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
 
@@ -952,19 +1099,9 @@ const PackagesTable = () => {
                                     onChange={(e) => handleInputChange(e, Settitle)}
                                 />
 
+{errorFlag && !title  && (<p style={{color:'red',marginTop:'10px'}} >{'Title is Required'}</p>) }
+
                             </Form.Group>
-
-                            {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Label>Description</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Description"
-                                    autoFocus
-                                    onChange={(e) => handleInputChange(e, Setdescription)}
-                                />
-
-                            </Form.Group> */}
-
                             <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                                 <Form.Label>Description</Form.Label>
                                 <Form.Control
@@ -974,6 +1111,8 @@ const PackagesTable = () => {
                                     autoFocus
                                     onChange={(e) => handleInputChange(e, Setdescription)}
                                 />
+
+{errorFlag && !description  && (<p style={{color:'red',marginTop:'10px'}} >{'Description is Required'}</p>) }
                             </Form.Group>
 
 
@@ -991,6 +1130,7 @@ const PackagesTable = () => {
                                             }
                                         }
                                     />
+                                    {errorFlag && !imagelist.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Image are Required'}</p>) }
                                 </div>
                             </div>
 
@@ -1034,15 +1174,12 @@ const PackagesTable = () => {
                                                     />
                                                 </label>
                                             </div>
-                                            {/* <div className="product-remove">
-                        <span onClick={() => handleRemoveProduct(product._id)} className="remove-icon">✖</span>
-                    </div> */}
                                         </li>
                                     ))}
                                 </ul>
-                            </div>
-                            {/*  */}
 
+                                {errorFlag && !ADDselectedProducts.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Select Products are Required'}</p>) }
+                            </div>
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
@@ -1060,7 +1197,7 @@ const PackagesTable = () => {
 
 
             {/* edit category modal 2 */}
-            <Modal show={show2} onHide={handleClose2}>
+           {show2 && ( <Modal show={show2} onHide={handleClose2}>
                 {/* <Modal.Header closeButton>
                     <Modal.Title>Change Password </Modal.Title>
 
@@ -1085,7 +1222,7 @@ const PackagesTable = () => {
                                 onChange={(e) => handleInputChange(e, Settitle)}
                                 value={title}
                             />
-
+{errorFlag && !title  && (<p style={{color:'red',marginTop:'10px'}} >{'Title is Required'}</p>) }
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
@@ -1099,7 +1236,7 @@ const PackagesTable = () => {
                                     value={description}
                                 />
                             </Form.Group>
-
+                            {errorFlag && !description  && (<p style={{color:'red',marginTop:'10px'}} >{'Description is Required'}</p>) }
 
 
 
@@ -1123,42 +1260,13 @@ const PackagesTable = () => {
 
         )
     }
-
+ {errorFlag && !imagelist.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Image are Required'}</p>) }
 </div>
 
 
 </div>
-
-                        
 
                         {/* product list */}
-
-
-                        {/* <div className="product-list-container">
-                            <h1>Product List</h1>
-                            <ul className='product_ul' >
-                                {ProductsData?.map(product => (
-                                    <li key={product._id} className="product-item">
-                                        <img src={Baseurl.baseUrl + product?.media[0]?.file} alt={product.title} />
-                                        <div className="product-details">
-                                            <h2>{product?.title}</h2>
-                                            <p>Price: ${product.price}</p>
-                                        </div>
-                                        <div className="product-checkbox">
-                                            <label>
-                                                <input
-                                                    type="checkbox"
-                                                    checked={!!UpdatedProductsData.find(p => p._id === product._id)}
-                                                    onChange={() => handleCheckboxChange(product)}
-                                                />
-                                            </label>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div> */}
-
-
                         <h1>Product List</h1>
                             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                 <InputGroup>
@@ -1203,6 +1311,7 @@ const PackagesTable = () => {
                                         </li>
                                     ))}
                                 </ul>
+                                {errorFlag && !UpdatedProductsData.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Select Products are Required'}</p>) }
                             </div>
 
 
@@ -1226,7 +1335,165 @@ const PackagesTable = () => {
                         Update
                     </Button>
                 </Modal.Footer>
+            </Modal>) }
+
+           
+
+
+                        {/* images modal */}
+                        <Modal show={ViewimageModal} onHide={ViewimageModalclosed}>
+                {/* <Modal.Header closeButton>
+                    <Modal.Title>Change Password </Modal.Title>
+
+                </Modal.Header> */}
+                <Modal.Header >
+                    {/* <i className='fa fa-close'>baloch</i>
+                    <AiFillCloseCircle fontSize={20} /> */}
+                    <Modal.Title>Images </Modal.Title>
+                    <AiFillCloseCircle onClick={ViewimageModalclosed} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
+
+                </Modal.Header>
+                <Modal.Body>    
+                            {
+                            ImageLoader ? (
+                                (<Loader fullPage loading />)
+
+                            ): (
+                                ViewimagelistData?.map((result, resultIndex) => {
+                                    return result?.products.length > 0 ? (
+                                        result?.products?.map((item, itemIndex) => (
+                                            <div className='col-md-12' key={`${resultIndex}-${itemIndex}`}>
+                                                <p>Price {item?.price}</p>
+    
+                                                <div className='flexlist' >
+                                                {item?.media?.map((a)=>{
+                                                    {console.log('a==>',a)}
+                                                return(
+                                                    <img
+                                                    style={{ marginBottom: 20 }}
+                                                    width={200}
+                                                    height={200}
+                                                    src={ a?.file  ? Baseurl.baseUrl + a?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg' }
+                                                    alt="Image not found"  
+                                                    // onError={(e) => { e.target.src = '/path-to-placeholder.png'; }} 
+                                                />
+                                                )
+                                                
+                                               })} 
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div key={resultIndex} className="col-12">
+                                            <p>No Products found for this entry.</p>
+                                        </div>
+                                    );
+                                })
+                            )
+                            
+                           
+                            } 
+    
+    
+    
+    
+                            {/* <div className="col-md-12 image-holder">
+                                <div className="panel panel-default">
+                                    <div className="panel-body">
+                                        <a
+                                            href="#"
+                                            className="zoom"
+                                            data-toggle="modal"
+                                            data-target="#lightbox"
+                                        >
+                                            <img
+                                                src="https://raw.githubusercontent.com/yuliya5/image-modal-responsive/master/images/mountains1.jpg"
+                                                alt="..."
+                                            />
+                                            <span className="overlay">
+                                                <i className="glyphicon glyphicon-fullscreen" />
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <section></section> */}
+                            {/* abhi comment */}
+                        {/* </div>
+                     )
+                    
+                     } */}
+                    
+
+                   
+
+
+                    {/* <Form>
+
+
+
+                        <div className="row">
+
+                            <div className='col-md-12 mb-2' >
+                                <DropzoneArea
+                                    // acceptedFiles={['image/*']}
+                                    // filesLimit={12}
+                                    // dropzoneText={"Drag and drop an image here or click"}
+                                    onChange={() => {}}
+                                    // onChange={(files) => {
+
+
+                                    //     // setImage(e.target.files[0])
+                                    //     console.log('Files:', files)
+                                    //     // Setimage(files[0])
+                                    // }
+                                    // value={imagelistData}
+
+                                    // }
+                                    // onChange={() => {}}
+
+                                    //  initialFiles={
+                                    //     [
+                                        
+                                    //      imagelistData.map((a,i)=>
+                                    //     //  {
+                                         
+
+                                    //          console.log("initialFiles Data ===>",Baseurl.imgUrl  + a.image)
+                                    //         //  Baseurl.imgUrl  + a.image[i]
+                                    //         // src={  Baseurl.imgUrl + a.image}    
+                                    //     //  }               
+                                    //         )
+                                    //     ]
+                                    //      }
+
+
+                                         
+                                      
+                            
+                                    initialFiles={["https://api.clearpricing.health/upload/SuperAdmin/dummy.jpg"]}
+                                    
+
+                                />
+
+                            </div> 
+
+
+                        </div>
+
+
+                    </Form> */}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={ViewimageModalclosed}>
+                        Close
+                    </Button>
+                    {/* <Button variant="primary"  >
+                        Add Product
+                    </Button> */}
+                </Modal.Footer>
             </Modal>
+
 
 
 

@@ -70,9 +70,14 @@ const tableIcons = {
 
 const ProductTable = () => {
 
+    const [errorFlag,SeterrorFlag]=useState(false)
+
+    console.log('errorFlag',errorFlag)
+
+
     const [show, setShow] = useState(false);
 
-    const handleClose = () => setShow(false);
+    const handleClose = () => {  setShow(false); SeterrorFlag(false);  }
     const handleShow = () => setShow(true);
 
     // modal state forimages
@@ -203,7 +208,12 @@ const ProductTable = () => {
 
     const AddProduct = () => {
 
-        handleClose()
+        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ){
+            SeterrorFlag(true)
+            return
+        }
+
+       //
 
 
 
@@ -261,7 +271,7 @@ const ProductTable = () => {
                     SetProductType('')
                     setCategoryName('')
                     Setimagelist('')
-
+                    handleClose()
                     setShow(false)
                     GetproductData()
 
@@ -310,7 +320,10 @@ const ProductTable = () => {
 
     const UpdateProduct = () => {
 
-        handleClose()
+        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ){
+            SeterrorFlag(true)
+            return
+        }
 
         console.log('imagelist==>Update', imagelist)
 
@@ -371,7 +384,7 @@ const ProductTable = () => {
                     setCategoryName('')
                     Setimagelist([]); // Clear the imagelist
                     setDeletedImageIds([]); // Clear the deleted image IDs
-
+                    handleClose()
                     setShow3(false)
                     GetproductData()
 
@@ -1033,13 +1046,7 @@ const ProductTable = () => {
 
             {/* add Product modal */}
             {show && (<Modal show={show} onHide={handleClose}>
-                {/* <Modal.Header closeButton>
-                    <Modal.Title>Change Password </Modal.Title>
-
-                </Modal.Header> */}
                 <Modal.Header >
-                    {/* <i className='fa fa-close'>baloch</i>
-                    <AiFillCloseCircle fontSize={20} /> */}
                     <Modal.Title>{'Add Product'}</Modal.Title>
                     <AiFillCloseCircle onClick={handleClose} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
 
@@ -1059,6 +1066,8 @@ const ProductTable = () => {
                                 onChange={(e) => Setname(e.target.value)}
 
                             />
+                            
+{errorFlag && !name  && (<p style={{color:'red',marginTop:'10px'}} >{'Name is Required'}</p>) }
                         </Form.Group>
 
 
@@ -1074,6 +1083,8 @@ const ProductTable = () => {
 
                             />
 
+{errorFlag && !brandname  && (<p style={{color:'red',marginTop:'10px'}} >{'Brand Name is Required'}</p>) }
+
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1088,7 +1099,7 @@ const ProductTable = () => {
 
 
                             />
-
+{errorFlag && !price  && (<p style={{color:'red',marginTop:'10px'}} >{'Price is Required'}</p>) }
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1102,6 +1113,8 @@ const ProductTable = () => {
                                 onChange={(e) => Setsku(e.target.value)}
 
                             />
+
+{errorFlag && !sku  && (<p style={{color:'red',marginTop:'10px'}} >{'Sku is Required'}</p>) }
 
                         </Form.Group>
                         {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1125,6 +1138,8 @@ const ProductTable = () => {
                                 autoFocus
                                 onChange={(e) => Setlongdescription(e.target.value)}
                             />
+
+{errorFlag && !longdescription  && (<p style={{color:'red',marginTop:'10px'}} >{'Description is Required'}</p>) }
                         </Form.Group>
 
                         {/* <div className="col-md-12 col-sm-6">
@@ -1164,17 +1179,10 @@ const ProductTable = () => {
 
                             />
 
+{errorFlag && !ProductType  && (<p style={{color:'red',marginTop:'10px'}} >{'Product Type is Required'}</p>) }
+
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            {/* <Form.Label>Category ID</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="categoryid"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setcategoryid(e.target.value)}
-                                value={categoryid}
-                            /> */}
                             <Form.Label>Category ID</Form.Label>
                             <Form.Control
                                 as="select"
@@ -1196,9 +1204,10 @@ const ProductTable = () => {
                                         )
                                     })
                                 }
+
+
                             </Form.Control>
-
-
+                            {errorFlag && !CategoryName  && (<p style={{color:'red',marginTop:'10px'}} >{'Product Type is Required'}</p>) }
 
                         </Form.Group>
 
@@ -1220,13 +1229,9 @@ const ProductTable = () => {
                                     }
                                 />
 
+{errorFlag && !imagelist.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Image are Required'}</p>) }
+
                             </div>
-
-
-
-
-
-
                         </div>
 
 
@@ -1271,6 +1276,8 @@ const ProductTable = () => {
                                 onChange={(e) => Setname(e.target.value)}
                                 value={name}
                             />
+                               {errorFlag && !name  && (<p style={{color:'red',marginTop:'10px'}} >{'Name is Required'}</p>) }
+                    
                         </Form.Group>
 
 
@@ -1285,7 +1292,7 @@ const ProductTable = () => {
                                 onChange={(e) => Setbrandname(e.target.value)}
                                 value={brandname}
                             />
-
+   {errorFlag && !brandname  && (<p style={{color:'red',marginTop:'10px'}} >{'Brand Name is Required'}</p>) }
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1300,7 +1307,7 @@ const ProductTable = () => {
                                 value={price}
 
                             />
-
+{errorFlag && !price  && (<p style={{color:'red',marginTop:'10px'}} >{'Price is Required'}</p>) }
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1314,7 +1321,7 @@ const ProductTable = () => {
                                 onChange={(e) => Setsku(e.target.value)}
                                 value={sku}
                             />
-
+{errorFlag && !sku  && (<p style={{color:'red',marginTop:'10px'}} >{'Sku is Required'}</p>) }
                         </Form.Group>
                         {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Description</Form.Label>
@@ -1339,6 +1346,7 @@ const ProductTable = () => {
                                 onChange={(e) => Setlongdescription(e.target.value)}
                                 value={longdescription}
                             />
+                            {errorFlag && !longdescription  && (<p style={{color:'red',marginTop:'10px'}} >{'Description is Required'}</p>) }
                         </Form.Group>
 
 
@@ -1379,7 +1387,7 @@ const ProductTable = () => {
                                 onChange={(e) => SetProductType(e.target.value)}
                                 value={ProductType}
                             />
-
+      {errorFlag && !ProductType  && (<p style={{color:'red',marginTop:'10px'}} >{'Product Type is Required'}</p>) }
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             {/* <Form.Label>Category ID</Form.Label>
@@ -1401,7 +1409,7 @@ const ProductTable = () => {
                                 }}
                             // value={categoryid}
                             >
-                                <option value="selectcatgory">Select Catogary</option>
+                                <option value="selectcatgory">Select Category</option>
                                 {
                                     CategoryDropdown?.map((a) => {
                                         // console.log("safdar",a.name)
@@ -1412,10 +1420,11 @@ const ProductTable = () => {
                                         )
                                     })
                                 }
+                              
                             </Form.Control>
+                            {errorFlag && !CategoryName  && (<p style={{color:'red',marginTop:'10px'}} >{'Category is Required'}</p>) }
 
-
-
+                            
                         </Form.Group>
 
 
@@ -1440,7 +1449,7 @@ const ProductTable = () => {
                                     </div>)}
 
 
-
+                                    {errorFlag && !imagelist.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Image are Required'}</p>) }
 
                         </div>
 
