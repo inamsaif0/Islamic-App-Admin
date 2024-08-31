@@ -84,3 +84,9 @@ form.form-horizontal .form-group .label-control {
   border-radius: 0;
 }
 
+.flexlist{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap
+}
+
