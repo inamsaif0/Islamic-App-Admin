@@ -391,7 +391,7 @@ const Header = () => {
                                 <a className="navbar-brand" >
                                     {/* <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/logo/logo.png" /> */}
                                     {/* yeh  */}
-                                    <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/potrait/small/adminprofile.jpeg" />
+                                    <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/portrait/small/adminprofile.jpeg" />
                                     {/* <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/logo/Pyurelywhite-01.png" /> */}
 
 
@@ -545,7 +545,7 @@ const Header = () => {
                             <ul className="nav navbar-nav float-right">
                                 <li className={Profilebtn ? "dropdown dropdown-user nav-item show " : "dropdown dropdown-user nav-item"} onClick={profilebtnfun}>
                                     <a className="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
-                                        <span className="mr-1">Admin
+                                        <span className="mr-1">Hello,
                                             <span className="user-name text-bold-700">{Name}</span>
                                         </span>
                                         <span className="avatar avatar-online">
@@ -555,6 +555,11 @@ const Header = () => {
                                             
                                     </a>
                                     <div className={Profilebtn ? "dropdown-menu dropdown-menu-right show" : "dropdown-menu dropdown-menu-right"}>
+                                    {/* <Link to={"/profile"} > */}
+                                    <Link to={"#"} >
+                                    <a className="dropdown-item" ><i className="ft-user" /> Edit Profile</a>
+                                    </Link>  
+                                     
                                      
                                         {/* <a className="dropdown-item " onClick={handleShow} ><i className="ft-user" /> Change Password</a> */}
                                      
