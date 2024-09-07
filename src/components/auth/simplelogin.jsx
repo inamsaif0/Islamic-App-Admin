@@ -112,7 +112,7 @@ const Simplelogin = () => {
                                             <div className="card-title text-center">
                                                 <div className="p-1">
                                                     {/* <img src="../../../app-assets/images/logo/1.png" height={72} alt="branding logo" /> */}
-                                                    <img src="../../../app-assets/images/logo/logoIslamic.jpeg" height={110} alt="branding logo" />
+                                                    <img src="../../../app-assets/images/potrait/smaill/adminprofile.jpeg" height={110} alt="branding logo" />
 
                                                    
                                                     {/* public\app-assets\images\logo\Pyurelywhite-01.png */}
