@@ -391,7 +391,7 @@ const Header = () => {
                                 <a className="navbar-brand" >
                                     {/* <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/logo/logo.png" /> */}
                                     {/* yeh  */}
-                                    <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/logo/logoIslamic.jpeg" />
+                                    <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/logo/portraits/small/profileadmin.jpeg" />
                                     {/* <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/logo/Pyurelywhite-01.png" /> */}
 
 
