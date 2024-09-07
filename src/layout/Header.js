@@ -545,7 +545,7 @@ const Header = () => {
                             <ul className="nav navbar-nav float-right">
                                 <li className={Profilebtn ? "dropdown dropdown-user nav-item show " : "dropdown dropdown-user nav-item"} onClick={profilebtnfun}>
                                     <a className="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
-                                        <span className="mr-1">Hello,
+                                        <span className="mr-1">Admin
                                             <span className="user-name text-bold-700">{Name}</span>
                                         </span>
                                         <span className="avatar avatar-online">
@@ -556,9 +556,9 @@ const Header = () => {
                                     </a>
                                     <div className={Profilebtn ? "dropdown-menu dropdown-menu-right show" : "dropdown-menu dropdown-menu-right"}>
                                     {/* <Link to={"/profile"} > */}
-                                    <Link to={"#"} >
-                                    <a className="dropdown-item" ><i className="ft-user" /> Edit Profile</a>
-                                    </Link>  
+                                    // <Link to={"#"} >
+                                    // <a className="dropdown-item" ><i className="ft-user" /> Edit Profile</a>
+                                    // </Link>  
                                      
                                      
                                         {/* <a className="dropdown-item " onClick={handleShow} ><i className="ft-user" /> Change Password</a> */}
