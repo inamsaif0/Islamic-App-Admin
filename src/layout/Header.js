@@ -556,7 +556,9 @@ const Header = () => {
                                     </a>
                                     <div className={Profilebtn ? "dropdown-menu dropdown-menu-right show" : "dropdown-menu dropdown-menu-right"}>
                                      // <Link to={"/profile"} > }
-
+                                    <Link to={"#"} >
+                                    // <a className="dropdown-item" ><i className="ft-user" /> Edit Profile</a>
+                                    </Link>  
                                      
                                      
                                         {/* <a className="dropdown-item " onClick={handleShow} ><i className="ft-user" /> Change Password</a> */}
