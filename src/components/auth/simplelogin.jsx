@@ -78,6 +78,7 @@ const Simplelogin = () => {
     
                     }
                     else {
+                        setLoader(false)
                         Swal.fire({
                             title: "Oops",
                             text: result.message,
@@ -88,7 +89,9 @@ const Simplelogin = () => {
     
                 }
                  )
-            .catch(error => console.log('error', error));
+            .catch(error => {
+                setLoader(false)
+                console.log('error', error)});
 
     }
 

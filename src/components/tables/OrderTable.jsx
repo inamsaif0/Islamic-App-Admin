@@ -58,6 +58,8 @@ const OrderTable = () => {
     const Token = localStorage.getItem("AdminToken")
     const [OrderData,SetOrderData]= useState([])
 
+    console.log('OrderData==>',OrderData)
+
     const[name ,Setname]=useState('')
 
     const [loader,setloader]=useState(null)
@@ -106,20 +108,20 @@ const OrderTable = () => {
         var requestOptions = {
             method: 'GET',
             headers: {
-                Authorization: "Bearer " + Token
+                token: Token
             },
             redirect: 'follow'
         };
         setloader(true)
 
-        fetch(`${Baseurl.baseUrl}/GetOrders`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/order/get-all-orders`, requestOptions)
 
             .then(response => response.json())
             .then(result =>
                 {
                     setloader(false)
                 console.log("result",result)
-                console.log("result",result.data)
+                console.log("result",result?.data)
                 SetOrderData(result.data)
                 }
             )
@@ -171,6 +173,40 @@ const OrderTable = () => {
 
     }
 
+    const TRUNCATE_LENGTH = 20;
+
+    const ReadMore = ({ text }) => {
+        const [isExpanded, setIsExpanded] = useState(false);
+    
+        // Toggle the expansion state
+        const toggleReadMore = () => {
+            setIsExpanded(!isExpanded);
+        };
+    
+        // Check if the text length exceeds the truncate length
+        const isLongText = text?.length > TRUNCATE_LENGTH;
+    
+        return (
+            <div>
+                {isLongText ? (
+                    // If the text is long, render a truncated version with a toggle option
+                    <>
+                        {isExpanded ? text : `${text.substring(0, TRUNCATE_LENGTH)}...`}
+                        <span
+                            style={{ color: 'blue', cursor: 'pointer', marginLeft: '5px' }}
+                            onClick={toggleReadMore}
+                        >
+                            {isExpanded ? 'Read Less' : 'Read More'}
+                        </span>
+                    </>
+                ) : (
+                    // If the text is short, render it as is without the toggle option
+                    text
+                )}
+            </div>
+        );
+    };
+
 
     return (
         <>
@@ -186,18 +222,6 @@ const OrderTable = () => {
                                 
                                  Order Details
                             </h3>
-                            {/* <div className="row breadcrumbs-top d-inline-block">
-                                <div className="breadcrumb-wrapper col-12">
-                                    <ol className="breadcrumb">
-                                        <li className="breadcrumb-item"><a href="index.html">Home</a>
-                                        </li>
-                                        <li className="breadcrumb-item"><a href="#">Gallery</a>
-                                        </li>
-                                        <li className="breadcrumb-item active">Gallery Media Grid
-                                        </li>
-                                    </ol>
-                                </div>
-                            </div> */}
                         </div>
                         <div className="content-header-right col-md-6 col-12">
                             <div className="dropdown float-md-right">
@@ -222,12 +246,16 @@ const OrderTable = () => {
                             <MaterialTable
                             icons={tableIcons}
                                 columns={[
-                                    { title: "User Name", field: "name" },
-                                    { title: "Price", field: "totalprice" },
-                                    { title: "Time", field: "discout" },
-                                    { title: "Payment Method", field: "discounted_price" },
-                                    { title: "View Details", field: "discounted_price" },
-                                    { title: "Status", field: "discounted_price" },
+                                    { title: "Full Name", field: "name" },
+                                    { title: "Email", field: "email" },
+                                    { title: "Payment Status", field: "paymentStatus" },
+                                    { title: "Delivery Status", field: "deliveryStatus" },
+                                    { title: "Shipping Address", field: "shippingAddress",
+                                        render: item => <ReadMore text={item?.shippingAddress} />,
+                                        
+                                     },
+                                    { title: "ZipCode", field: "ZipCode" },
+                                    { title: "Sub Total", field: "discounted_price" },
 
                                     
                             //         { title: "Coupon Name", field: "CoupanName" },
