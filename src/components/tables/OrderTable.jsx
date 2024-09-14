@@ -377,9 +377,15 @@ var requestOptions = {
                                        } 
                                      },
                                      {
-                                        title: "Change Order Delivery Status", field: "_id", render: rowData =>
-
-                                            <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ChangeOrderStatus(rowData)}  >Delivery Status </Button>
+                                        title: "Change Order Delivery Status", field: "deliveryStatus", render: rowData =>
+                                            <Button 
+                                        className='btn btn-danger  round btn-glow px-2'
+                                        onClick={() => ChangeOrderStatus(rowData)}
+                                        disabled={rowData?.deliveryStatus === 'delivered'}
+                                      >
+                                        {rowData.deliveryStatus === 'delivered' ? 'Delivered' : 'Change Delivery Status'}
+                                      </Button>
+                                            // <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ChangeOrderStatus(rowData)}  >{rowData.deliveryStatus === 'delivered' ? 'Delivered' : 'Change Delivery Status'}</Button>
 
                                     },
 
