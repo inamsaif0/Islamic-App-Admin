@@ -31,6 +31,7 @@ import { Loader } from 'react-overlay-loader';
 // import Button from 'react-bootstrap/Button';
 import { AiFillCloseCircle } from "react-icons/ai";
 import { Phone } from '@material-ui/icons';
+import Swal from 'sweetalert2';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -207,6 +208,112 @@ const OrderTable = () => {
         );
     };
 
+//   const subTotal =OrderData?.products.reduce((acc, product) => acc + product?.totalPrice, 0); 
+
+//   console.log('subTotal==>',subTotal)
+
+
+const ChangeOrderStatus = (row) => {
+
+    // console.log('row==>',row?._id)
+
+    // if(row?._id){
+    //     alert('hello baloch')
+    // }
+
+    // var formdata = new FormData();
+    // formdata.append("orderId", row?._id);
+    // const data = {
+    //     orderId: row._id
+    // };
+    // var requestOptions = {
+    //     method: 'POST',
+    //     headers: {
+    //         token: Token,
+    //          Accept: 'application/json'
+    //     },
+    //     body: formdata,
+    //     // body: JSON.stringify(data),
+    //     redirect: 'follow'
+    // };
+
+    var myHeaders = new Headers();
+    myHeaders.append("token", Token);
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({
+  orderId: row?._id
+});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+
+    setloader(true)
+    fetch(`${Baseurl.baseUrl}api/order/change-order-delivery-status`, requestOptions)
+        .then(response => response.json())
+        .then(result => {
+
+            setloader(false)
+            if (result.status == true) {
+        
+                GetOrderData()
+
+                console.log("getcustomerapi ===>", result)
+                Swal.fire({
+                    title: "success",
+                    text: result.message,
+                    icon: "success",
+                    confirmButtonColor: "#29BF12",
+                });
+            }
+            else {
+                setloader(false)
+                Swal.fire({
+                    title: "Oops",
+                    text: result.message,
+                    icon: "error",
+                    confirmButtonColor: "#29BF12",
+                });
+            }
+        }
+        )
+        .catch(error => {
+            console.log('error', error)
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error,
+                confirmButtonColor: "#03bafe",
+            })
+
+        }
+
+        );
+//     var myHeaders = new Headers();
+// myHeaders.append("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YWJlOWYzYmE2NjI2NzQ4OWNiNGE4ZSIsImVtYWlsIjoiYWRtaW5AeW9wbWFpbC5jb20iLCJmdWxsTmFtZSI6bnVsbCwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2MTc1MjcxLCJleHAiOjE3Mjg3NjcyNzF9.xsuM7EL50uhBlUDkJtJ5UmmLInWP-oCPsYfrd1Ui7vI");
+// myHeaders.append("Content-Type", "application/json");
+
+// var raw = JSON.stringify({
+//   "orderId": "66deb6b260e507ad4693990f"
+// });
+
+// var requestOptions = {
+//   method: 'POST',
+//   headers: myHeaders,
+//   body: raw,
+//   redirect: 'follow'
+// };
+
+// fetch("http://51.20.55.91:8098/api/order/change-order-delivery-status", requestOptions)
+//   .then(response => response.text())
+//   .then(result => console.log(result))
+//   .catch(error => console.log('error', error));
+}
+
 
     return (
         <>
@@ -246,8 +353,17 @@ const OrderTable = () => {
                             <MaterialTable
                             icons={tableIcons}
                                 columns={[
-                                    { title: "Full Name", field: "name" },
-                                    { title: "Email", field: "email" },
+                                    { title: "Full Name", field: "name",
+                                        render:(row)=>{
+                                      return   <span>{row?.userId?.fullName || '-' }</span>
+                                        }
+                                     },
+                                    { title: "Email", field: "userId.email",
+                                        render:(row)=>{
+                                            {console.log('row==>',row)}
+                                          return  <span>{row?.userId?.email || '-' }</span>
+                                        }
+                                     },
                                     { title: "Payment Status", field: "paymentStatus" },
                                     { title: "Delivery Status", field: "deliveryStatus" },
                                     { title: "Shipping Address", field: "shippingAddress",
@@ -255,7 +371,17 @@ const OrderTable = () => {
                                         
                                      },
                                     { title: "ZipCode", field: "ZipCode" },
-                                    { title: "Sub Total", field: "discounted_price" },
+                                    { title: "Sub Total", field: "totalPrice", 
+                                       render:(row)=>{
+                                        return <span>{row?.products?.reduce((acc, product) => acc + product.totalPrice, 0) || '-' }</span>
+                                       } 
+                                     },
+                                     {
+                                        title: "Change Order Delivery Status", field: "_id", render: rowData =>
+
+                                            <Button className='btn btn-danger  round btn-glow px-2' onClick={() => ChangeOrderStatus(rowData)}  >Delivery Status </Button>
+
+                                    },
 
                                     
                             //         { title: "Coupon Name", field: "CoupanName" },

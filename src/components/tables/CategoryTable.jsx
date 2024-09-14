@@ -462,7 +462,7 @@ const CategoryTable = () => {
 
              // Fetch media and handle uniqueness
         const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
-            const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+            const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`, { mode: 'no-cors' });
             const blob = await response.blob();
             const fileName = mediaItem.file.split('/').pop(); // Use original file name
             const file = new File([blob], fileName, { type: blob.type });

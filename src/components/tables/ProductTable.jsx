@@ -801,54 +801,134 @@ const ProductTable = () => {
     //     console.log('Deleted Image ID:', deletedImageId);
     //   };
 
-
+// working code
     const handleEdit2 = async (rowData) => {
-        console.log('rowData==>', rowData);
-        setLoading2(true);  // Start loading
+        try {
+            console.log('rowData==>', rowData);
+            setLoading2(true);  // Start loading
+    
+            // Set product details
+            Edited(rowData._id);
+            Setname(rowData?.title);
+            Setbrandname(rowData?.brandName);
+            Setlongdescription(rowData?.description);
+            Setprice(rowData?.price);
+            Setsku(rowData?.sku);
+            SetProductType(rowData?.productType);
+            setCategoryName(rowData?.category);
+    
+            // Fetch media and handle uniqueness
+            const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+             let ahmed=`${Baseurl.baseUrl}${mediaItem?.file}`
+             console.log('mediaItem==>1',mediaItem)
+                console.log('mediaItem==>2',ahmed)
+    
+                // const response2 = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+    
+                // console.log('mediaItem==>2',response2)
+    
+                const response = await fetch(`${Baseurl.baseUrl}${mediaItem?.file}`, { mode: 'no-cors' });
+                console.log('mediaItem==>response==>',response)
+                const blob = await response.blob();
+                const fileName = mediaItem.file.split('/').pop(); // Use original file name
+                const file = new File([blob], fileName, { type: blob.type });
+    
+                return { file, id: mediaItem?._id }; // Return file with its ID
+            }));
+    
+            console.log('existingImages', existingImages);
+    
+            // Ensure no duplicate files are added
+            const fileMap = new Map();
+            existingImages.forEach(item => {
+                if (!fileMap.has(item.id)) {
+                    fileMap.set(item.id, item);
+                }
+            });
+    
+            // Extract unique files and their IDs
+            const uniqueImages = Array.from(fileMap.values());
+            const filesArray = uniqueImages.map(item => item.file);
+            Setimagelist(filesArray);
+    
+            const newImageMap = {};
+            uniqueImages.forEach(item => {
+                newImageMap[item.file.name] = item.id; // Map filename to ID
+            });
+    
+            setImageMap(newImageMap);
+            setLoading2(false); // Stop loading when files are set
 
-        // Set product details
-        Edited(rowData._id);
-        Setname(rowData?.title);
-        Setbrandname(rowData?.brandName);
-        Setlongdescription(rowData?.description);
-        Setprice(rowData?.price);
-        Setsku(rowData?.sku);
-        SetProductType(rowData?.productType);
-        setCategoryName(rowData?.category);
+        } catch (error){
+            console.error("Error fetching images:", error);
+            // Optionally, set some error state here if needed
+        } finally{
+            setLoading2(false); 
+        }
 
-        // Fetch media and handle uniqueness
-        const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
-            const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
-            const blob = await response.blob();
-            const fileName = mediaItem.file.split('/').pop(); // Use original file name
-            const file = new File([blob], fileName, { type: blob.type });
 
-            return { file, id: mediaItem._id }; // Return file with its ID
-        }));
-
-        console.log('existingImages', existingImages);
-
-        // Ensure no duplicate files are added
-        const fileMap = new Map();
-        existingImages.forEach(item => {
-            if (!fileMap.has(item.id)) {
-                fileMap.set(item.id, item);
-            }
-        });
-
-        // Extract unique files and their IDs
-        const uniqueImages = Array.from(fileMap.values());
-        const filesArray = uniqueImages.map(item => item.file);
-        Setimagelist(filesArray);
-
-        const newImageMap = {};
-        uniqueImages.forEach(item => {
-            newImageMap[item.file.name] = item.id; // Map filename to ID
-        });
-
-        setImageMap(newImageMap);
-        setLoading2(false); // Stop loading when files are set
+       
     };
+
+
+    // not working but try
+    // const handleEdit2 = async (rowData) => {
+    //     try {
+    //         console.log('rowData==>', rowData);
+    //         setLoading2(true);  // Start loading
+    
+    //         // Set product details
+    //         Edited(rowData._id);
+    //         Setname(rowData?.title);
+    //         Setbrandname(rowData?.brandName);
+    //         Setlongdescription(rowData?.description);
+    //         Setprice(rowData?.price);
+    //         Setsku(rowData?.sku);
+    //         SetProductType(rowData?.productType);
+    //         setCategoryName(rowData?.category);
+    
+    //         // Fetch media and handle uniqueness
+    //         const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+    //             const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`, { mode: 'cors' });  // Ensure 'cors' mode is set
+    //             if (!response.ok) {
+    //                 throw new Error('Failed to fetch image');
+    //             }
+    //             const blob = await response.blob();
+    //             const fileName = mediaItem.file.split('/').pop(); // Use original file name
+    //             const file = new File([blob], fileName, { type: blob.type });
+    //             return { file, id: mediaItem._id }; // Return file with its ID
+    //         }));
+    
+    //         console.log('existingImages', existingImages);
+    
+    //         // Handle file uniqueness
+    //         const fileMap = new Map();
+    //         existingImages.forEach(item => {
+    //             if (!fileMap.has(item.id)) {
+    //                 fileMap.set(item.id, item);
+    //             }
+    //         });
+    
+    //         const uniqueImages = Array.from(fileMap.values());
+    //         const filesArray = uniqueImages.map(item => item.file);
+    //         Setimagelist(filesArray);
+    
+    //         const newImageMap = {};
+    //         uniqueImages.forEach(item => {
+    //             newImageMap[item.file.name] = item.id; // Map filename to ID
+    //         });
+    
+    //         setImageMap(newImageMap);
+    //         setLoading2(false);
+    
+    //     } catch (error) {
+    //         console.error("Error fetching images:", error);
+    //         // Handle error state
+    //     } finally {
+    //         setLoading2(false);
+    //     }
+    // };
+    
 
     const handleDelete = (deletedFile) => {
         console.log('deletedFile', deletedFile);

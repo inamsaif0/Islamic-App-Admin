@@ -360,18 +360,12 @@ const PackagesTable = () => {
                         icon: "success",
                         confirmButtonColor: "#29BF12",
                     });
-                    // setProfileImage('')
-                    // setSelectProfileImage('')
                     Settitle('')
                     Setdescription('')
                     setADDselectedProducts([])
                     handleClose()
                     setShow(false)
                     GetPackagesData()
-
-                    // Navigate('/addcustomer')
-
-
                 }
                 else {
                     setloader(false)
@@ -381,11 +375,7 @@ const PackagesTable = () => {
                         icon: "error",
                         confirmButtonColor: "#29BF12",
                     });
-
                 }
-
-
-
             }
             )
             .catch(error => {
@@ -757,6 +747,9 @@ const PackagesTable = () => {
 
              // Fetch media and handle uniqueness
         const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+            let ahmed=`${Baseurl.baseUrl}${mediaItem?.file}`
+            console.log('mediaItem==>1package',mediaItem)
+               console.log('mediaItem==>2package',ahmed)
             const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
             const blob = await response.blob();
             const fileName = mediaItem.file.split('/').pop(); // Use original file name
@@ -855,100 +848,6 @@ const PackagesTable = () => {
             </div>
         );
     };
-
-    // const GetAllImages = (id) => {
-    //     console.log("this baloch id of iamges ===>", id)
-
-        
-
-
-    //     // let filterImages = productData?.filter((a) => a._id == id)
-
-    //     // console.log('filterImages==>', filterImages)
-
-
-    //     // SetViewimagelistData(filterImages)
-
-
-    //     const requestBodydata = {
-    //         productId: id
-    //     }
-    //     const requestBody = JSON.stringify(requestBodydata);
-    //     console.log(requestBody, 'requestBody')
-
-    //     var requestOptions = {
-    //         method: 'POST',
-    //         headers: {
-    //             token: Token,
-    //             "Content-Type": "application/json"
-    //         },
-    //         body: requestBody,
-
-    //         redirect: 'follow'
-    //     };
-
-    //     console.log('requestOptions', requestOptions)
-    //     setImageLoader(true)
-
-    //     fetch(`${Baseurl.baseUrl}api/products/get-product-images`, requestOptions)
-
-    //         .then(response => response.json())
-    //         .then(result => {
-
-    //             if (result.status == true) {
-    //                 console.log('resultget==>of==>images',result?.data)
-    //                 setImageLoader(false)
-    //                 SetViewimagelistData(result?.data)
-    //             }
-    //             else {
-    //                 // setLoader(true)
-    //                 // setLoader(false)
-    //                 console.log("result.message", result.message)
-                   
-
-    //             }
-    //             // console.log('getProduct',result?.data)
-    //             // setLoader(false)
-    //             // // console.log("result ahmed",result)
-    //             // SetproductData(result?.data?.result)
-    //         }
-    //         )
-    //         .catch(error => {
-    //             setImageLoader(false)
-    //             console.log('error', error)
-    //         }
-    //         );
-
-
-
-
-
-
-    //     // var requestOptions = {
-    //     //     method: 'GET',
-    //     //     headers: {
-    //     //         Authorization: "Bearer " + Token
-    //     //     },
-    //     //     redirect: 'follow'
-    //     // };
-    //     // setLoader(true)
-
-    //     // fetch(`${Baseurl.baseUrl}/productImages?uid=${id}`, requestOptions)
-
-    //     //     .then(response => response.json())
-    //     //     .then(result => {
-    //     //         setLoader(false)
-    //     //         console.log("getting all images result", result.data)
-    //     //         SetimagelistData(result.data)
-    //     //     }
-    //     //     )
-    //     //     .catch(error => {
-    //     //         setLoader(false)
-    //     //         console.log('error', error)
-    //     //     }
-    //     //     );
-    // }
-
     const ViewImages = (e) => {
         console.log("rowdata of images id", e)
         console.log("rowdata of images view product", e?._id)

@@ -64,6 +64,7 @@ const Simplelogin = () => {
                     if (result.status == true) {
                         console.log(result)
                         localStorage.setItem('AdminToken', result?.data?.token);
+                        localStorage.setItem('role', result?.data?.User?.role);
                         // localStorage.setItem('AdminData', JSON.stringify(result.data));
                         console.log("status check==================", localStorage.getItem('AdminToken'))
     

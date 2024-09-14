@@ -56,7 +56,7 @@ const Header = () => {
 
     const Token = localStorage.getItem("AdminToken")
 
-
+    const UserRole =localStorage.getItem("role")
     // useEffect get api of admin
 
     useEffect(()=>{
@@ -802,7 +802,9 @@ const Header = () => {
                                 </Link>
                                 
                             </li>
-                            <li className=" nav-item">
+
+                           {
+                            UserRole == 'admin' ? ( <li className=" nav-item">
                                 <Link to={"/orders"} >
                                 <a >
                                     <i className="la la-support" />
@@ -812,7 +814,9 @@ const Header = () => {
                                 
                                 </Link>
                                 
-                            </li>
+                            </li>) : null
+                           } 
+                           
                             {/* <li className=" nav-item">
                                 <Link to={"/addcustomer"} >
                                 <a >
