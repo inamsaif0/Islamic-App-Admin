@@ -380,6 +380,7 @@ var requestOptions = {
                                         title: "Change Order Delivery Status", field: "deliveryStatus", render: rowData =>
                                             <Button 
                                         className='btn btn-danger  round btn-glow px-2'
+                                        style={{cursor:'pointer'}}
                                         onClick={() => ChangeOrderStatus(rowData)}
                                         disabled={rowData?.deliveryStatus === 'delivered'}
                                       >

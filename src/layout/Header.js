@@ -59,11 +59,11 @@ const Header = () => {
     const UserRole =localStorage.getItem("role")
     // useEffect get api of admin
 
-    useEffect(()=>{
+    // useEffect(()=>{
        
-        // AdminDatafunction()
+    //     // AdminDatafunction()
          
-    },[])
+    // },[])
 
     
     useEffect(()=>{
@@ -775,6 +775,17 @@ const Header = () => {
                                     <i className="la la-tablet" />
                                 
                                 <span className="menu-title" data-i18n="nav.support_raise_support.main">Category</span>
+                                </a>
+                                
+                                </Link>
+                                
+                            </li>
+                            <li className=" nav-item">
+                                <Link to={"/addsubcategory"} >
+                                <a >
+                                    <i className="la la-tablet" />
+                                
+                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Sub Category</span>
                                 </a>
                                 
                                 </Link>

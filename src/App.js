@@ -21,6 +21,7 @@ import Customer from './pages/addcustomer/Customer';
 import Bootstarpcard from './pages/cards/cardbootstrap'
 import Error404 from './pages/errors/Error404'
 import Error500 from './pages/errors/Error500';
+// import AddSubCategory from './pages/addsubcategory/AddSubCategory';
 // import Package from './pages/addpackage/AddPackage';
 const SimpleLogin = lazy(() => import('./pages/auth/simplelogin'));
 const SimpleRegister = lazy(() => import('./pages/auth/simpleregister'));
@@ -28,6 +29,7 @@ const Profile = lazy(() => import('./pages/Profile/Profile'));
 const AddProduct = lazy(() => import('./pages/addproduct/AddProduct'));
 const Order = lazy(() => import('./pages/addorder/Order'));
 const AddCategory = lazy(() => import('./pages/addcategory/AddCategory'));
+const AddSubCategory = lazy(() => import('./pages/addsubcategory/AddSubCategory'));
 const AddCoupen = lazy(() => import('./pages/addcoupen/AddCoupen'));
 const Package = lazy(() => import('./pages/addpackage/AddPackage'));
 const ForgetPassword = lazy(() => import('./pages/auth/ForgetPassword'));
@@ -57,6 +59,7 @@ function App() {
             <Route path='/addproduct' element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
             <Route path='/orders' element={<ProtectedRoute><Order /></ProtectedRoute>} />  
             <Route path='/addcategory' element={<ProtectedRoute><AddCategory /></ProtectedRoute>} />  
+            <Route path='/addsubcategory' element={<ProtectedRoute><AddSubCategory /></ProtectedRoute>} />  
             <Route path='/addpackage' element={<ProtectedRoute><Package /></ProtectedRoute>} /> 
 
 

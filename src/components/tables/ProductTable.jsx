@@ -109,9 +109,12 @@ const ProductTable = () => {
 
 
     const [CategoryName, setCategoryName] = useState('')
+// for sub-category
+    const [CategoryName2, setCategoryName2] = useState('')
 
 
     const [CategoryDropdown, SetCategoryDropdown] = useState([])
+    const [SubCategoryDropdown, SetSubCategoryDropdown] = useState([])
     // const [ProductData,SetProductData]=useState([])
     const [productData, SetproductData] = useState([])
     const [Productimage, setProductimage] = useState('');
@@ -153,13 +156,62 @@ const ProductTable = () => {
             __html: DOMPurify.sanitize(html)
         }
     }
+    
 
     useEffect(() => {
 
         GetproductData()
         // GetAllImages()
+        GetSubCategoryData()
 
     }, [])
+
+    const GetSubCategoryData = () => {
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                token: Token
+            },
+            redirect: 'follow'
+        };
+        // setloader(true)
+
+        fetch(`${Baseurl.baseUrl}api/subcategories/get`, requestOptions)
+
+            .then(response => response.json())
+            .then(result => {
+
+                console.log('resultGetCategories', result)
+                if (result.status == true) {
+                    // setloader(false)
+                    SetSubCategoryDropdown(result?.data?.result)
+
+                }
+                else {
+                    // setLoader(true)
+                    // setloader(false)
+                    console.log("result.message", result?.message)
+                    Swal.fire({
+                        title: "Oops",
+                        text: result.message,
+                        icon: "error",
+                        confirmButtonColor: "#29BF12",
+                    });
+
+                }
+
+            }
+                // console.log("result",result)
+            )
+            .catch(error => {
+                // setloader(false)
+                console.log('error', error)
+
+
+            }
+
+            );
+    }
 
     const GetproductData = () => {
         var requestOptions = {
@@ -208,7 +260,7 @@ const ProductTable = () => {
 
     const AddProduct = () => {
 
-        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ){
+        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ||  !CategoryName2  ){
             SeterrorFlag(true)
             return
         }
@@ -229,6 +281,7 @@ const ProductTable = () => {
 
         formdata.append("productType", ProductType);
         formdata.append("category", CategoryName);
+        formdata.append("subCategory", CategoryName2);
         // formdata.append("image", image);
         for (var i = 0; i < imagelist.length; i++) {
             formdata.append("media", imagelist[i]);
@@ -270,6 +323,7 @@ const ProductTable = () => {
                     setConvertedContent('')
                     SetProductType('')
                     setCategoryName('')
+                    setCategoryName2('')
                     Setimagelist('')
                     handleClose()
                     setShow(false)
@@ -320,7 +374,7 @@ const ProductTable = () => {
 
     const UpdateProduct = () => {
 
-        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ){
+        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName || !CategoryName2 ){
             SeterrorFlag(true)
             return
         }
@@ -336,6 +390,7 @@ const ProductTable = () => {
         formdata.append("description", longdescription);
 
         formdata.append("productType", ProductType);
+        formdata.append("subCategory", CategoryName2);
         formdata.append("category", CategoryName);
         formdata.append("productId", TabelId);
 
@@ -382,6 +437,7 @@ const ProductTable = () => {
                     setConvertedContent('')
                     SetProductType('')
                     setCategoryName('')
+                    setCategoryName2('')
                     Setimagelist([]); // Clear the imagelist
                     setDeletedImageIds([]); // Clear the deleted image IDs
                     handleClose()
@@ -776,8 +832,6 @@ const ProductTable = () => {
             .catch(error => {
                 // setloader(false)
                 console.log('error', error)
-
-
             }
 
             );
@@ -816,6 +870,7 @@ const ProductTable = () => {
             Setsku(rowData?.sku);
             SetProductType(rowData?.productType);
             setCategoryName(rowData?.category);
+            setCategoryName2(rowData?.subCategory);
     
             // Fetch media and handle uniqueness
             const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
@@ -1291,6 +1346,35 @@ const ProductTable = () => {
 
                         </Form.Group>
 
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Sub Category ID</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={CategoryName2}
+                                onChange={e => {
+                                    console.log("e.target.value", e.target.value);
+                                    setCategoryName2(e.target.value);
+                                }}
+                            // value={categoryid}
+                            >
+                                <option value="selectcatgory">Select Sub Catogary</option>
+                                {
+                                    SubCategoryDropdown?.map((a) => {
+                                        // console.log("safdar",a.name)
+                                        return (
+                                            <>
+                                                <option value={a._id}>{a.title}</option>
+                                            </>
+                                        )
+                                    })
+                                }
+
+
+                            </Form.Control>
+                            {errorFlag && !CategoryName2  && (<p style={{color:'red',marginTop:'10px'}} >{'Product Type is Required'}</p>) }
+
+                        </Form.Group>
+
 
                         <div className="row">
 
@@ -1470,15 +1554,6 @@ const ProductTable = () => {
       {errorFlag && !ProductType  && (<p style={{color:'red',marginTop:'10px'}} >{'Product Type is Required'}</p>) }
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            {/* <Form.Label>Category ID</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="categoryid"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setcategoryid(e.target.value)}
-                                value={categoryid}
-                            /> */}
                             <Form.Label>Category ID</Form.Label>
                             <Form.Control
                                 as="select"
@@ -1487,12 +1562,10 @@ const ProductTable = () => {
                                     console.log("e.target.value", e.target.value);
                                     setCategoryName(e.target.value);
                                 }}
-                            // value={categoryid}
                             >
                                 <option value="selectcatgory">Select Category</option>
                                 {
                                     CategoryDropdown?.map((a) => {
-                                        // console.log("safdar",a.name)
                                         return (
                                             <>
                                                 <option value={a._id}>{a.title}</option>
@@ -1503,6 +1576,33 @@ const ProductTable = () => {
                               
                             </Form.Control>
                             {errorFlag && !CategoryName  && (<p style={{color:'red',marginTop:'10px'}} >{'Category is Required'}</p>) }
+
+                            
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Sub Category ID</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={CategoryName2}
+                                onChange={e => {
+                                    console.log("e.target.value", e.target.value);
+                                    setCategoryName2(e.target.value);
+                                }}
+                            >
+                                <option value="selectcatgory">Select Sub Category</option>
+                                {
+                                    SubCategoryDropdown?.map((a) => {
+                                        return (
+                                            <>
+                                                <option value={a._id}>{a.title}</option>
+                                            </>
+                                        )
+                                    })
+                                }
+                              
+                            </Form.Control>
+                            {errorFlag && !CategoryName2  && (<p style={{color:'red',marginTop:'10px'}} >{'Category is Required'}</p>) }
 
                             
                         </Form.Group>
