@@ -162,56 +162,56 @@ const ProductTable = () => {
 
         GetproductData()
         // GetAllImages()
-        GetSubCategoryData()
+        // GetSubCategoryData()
 
     }, [])
 
-    const GetSubCategoryData = () => {
-        var requestOptions = {
-            method: 'GET',
-            headers: {
-                token: Token
-            },
-            redirect: 'follow'
-        };
-        // setloader(true)
+    // const GetSubCategoryData = () => {
+    //     var requestOptions = {
+    //         method: 'GET',
+    //         headers: {
+    //             token: Token
+    //         },
+    //         redirect: 'follow'
+    //     };
+    //     // setloader(true)
 
-        fetch(`${Baseurl.baseUrl}api/subcategories/get`, requestOptions)
+    //     fetch(`${Baseurl.baseUrl}api/subcategories/get`, requestOptions)
 
-            .then(response => response.json())
-            .then(result => {
+    //         .then(response => response.json())
+    //         .then(result => {
 
-                console.log('resultGetCategories', result)
-                if (result.status == true) {
-                    // setloader(false)
-                    SetSubCategoryDropdown(result?.data?.result)
+    //             console.log('resultGetCategories', result)
+    //             if (result.status == true) {
+    //                 // setloader(false)
+    //                 SetSubCategoryDropdown(result?.data?.result)
 
-                }
-                else {
-                    // setLoader(true)
-                    // setloader(false)
-                    console.log("result.message", result?.message)
-                    Swal.fire({
-                        title: "Oops",
-                        text: result.message,
-                        icon: "error",
-                        confirmButtonColor: "#29BF12",
-                    });
+    //             }
+    //             else {
+    //                 // setLoader(true)
+    //                 // setloader(false)
+    //                 console.log("result.message", result?.message)
+    //                 Swal.fire({
+    //                     title: "Oops",
+    //                     text: result.message,
+    //                     icon: "error",
+    //                     confirmButtonColor: "#29BF12",
+    //                 });
 
-                }
+    //             }
 
-            }
-                // console.log("result",result)
-            )
-            .catch(error => {
-                // setloader(false)
-                console.log('error', error)
+    //         }
+    //             // console.log("result",result)
+    //         )
+    //         .catch(error => {
+    //             // setloader(false)
+    //             console.log('error', error)
 
 
-            }
+    //         }
 
-            );
-    }
+    //         );
+    // }
 
     const GetproductData = () => {
         var requestOptions = {
@@ -440,6 +440,7 @@ const ProductTable = () => {
                     setCategoryName2('')
                     Setimagelist([]); // Clear the imagelist
                     setDeletedImageIds([]); // Clear the deleted image IDs
+                    // setFilterSubcategoryData([]); // Clear the deleted image IDs
                     handleClose()
                     setShow3(false)
                     GetproductData()
@@ -814,8 +815,6 @@ const ProductTable = () => {
 
                 }
                 else {
-                    // setLoader(true)
-                    // setloader(false)
                     console.log("result.message", result?.message)
                     Swal.fire({
                         title: "Oops",
@@ -1044,6 +1043,28 @@ const ProductTable = () => {
             </div>
         );
     };
+
+
+    
+  const [filterSubcategoryData, setFilterSubcategoryData] = useState([]);
+
+  useEffect(() => {
+    if (CategoryName) {
+      // Filter the subcategories based on the selected category
+      const filterSubCategory = CategoryDropdown?.filter(
+        (a) => a?._id === CategoryName
+      );
+      // Update the state with the filtered subcategories
+      setFilterSubcategoryData(filterSubCategory);
+    }
+  }, [CategoryName, CategoryDropdown]);
+  
+  console.log('dropdownSubcategory==>State', filterSubcategoryData);
+
+
+    // const dropdownSubcategory=CategoryDropdown.filter((a)=>a._id == CategoryName)
+
+    // console.log('dropdownSubcategory==>',dropdownSubcategory)
 
     return (
         <>
@@ -1359,7 +1380,7 @@ const ProductTable = () => {
                             >
                                 <option value="selectcatgory">Select Sub Catogary</option>
                                 {
-                                    SubCategoryDropdown?.map((a) => {
+                                    filterSubcategoryData[0]?.subcategories?.map((a) => {
                                         // console.log("safdar",a.name)
                                         return (
                                             <>
@@ -1592,7 +1613,7 @@ const ProductTable = () => {
                             >
                                 <option value="selectcatgory">Select Sub Category</option>
                                 {
-                                    SubCategoryDropdown?.map((a) => {
+                                    filterSubcategoryData[0]?.subcategories?.map((a) => {
                                         return (
                                             <>
                                                 <option value={a._id}>{a.title}</option>
