@@ -45,9 +45,6 @@ import { convertToHTML } from 'draft-convert';
 // import { convertToHTML } from 'draft-convert';
 import DOMPurify from 'dompurify';
 
-
-
-
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -73,28 +70,16 @@ const ProductTable = () => {
     const [errorFlag,SeterrorFlag]=useState(false)
 
     console.log('errorFlag',errorFlag)
-
-
     const [show, setShow] = useState(false);
-
     const handleClose = () => {  setShow(false); SeterrorFlag(false);  }
     const handleShow = () => setShow(true);
-
     // modal state forimages
-
     const [show2, setShow2] = useState(false);
-
     const handleClose2 = () => setShow2(false);
     const handleShow2 = () => setShow2(true);
-
-
     const [show3, setShow3] = useState(false);
-
     const handleClose3 = () => setShow3(false);
     const handleShow3 = () => setShow3(true);
-
-
-
     const [name, Setname] = useState('')
     const [brandname, Setbrandname] = useState('')
     const [description, Setdescription] = useState('')
@@ -106,34 +91,26 @@ const ProductTable = () => {
     const [imagelist, Setimagelist] = useState([])
 
     console.log('imagelist', imagelist)
-
-
     const [CategoryName, setCategoryName] = useState('')
 // for sub-category
     const [CategoryName2, setCategoryName2] = useState('')
+    const [selectedLanguage, setSelectedLanguage] = useState('')
 
+    console.log('selectedLanguage==>',selectedLanguage)
 
     const [CategoryDropdown, SetCategoryDropdown] = useState([])
     const [SubCategoryDropdown, SetSubCategoryDropdown] = useState([])
     // const [ProductData,SetProductData]=useState([])
     const [productData, SetproductData] = useState([])
     const [Productimage, setProductimage] = useState('');
-
     const [TabelId, SetTabelId] = useState('')
-
     const Token = localStorage.getItem("AdminToken")
-
     const [imagelistData, SetimagelistData] = useState([])
-
     const [ViewimagelistData, SetViewimagelistData] = useState([])
-
     console.log('ViewimagelistData',ViewimagelistData)
-
     const [loader, setLoader] = useState(false)
-
     const [imageMap, setImageMap] = useState({});
     const [deletedImageIds, setDeletedImageIds] = useState([]);
-
     console.log('deletedImageIds', deletedImageIds)
 
 
@@ -159,12 +136,17 @@ const ProductTable = () => {
     
 
     useEffect(() => {
-
         GetproductData()
         // GetAllImages()
         // GetSubCategoryData()
 
     }, [])
+
+    const languagedropdwon=[
+        { value: "arabic", label: "Arabic" },
+  { value: "english", label: "English" },
+  { value: "korean", label: "Korean" }
+    ]
 
     // const GetSubCategoryData = () => {
     //     var requestOptions = {
@@ -260,7 +242,7 @@ const ProductTable = () => {
 
     const AddProduct = () => {
 
-        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ||  !CategoryName2  ){
+        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ||  !CategoryName2 || !selectedLanguage ){
             SeterrorFlag(true)
             return
         }
@@ -282,6 +264,9 @@ const ProductTable = () => {
         formdata.append("productType", ProductType);
         formdata.append("category", CategoryName);
         formdata.append("subCategory", CategoryName2);
+        formdata.append("language", selectedLanguage);
+
+        
         // formdata.append("image", image);
         for (var i = 0; i < imagelist.length; i++) {
             formdata.append("media", imagelist[i]);
@@ -325,6 +310,7 @@ const ProductTable = () => {
                     setCategoryName('')
                     setCategoryName2('')
                     Setimagelist('')
+                    setSelectedLanguage('')
                     handleClose()
                     setShow(false)
                     GetproductData()
@@ -870,6 +856,7 @@ const ProductTable = () => {
             SetProductType(rowData?.productType);
             setCategoryName(rowData?.category);
             setCategoryName2(rowData?.subCategory);
+            setSelectedLanguage(rowData?.language);
     
             // Fetch media and handle uniqueness
             const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
@@ -1396,6 +1383,32 @@ const ProductTable = () => {
 
                         </Form.Group>
 
+                          {/* Language Dropdown */}
+        <Form.Group className="mb-3" controlId="languageDropdown">
+          <Form.Label>Language</Form.Label>
+          <Form.Control
+            as="select"
+            value={selectedLanguage} // replace with your state variable for language
+            onChange={e => setSelectedLanguage(e.target.value)} // replace with your handler for language selection
+          >
+            <option value="">Select Language --</option>
+            {
+              languagedropdwon.map((language, index) => (
+                <option key={index} value={language.value}>
+                  {language.label}
+                </option>
+              ))
+            }
+          </Form.Control>
+          {errorFlag && !selectedLanguage && (
+            <p style={{color: 'red', marginTop: '10px'}}>
+              {'Language is Required'}
+            </p>
+          )}
+        </Form.Group>
+
+        {/* Existing form fields */}
+
 
                         <div className="row">
 
@@ -1627,7 +1640,32 @@ const ProductTable = () => {
 
                             
                         </Form.Group>
+                           
+                             {/* Language Dropdown */}
+        <Form.Group className="mb-3" controlId="languageDropdown">
+          <Form.Label>Language</Form.Label>
+          <Form.Control
+            as="select"
+            value={selectedLanguage} // replace with your state variable for language
+            onChange={e => setSelectedLanguage(e.target.value)} // replace with your handler for language selection
+          >
+            <option value="">Select Language --</option>
+            {
+              languagedropdwon?.map((language, index) => (
+                <option key={index} value={language.value}>
+                  {language.label}
+                </option>
+              ))
+            }
+          </Form.Control>
+          {errorFlag && !selectedLanguage && (
+            <p style={{color: 'red', marginTop: '10px'}}>
+              {'Language is Required'}
+            </p>
+          )}
+        </Form.Group>
 
+        {/* Existing form fields */}
 
                         <div className="row">
                             {
