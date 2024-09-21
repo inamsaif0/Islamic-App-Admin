@@ -85,9 +85,15 @@ const ProductTable = () => {
     const [description, Setdescription] = useState('')
     const [price, Setprice] = useState('')
     const [sku, Setsku] = useState('')
+    const [noofpage, Setnoofpage] = useState('')
     const [longdescription, Setlongdescription] = useState('')
+    const [dimension, Setdimension] = useState('')
     const [ProductType, SetProductType] = useState('')
     const [categoryid, Setcategoryid] = useState('')
+
+    const [authorName, SetAuthorName] = useState('')
+
+
     const [imagelist, Setimagelist] = useState([])
 
     console.log('imagelist', imagelist)
@@ -242,7 +248,7 @@ const ProductTable = () => {
 
     const AddProduct = () => {
 
-        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ||  !CategoryName2 || !selectedLanguage ){
+        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ||  !CategoryName2 || !selectedLanguage || !dimension || !noofpage || !authorName ){
             SeterrorFlag(true)
             return
         }
@@ -265,6 +271,10 @@ const ProductTable = () => {
         formdata.append("category", CategoryName);
         formdata.append("subCategory", CategoryName2);
         formdata.append("language", selectedLanguage);
+
+        formdata.append("dimension", dimension);
+        formdata.append("author", authorName);
+        formdata.append("noofpages", noofpage);
 
         
         // formdata.append("image", image);
@@ -305,6 +315,9 @@ const ProductTable = () => {
                     Setdescription('')
                     Setprice('')
                     Setsku('')
+                    Setnoofpage('')
+                    Setdimension('')
+                    SetAuthorName('')
                     setConvertedContent('')
                     SetProductType('')
                     setCategoryName('')
@@ -360,7 +373,7 @@ const ProductTable = () => {
 
     const UpdateProduct = () => {
 
-        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName || !CategoryName2 ){
+        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !dimension || !noofpage || !authorName ){
             SeterrorFlag(true)
             return
         }
@@ -379,6 +392,9 @@ const ProductTable = () => {
         formdata.append("subCategory", CategoryName2);
         formdata.append("category", CategoryName);
         formdata.append("productId", TabelId);
+        formdata.append("dimension", dimension);
+        formdata.append("author", authorName);
+        formdata.append("noofpages", noofpage);
 
         for (var i = 0; i < deletedImageIds.length; i++) {
             formdata.append(`deleteImages[${i}]`, deletedImageIds[i]);
@@ -417,9 +433,12 @@ const ProductTable = () => {
                         confirmButtonColor: "#29BF12",
                     });
                     Setname('')
+                    SetAuthorName('')
                     Setdescription('')
                     Setprice('')
                     Setsku('')
+                    Setnoofpage('')
+                    Setdimension('')
                     setConvertedContent('')
                     SetProductType('')
                     setCategoryName('')
@@ -850,7 +869,10 @@ const ProductTable = () => {
             Edited(rowData._id);
             Setname(rowData?.title);
             Setbrandname(rowData?.brandName);
+            SetAuthorName(rowData?.author);
             Setlongdescription(rowData?.description);
+            Setnoofpage(rowData?.noofpages)
+            Setdimension(rowData?.dimension)
             Setprice(rowData?.price);
             Setsku(rowData?.sku);
             SetProductType(rowData?.productType);
@@ -1228,6 +1250,18 @@ const ProductTable = () => {
 
 {errorFlag && !brandname  && (<p style={{color:'red',marginTop:'10px'}} >{'Brand Name is Required'}</p>) }
 
+                        </Form.Group> 
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Author Name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Author Name"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => SetAuthorName(e.target.value)}
+                            />
+   {errorFlag && !authorName  && (<p style={{color:'red',marginTop:'10px'}} >{'Author Name is Required'}</p>) }
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1243,6 +1277,21 @@ const ProductTable = () => {
 
                             />
 {errorFlag && !price  && (<p style={{color:'red',marginTop:'10px'}} >{'Price is Required'}</p>) }
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>No of pages</Form.Label>
+                            <Form.Control
+                                type="number"
+                                min="0"
+                                placeholder="No of Pages"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => Setnoofpage(e.target.value)}
+
+                            />
+
+{errorFlag && !noofpage  && (<p style={{color:'red',marginTop:'10px'}} >{'No of Pages is Required'}</p>) }
+
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1272,6 +1321,20 @@ const ProductTable = () => {
                             />
 
                         </Form.Group> */}
+                           
+                           <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                            <Form.Label>Dimension</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                placeholder="Dimension"
+                                rows="6" cols="50"
+                                autoFocus
+                                onChange={(e) => Setdimension(e.target.value)}
+                            />
+
+{errorFlag && !dimension  && (<p style={{color:'red',marginTop:'10px'}} >{'Dimension is Required'}</p>) }
+                        </Form.Group>
+
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Description</Form.Label>
                             <Form.Control
@@ -1494,6 +1557,19 @@ const ProductTable = () => {
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Author Name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Author Name"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => SetAuthorName(e.target.value)}
+                                value={authorName}
+                            />
+   {errorFlag && !authorName  && (<p style={{color:'red',marginTop:'10px'}} >{'Author Name is Required'}</p>) }
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Price</Form.Label>
                             <Form.Control
                                 type="number"
@@ -1506,6 +1582,19 @@ const ProductTable = () => {
 
                             />
 {errorFlag && !price  && (<p style={{color:'red',marginTop:'10px'}} >{'Price is Required'}</p>) }
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>No of Page</Form.Label>
+                            <Form.Control
+                                type="number"
+                                min="0"
+                                placeholder="No of Pages"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => Setnoofpage(e.target.value)}
+                                value={noofpage}
+                            />
+{errorFlag && !noofpage  && (<p style={{color:'red',marginTop:'10px'}} >{'No of Pages is Required'}</p>) }
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1533,7 +1622,18 @@ const ProductTable = () => {
                             />
 
                         </Form.Group> */}
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                            <Form.Label>Dimension</Form.Label>
+                            <Form.Control
+                                 type="text"
+                                placeholder="Dimension"
+                                autoFocus
+                                onChange={(e) => Setdimension(e.target.value)}
+                                value={dimension}
+                            />
 
+{errorFlag && !dimension  && (<p style={{color:'red',marginTop:'10px'}} >{'Dimension is Required'}</p>) }
+</Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Description</Form.Label>
                             <Form.Control
