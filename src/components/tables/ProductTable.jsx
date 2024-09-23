@@ -84,6 +84,7 @@ const ProductTable = () => {
     const [brandname, Setbrandname] = useState('')
     const [description, Setdescription] = useState('')
     const [price, Setprice] = useState('')
+    const [Quantity, SetQuantity] = useState('')
     const [sku, Setsku] = useState('')
     const [noofpage, Setnoofpage] = useState('')
     const [longdescription, Setlongdescription] = useState('')
@@ -248,7 +249,7 @@ const ProductTable = () => {
 
     const AddProduct = () => {
 
-        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ||  !CategoryName2 || !selectedLanguage || !dimension || !noofpage || !authorName ){
+        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ||  !CategoryName2 || !selectedLanguage || !dimension || !noofpage || !authorName || !Quantity ){
             SeterrorFlag(true)
             return
         }
@@ -262,6 +263,7 @@ const ProductTable = () => {
         formdata.append("brandName", brandname);
 
         formdata.append("price", price);
+        formdata.append("quantity", Quantity);
         formdata.append("sku", sku);
         formdata.append("description", longdescription);
         // formdata.append("description", convertedContent);
@@ -314,6 +316,7 @@ const ProductTable = () => {
                     Setname('')
                     Setdescription('')
                     Setprice('')
+                    SetQuantity('')
                     Setsku('')
                     Setnoofpage('')
                     Setdimension('')
@@ -373,7 +376,7 @@ const ProductTable = () => {
 
     const UpdateProduct = () => {
 
-        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !dimension || !noofpage || !authorName ){
+        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !dimension || !noofpage || !authorName || !Quantity ){
             SeterrorFlag(true)
             return
         }
@@ -385,6 +388,7 @@ const ProductTable = () => {
         formdata.append("brandName", brandname);
 
         formdata.append("price", price);
+        formdata.append("quantity", Quantity);
         formdata.append("sku", sku);
         formdata.append("description", longdescription);
 
@@ -436,6 +440,7 @@ const ProductTable = () => {
                     SetAuthorName('')
                     Setdescription('')
                     Setprice('')
+                    SetQuantity('')
                     Setsku('')
                     Setnoofpage('')
                     Setdimension('')
@@ -874,6 +879,7 @@ const ProductTable = () => {
             Setnoofpage(rowData?.noofpages)
             Setdimension(rowData?.dimension)
             Setprice(rowData?.price);
+            SetQuantity(rowData?.quantity);
             Setsku(rowData?.sku);
             SetProductType(rowData?.productType);
             setCategoryName(rowData?.category);
@@ -1138,8 +1144,7 @@ const ProductTable = () => {
                                         render: item => <ReadMore text={item?.description} />,
                                     },
                                     { title: "Price", field: "price" },
-
-
+                                    { title: "Quantity", field: "quantity" },
                                     { title: "Product Type", field: "productType" },
                                     { title: "SKU", field: "sku" },
                                     // { title: "Date", field: convertTimestamp(updatedAt) },
@@ -1278,6 +1283,21 @@ const ProductTable = () => {
                             />
 {errorFlag && !price  && (<p style={{color:'red',marginTop:'10px'}} >{'Price is Required'}</p>) }
                         </Form.Group>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Quantity</Form.Label>
+                            <Form.Control
+                                type="number"
+                                min="0"
+                                placeholder="Quantity"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => SetQuantity(e.target.value)}
+
+                            />
+                           
+{errorFlag && !Quantity  && (<p style={{color:'red',marginTop:'10px'}} >{'Quantity is Required'}</p>) }
+</Form.Group>
+
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>No of pages</Form.Label>
                             <Form.Control
@@ -1582,6 +1602,21 @@ const ProductTable = () => {
 
                             />
 {errorFlag && !price  && (<p style={{color:'red',marginTop:'10px'}} >{'Price is Required'}</p>) }
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Quantity</Form.Label>
+                            <Form.Control
+                                type="number"
+                                min="0"
+                                placeholder="Quantity"
+                                autoFocus
+                                // onChange={(e) => handleEdited(e, setLname2)}
+                                onChange={(e) => SetQuantity(e.target.value)}
+                                value={Quantity}
+
+                            />
+{errorFlag && !Quantity  && (<p style={{color:'red',marginTop:'10px'}} >{'Quantity is Required'}</p>) }
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>No of Page</Form.Label>
