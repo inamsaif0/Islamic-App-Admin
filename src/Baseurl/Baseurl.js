@@ -3,7 +3,7 @@ export default {
     
     
 
-    baseUrl:'http://3.36.106.17:9000/'
+    baseUrl:'https://api.ooridoo.com/'
     
     // baseUrl:"http://51.20.55.91:8098/",
     // baseUrl:"https://pyurelyecommerce.pythonanywhere.com/api",
