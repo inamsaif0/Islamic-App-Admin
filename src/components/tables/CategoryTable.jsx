@@ -30,7 +30,7 @@ import CloseButton from 'react-bootstrap/CloseButton';
 import { DropzoneArea } from 'material-ui-dropzone';
 import { AiFillCloseCircle } from "react-icons/ai";
 import Baseurl from '../../Baseurl/Baseurl';
-import {Loader} from 'react-overlay-loader';
+import { Loader } from 'react-overlay-loader';
 import moment from 'moment';
 
 const tableIcons = {
@@ -55,9 +55,9 @@ const tableIcons = {
 
 const CategoryTable = () => {
 
-    const [errorFlag,SeterrorFlag]=useState(false)
+    const [errorFlag, SeterrorFlag] = useState(false)
 
-    console.log('errorFlag==>',errorFlag)
+    console.log('errorFlag==>', errorFlag)
 
     const [CategoryData, SetCategoryData] = useState([])
     const [title, Settitle] = useState('')
@@ -69,9 +69,9 @@ const CategoryTable = () => {
 
     const [show, setShow] = useState(false);
 
-    const handleClose = () => { 
-         setShow(false); SeterrorFlag(false); Settitle(''); 
-         }
+    const handleClose = () => {
+        setShow(false); SeterrorFlag(false); Settitle('');
+    }
     const handleShow = () => setShow(true);
 
     const [imageMap, setImageMap] = useState({});
@@ -80,13 +80,13 @@ const CategoryTable = () => {
     const [show2, setShow2] = useState(false);
 
     const handleClose2 = () => {
-        setShow2(false); SeterrorFlag(false); 
+        setShow2(false); SeterrorFlag(false);
     }
     const handleShow2 = () => setShow2(true);
 
     const Token = localStorage.getItem("AdminToken")
 
-    const [loader,setloader]=useState(false)
+    const [loader, setloader] = useState(false)
 
 
     useEffect(() => {
@@ -108,16 +108,15 @@ const CategoryTable = () => {
         fetch(`${Baseurl.baseUrl}api/categories/get`, requestOptions)
 
             .then(response => response.json())
-            .then(result =>{
-                if(result.status == true)
-                {
+            .then(result => {
+                if (result.status == true) {
                     setloader(false)
                     SetCategoryData(result?.data?.result)
                 }
                 else {
                     // setLoader(true)
                     setloader(false)
-                    console.log("result.message",result.message)
+                    console.log("result.message", result.message)
                     Swal.fire({
                         title: "Oops",
                         text: result.message,
@@ -147,15 +146,15 @@ const CategoryTable = () => {
 
     const addCategory = (e) => {
         e.preventDefault()
-  
-        if(!imagelist.length > 0 || !title){
+
+        if (!imagelist.length > 0 || !title) {
             SeterrorFlag(true)
             return
         }
-         
 
 
-     
+
+
 
         var formdata = new FormData();
         formdata.append("title", title);
@@ -168,7 +167,7 @@ const CategoryTable = () => {
             method: 'POST',
 
             headers: {
-                token:Token
+                token: Token
             },
             body: formdata,
             redirect: 'follow'
@@ -240,7 +239,7 @@ const CategoryTable = () => {
 
 
     const EditCategory = () => {
-        if(!imagelist.length > 0 || !title){
+        if (!imagelist.length > 0 || !title) {
             SeterrorFlag(true)
             return
         }
@@ -256,7 +255,7 @@ const CategoryTable = () => {
         var requestOptions = {
             method: 'Post',
             headers: {
-                token:Token
+                token: Token
             },
             body: formdata,
             redirect: 'follow'
@@ -343,12 +342,12 @@ const CategoryTable = () => {
 
         console.log("value of a==>", a)
 
-        const requestBody={
-            id:a
+        const requestBody = {
+            id: a
         }
         const requestBody2 = JSON.stringify(requestBody);
 
-        console.log('requestBody2',requestBody2)
+        console.log('requestBody2', requestBody2)
 
         var formdata = new FormData();
         formdata.append("id", a);
@@ -357,7 +356,7 @@ const CategoryTable = () => {
             method: 'Post',
             headers: {
                 token: Token,
-                "Content-Type":"application/json"
+                "Content-Type": "application/json"
             },
             body: requestBody2,
             redirect: 'follow'
@@ -366,7 +365,7 @@ const CategoryTable = () => {
 
         fetch(`${Baseurl.baseUrl}api/categories/delete`, requestOptions)
             .then(response => response.json())
-            .then(result => 
+            .then(result =>
             //     {
             //     console.log(result)
             //     GetCategoryData()
@@ -374,8 +373,7 @@ const CategoryTable = () => {
 
             // }
             {
-                if(result.status == true)
-                {
+                if (result.status == true) {
                     console.log(result)
                     Swal.fire({
                         title: "success",
@@ -385,15 +383,15 @@ const CategoryTable = () => {
                     });
                     GetCategoryData()
                 }
-               else{
-                Swal.fire({
-                    title: "Oops",
-                    text: result.message,
-                    icon: "error",
-                    confirmButtonColor: "#29BF12",
-                  });
-               }
-                
+                else {
+                    Swal.fire({
+                        title: "Oops",
+                        text: result.message,
+                        icon: "error",
+                        confirmButtonColor: "#29BF12",
+                    });
+                }
+
 
             }
             )
@@ -408,111 +406,111 @@ const CategoryTable = () => {
     }
 
     const handleEdit = (rowData) => {
-            Settitle(rowData.title)
-            Edited(rowData._id);
-        
-        
+        Settitle(rowData.title)
+        Edited(rowData._id);
+
+
         // Convert the media files to Blob/File objects for the DropzoneArea
         const existingImages = rowData?.media?.map(async (mediaItem) => {
-          const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
-          const blob = await response.blob();
-          return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
+            const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+            const blob = await response.blob();
+            return new File([blob], mediaItem.file.split('/').pop(), { type: blob.type });
         });
 
-        console.log('existingImages',existingImages)
-    
+        console.log('existingImages', existingImages)
+
         // Resolve all promises and set the files
         Promise.all(existingImages).then((filesArray) => {
             Setimagelist(filesArray);
         });
-    
-        
-      };
 
-      const [Loading2,setLoading2]=useState(false)
+
+    };
+
+    const [Loading2, setLoading2] = useState(false)
 
     //   const handleEdit2 = async (rowData) => {
     //     setLoading2(true);  // Start loading
     //     Settitle(rowData.title)
     //     Edited(rowData._id);
-    
-        
-        
+
+
+
     //     const existingImages = rowData?.media?.map(async (mediaItem) => {
     //       const response = await fetch(`${Baseurl.baseUrl}${mediaItem?.file}`);
 
-          
+
     //       const blob = await response?.blob();
     //       return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
     //     });
-        
+
     //     const filesArray = await Promise.all(existingImages);
     //     Setimagelist(filesArray);
     //     setLoading2(false); 
-        
+
     //   };
 
     const handleEdit2 = async (rowData) => {
         setLoading2(true);  // Start loading
-        
+
         try {
             // Set initial state
             Settitle(rowData.title);
             Edited(rowData._id);
 
-             // Fetch media and handle uniqueness
-        const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
-            const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`, { mode: 'no-cors' });
-            const blob = await response.blob();
-            const fileName = mediaItem.file.split('/').pop(); // Use original file name
-            const file = new File([blob], fileName, { type: blob.type });
-            
-            return { file, id: mediaItem._id }; // Return file with its ID
-        }));
-    
-        console.log('existingImages', existingImages);
-    
-        // Ensure no duplicate files are added
-        const fileMap = new Map();
-        existingImages.forEach(item => {
-            if (!fileMap.has(item.id)) {
-                fileMap.set(item.id, item);
-            }
-        });
-    
-        // Extract unique files and their IDs
-        const uniqueImages = Array.from(fileMap.values());
-        const filesArray = uniqueImages.map(item => item.file);
-        Setimagelist(filesArray);
-    
-        const newImageMap = {};
-        uniqueImages.forEach(item => {
-            newImageMap[item.file.name] = item.id; // Map filename to ID
-        });
-    
-        setImageMap(newImageMap);
-        setLoading2(false); // Stop loading when files are set
-    
+            // Fetch media and handle uniqueness
+            const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+                const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`, { mode: 'no-cors' });
+                const blob = await response.blob();
+                const fileName = mediaItem.file.split('/').pop(); // Use original file name
+                const file = new File([blob], fileName, { type: blob.type });
+
+                return { file, id: mediaItem._id }; // Return file with its ID
+            }));
+
+            console.log('existingImages', existingImages);
+
+            // Ensure no duplicate files are added
+            const fileMap = new Map();
+            existingImages.forEach(item => {
+                if (!fileMap.has(item.id)) {
+                    fileMap.set(item.id, item);
+                }
+            });
+
+            // Extract unique files and their IDs
+            const uniqueImages = Array.from(fileMap.values());
+            const filesArray = uniqueImages.map(item => item.file);
+            Setimagelist(filesArray);
+
+            const newImageMap = {};
+            uniqueImages.forEach(item => {
+                newImageMap[item.file.name] = item.id; // Map filename to ID
+            });
+
+            setImageMap(newImageMap);
+            setLoading2(false); // Stop loading when files are set
+
             // // Fetch all images
             // const existingImagesPromises = rowData?.media?.map(async (mediaItem) => {
             //     const response = await fetch(`${Baseurl?.baseUrl}${mediaItem?.file}`);
-                
+
             //     if (!response?.ok) {
             //         throw new Error('Failed to fetch image');
             //     }
-    
+
             //     const blob = await response.blob();
             //     return new File([blob], mediaItem?.file.split('/').pop(), { type: blob.type });
             // });
-    
+
             // const existingImages = await Promise.all(existingImagesPromises);
-    
+
             // Setimagelist(existingImages); // Set the list of images
-    
+
         } catch (error) {
             console.error("Error fetching images:", error);
             // Optionally, set some error state here if needed
-    
+
         } finally {
             setLoading2(false);  // Stop loading when files are set or error occurs
         }
@@ -520,20 +518,20 @@ const CategoryTable = () => {
 
     const handleDelete = (deletedFile) => {
         console.log('deletedFile', deletedFile);
-    
+
         const deletedFileName = deletedFile.name;
         const deletedImageId = imageMap[deletedFileName]; // Get ID using filename
-    
+
         if (deletedImageId) {
             console.log('deletedImageId', deletedImageId);
-    
+
             // Store deleted IDs
             setDeletedImageIds(prevIds => [...prevIds, deletedImageId]);
             console.log('Deleted Image ID:', deletedImageId);
-    
+
             // Remove the file from imagelist to prevent re-adding it
             Setimagelist(prevFiles => prevFiles.filter(file => file.name !== deletedFileName));
-    
+
             // Optionally remove from imageMap if you want to prevent further operations on it
             setImageMap(prevMap => {
                 const newMap = { ...prevMap };
@@ -543,11 +541,25 @@ const CategoryTable = () => {
         }
     };
 
+
+    const [imagePreview, setImagePreview] = useState(null);
+
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result); // Set the image preview
+            };
+            reader.readAsDataURL(file); // Read the file as a data URL
+        }
+    };
+
     return (
         <>
-        {loader == true ?
-            <Loader fullPage loading />:null
-        }
+            {loader == true ?
+                <Loader fullPage loading /> : null
+            }
 
             <div className="app-content content">
                 <div className="content-wrapper">
@@ -592,17 +604,19 @@ const CategoryTable = () => {
                             <MaterialTable
                                 icons={tableIcons}
                                 columns={[
-                                    { title: "Image", field: "media", render: item =>
-                                        <img src={item?.media[0]?.file ? Baseurl.baseUrl + item?.media[0]?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg' } alt="" border="3" height="50" width="100" />
-                                       //  <img src={Baseurl.baseUrl + item?.media[0]?.file} alt="" border="3" height="100" width="100" />
-                                       },
-                                   { title: "Title", field: "title" },
-                                   { title: "Date", field: 'createdAt' ,
-                                    render: (row) => {
-                                    return <span>{convertTimestamp(row?.createdAt,"YYYY-MM-DD")}</span>
-                                    // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
+                                    {
+                                        title: "Image", field: "media", render: item =>
+                                            <img src={item?.media[0]?.file ? Baseurl.baseUrl + item?.media[0]?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg'} alt="" border="3" height="50" width="100" />
+                                        //  <img src={Baseurl.baseUrl + item?.media[0]?.file} alt="" border="3" height="100" width="100" />
                                     },
-                                  }, 
+                                    { title: "Title", field: "title" },
+                                    {
+                                        title: "Date", field: 'createdAt',
+                                        render: (row) => {
+                                            return <span>{convertTimestamp(row?.createdAt, "YYYY-MM-DD")}</span>
+                                            // convertTimestamp(isoTimestamp, "YYYY-MM-DD")
+                                        },
+                                    },
                                 ]}
                                 data={
                                     CategoryData
@@ -657,7 +671,7 @@ const CategoryTable = () => {
 
 
             {/* add category modal */}
-           {show && (<Modal show={show} onHide={handleClose}>
+            {show && (<Modal show={show} onHide={handleClose}>
                 {/* <Modal.Header closeButton>
                     <Modal.Title>Change Password </Modal.Title>
 
@@ -682,38 +696,93 @@ const CategoryTable = () => {
                                 onChange={(e) => handleInputChange(e, Settitle)}
                             />
 
-                      {errorFlag && !title  && (<p style={{color:'red',marginTop:'10px'}} >{'Title is Required'}</p>) }
+                            {errorFlag && !title && (<p style={{ color: 'red', marginTop: '10px' }} >{'Title is Required'}</p>)}
                         </Form.Group>
 
 
                         <div className="row">
+                            <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
+                                {/* Image preview shown above the input and label */}
+                                {/* Image preview shown above the input and label */}
+                                {imagePreview && (
+                                    <div style={{
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        zIndex: 1, // Lower z-index to place image behind input
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        <img
+                                            src={imagePreview}
+                                            alt="Preview"
+                                            style={{
+                                                maxWidth: "400px",
+                                                maxHeight: "200px",
+                                                margin: "10px auto",
+                                                border: "2px solid #ccc",
+                                                padding: "10px",
+                                                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                borderRadius: "10px"
+                                            }}
+                                        />
+                                    </div>
+                                )}
 
-                            <div className='col-md-12 mb-2' >
-                                <DropzoneArea
-
+                                {/* File input and label */}
+                                <div style={{
+                                    position: "relative",
+                                    zIndex: 2, // Ensure file input and label are above the image preview
+                                }}>
+                                    <input
+                                        type="file"
+                                        id="cateogryImg"
+                                        style={{
+                                            display: "none",
+                                            zIndex: 3, // Ensure the input stays above the image preview
+                                            position: "absolute", // Position the input field on top
+                                            width: "100%",
+                                            height: "100%",
+                                            top: 0,
+                                            left: 0,
+                                            cursor: "pointer",
+                                        }}
+                                        onChange={handleImageChange}
+                                    />
+                                    <label
+                                        htmlFor="cateogryImg"
+                                        style={{
+                                            cursor: "pointer",
+                                            position: "relative",
+                                            zIndex: 3, // Ensure label stays above the preview
+                                            textAlign: "center",
+                                            display: "block", // Make label block-level for centering
+                                            marginTop: imagePreview ? "10px" : "0", // Adjust margin when preview is visible
+                                        }}
+                                    >
+                                        Drag and drop a file here or click
+                                    </label>
+                                </div>
+                                {/* Dropzone Area */}
+                                {/* <DropzoneArea
                                     acceptedFiles={['image/*']}
                                     filesLimit={1}
-                                    // initialFiles={imagelist}
-                                    // dropzoneText={"Drag and drop an image here or click"}
                                     showAlerts={false}
-                                    onChange={
-                                        (files) => {
+                                    onChange={(files) => {
+                                        console.log('Files:', files);
+                                        Setimagelist(files);
+                                    }}
+                                /> */}
 
-
-                                            // setImage(e.target.files[0])
-                                            console.log('Files:', files)
-                                            Setimagelist(files)
-                                        }
-
-                                    }
-                                />
-
-{errorFlag && !imagelist.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Image are Required'}</p>) }
-
-                                
-
+                                {errorFlag && !imagelist.length > 0 && (
+                                    <p style={{ color: 'red', marginTop: '10px' }}>
+                                        {'Image is Required'}
+                                    </p>
+                                )}
                             </div>
-
 
                         </div>
 
@@ -724,12 +793,12 @@ const CategoryTable = () => {
                     <Button variant="secondary" onClick={handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" type='button' onClick={(e)=>{ addCategory(e)}} >
+                    <Button variant="primary" type='button' onClick={(e) => { addCategory(e) }} >
                         Add Category
                     </Button>
                 </Modal.Footer>
-            </Modal>)} 
-            
+            </Modal>)}
+
 
 
             {/* edit category modal 2 */}
@@ -743,7 +812,7 @@ const CategoryTable = () => {
                     <Form onSubmit={(e) => e.preventDefault()}>
 
 
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Title</Form.Label>
                             <Form.Control
                                 type="text"
@@ -753,36 +822,36 @@ const CategoryTable = () => {
                                 onChange={(e) => handleInputChange(e, Settitle)}
                             />
 
-{errorFlag && !title  && (<p style={{color:'red',marginTop:'10px'}} >{'Title is Required'}</p>) }
+                            {errorFlag && !title && (<p style={{ color: 'red', marginTop: '10px' }} >{'Title is Required'}</p>)}
 
                         </Form.Group>
                         <div className="row">
 
                             <div className='col-md-12 mb-2' >
-                        {
-                            Loading2 == true ? (<Loader fullPage loading />) : (
-                                <DropzoneArea
-                key={imagelist.length} // Ensures re-render
-                acceptedFiles={['image/*']}
-                filesLimit={1}
-                onDelete={handleDelete}
-                initialFiles={imagelist &&imagelist}
-                showAlerts={false}
-                onChange={(uploadedFiles) => {
-                  Setimagelist(uploadedFiles);
-                  console.log('Files:', uploadedFiles);
-                }}
-              />
+                                {
+                                    Loading2 == true ? (<Loader fullPage loading />) : (
+                                        <DropzoneArea
+                                            key={imagelist.length} // Ensures re-render
+                                            acceptedFiles={['image/*']}
+                                            filesLimit={1}
+                                            onDelete={handleDelete}
+                                            initialFiles={imagelist && imagelist}
+                                            showAlerts={false}
+                                            onChange={(uploadedFiles) => {
+                                                Setimagelist(uploadedFiles);
+                                                console.log('Files:', uploadedFiles);
+                                            }}
+                                        />
 
-                            )
-                        }
-                        {errorFlag && !imagelist.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Image are Required'}</p>) }
+                                    )
+                                }
+                                {errorFlag && !imagelist.length > 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Image are Required'}</p>)}
                             </div>
 
 
                         </div>
 
-                        
+
 
 
                     </Form>

@@ -38,12 +38,13 @@ import { Room } from '@material-ui/icons';
 
 // text ediot
 import { ContentState, convertFromHTML, EditorState } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
+// import { Editor } from 'react-draft-wysiwyg';
 import { convertToHTML } from 'draft-convert';
 // import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 // "react-draft-wysiwyg": "^1.15.0",
 // import { convertToHTML } from 'draft-convert';
 import DOMPurify from 'dompurify';
+import { Tab, Tabs } from "react-bootstrap"
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -67,11 +68,11 @@ const tableIcons = {
 
 const ProductTable = () => {
 
-    const [errorFlag,SeterrorFlag]=useState(false)
+    const [errorFlag, SeterrorFlag] = useState(false)
 
-    console.log('errorFlag',errorFlag)
+    console.log('errorFlag', errorFlag)
     const [show, setShow] = useState(false);
-    const handleClose = () => {  setShow(false); SeterrorFlag(false);  }
+    const handleClose = () => { setShow(false); SeterrorFlag(false); }
     const handleShow = () => setShow(true);
     // modal state forimages
     const [show2, setShow2] = useState(false);
@@ -98,12 +99,18 @@ const ProductTable = () => {
     const [imagelist, Setimagelist] = useState([])
 
     console.log('imagelist', imagelist)
+  // States for Others Tab
+  const [otherField1, setOtherField1] = useState(""); // Field 1 in Others tab
+  const [otherField2, setOtherField2] = useState(""); // Field 2 in Others tab
+  const [otherField3, setOtherField3] = useState(""); // Field 3 in Others tab
+
+
     const [CategoryName, setCategoryName] = useState('')
-// for sub-category
+    // for sub-category
     const [CategoryName2, setCategoryName2] = useState('')
     const [selectedLanguage, setSelectedLanguage] = useState('')
 
-    console.log('selectedLanguage==>',selectedLanguage)
+    console.log('selectedLanguage==>', selectedLanguage)
 
     const [CategoryDropdown, SetCategoryDropdown] = useState([])
     const [SubCategoryDropdown, SetSubCategoryDropdown] = useState([])
@@ -114,7 +121,7 @@ const ProductTable = () => {
     const Token = localStorage.getItem("AdminToken")
     const [imagelistData, SetimagelistData] = useState([])
     const [ViewimagelistData, SetViewimagelistData] = useState([])
-    console.log('ViewimagelistData',ViewimagelistData)
+    console.log('ViewimagelistData', ViewimagelistData)
     const [loader, setLoader] = useState(false)
     const [imageMap, setImageMap] = useState({});
     const [deletedImageIds, setDeletedImageIds] = useState([]);
@@ -140,7 +147,7 @@ const ProductTable = () => {
             __html: DOMPurify.sanitize(html)
         }
     }
-    
+
 
     useEffect(() => {
         GetproductData()
@@ -149,10 +156,10 @@ const ProductTable = () => {
 
     }, [])
 
-    const languagedropdwon=[
+    const languagedropdwon = [
         { value: "arabic", label: "Arabic" },
-  { value: "english", label: "English" },
-  { value: "korean", label: "Korean" }
+        { value: "english", label: "English" },
+        { value: "korean", label: "Korean" }
     ]
 
     // const GetSubCategoryData = () => {
@@ -249,12 +256,12 @@ const ProductTable = () => {
 
     const AddProduct = () => {
 
-        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName ||  !CategoryName2 || !selectedLanguage || !dimension || !noofpage || !authorName || !Quantity ){
+        if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !selectedLanguage || !dimension || !noofpage || !authorName || !Quantity) {
             SeterrorFlag(true)
             return
         }
 
-       //
+        //
 
 
 
@@ -278,7 +285,7 @@ const ProductTable = () => {
         formdata.append("author", authorName);
         formdata.append("noofpages", noofpage);
 
-        
+
         // formdata.append("image", image);
         for (var i = 0; i < imagelist.length; i++) {
             formdata.append("media", imagelist[i]);
@@ -376,7 +383,7 @@ const ProductTable = () => {
 
     const UpdateProduct = () => {
 
-        if(!name || !brandname  || !price || !sku || !longdescription || !ProductType  || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !dimension || !noofpage || !authorName || !Quantity ){
+        if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !dimension || !noofpage || !authorName || !Quantity) {
             SeterrorFlag(true)
             return
         }
@@ -651,7 +658,7 @@ const ProductTable = () => {
             .then(result => {
 
                 if (result.status == true) {
-                    console.log('resultget==>of==>images',result?.data)
+                    console.log('resultget==>of==>images', result?.data)
                     setImageLoader(false)
                     SetViewimagelistData(result?.data)
                 }
@@ -659,7 +666,7 @@ const ProductTable = () => {
                     // setLoader(true)
                     // setLoader(false)
                     console.log("result.message", result.message)
-                   
+
 
                 }
                 // console.log('getProduct',result?.data)
@@ -864,12 +871,12 @@ const ProductTable = () => {
     //     console.log('Deleted Image ID:', deletedImageId);
     //   };
 
-// working code
+    // working code
     const handleEdit2 = async (rowData) => {
         try {
             console.log('rowData==>', rowData);
             setLoading2(true);  // Start loading
-    
+
             // Set product details
             Edited(rowData._id);
             Setname(rowData?.title);
@@ -885,28 +892,28 @@ const ProductTable = () => {
             setCategoryName(rowData?.category);
             setCategoryName2(rowData?.subCategory);
             setSelectedLanguage(rowData?.language);
-    
+
             // Fetch media and handle uniqueness
             const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
-             let ahmed=`${Baseurl.baseUrl}${mediaItem?.file}`
-             console.log('mediaItem==>1',mediaItem)
-                console.log('mediaItem==>2',ahmed)
-    
+                let ahmed = `${Baseurl.baseUrl}${mediaItem?.file}`
+                console.log('mediaItem==>1', mediaItem)
+                console.log('mediaItem==>2', ahmed)
+
                 // const response2 = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
-    
+
                 // console.log('mediaItem==>2',response2)
-    
+
                 const response = await fetch(`${Baseurl.baseUrl}${mediaItem?.file}`, { mode: 'no-cors' });
-                console.log('mediaItem==>response==>',response)
+                console.log('mediaItem==>response==>', response)
                 const blob = await response.blob();
                 const fileName = mediaItem.file.split('/').pop(); // Use original file name
                 const file = new File([blob], fileName, { type: blob.type });
-    
+
                 return { file, id: mediaItem?._id }; // Return file with its ID
             }));
-    
+
             console.log('existingImages', existingImages);
-    
+
             // Ensure no duplicate files are added
             const fileMap = new Map();
             existingImages.forEach(item => {
@@ -914,29 +921,29 @@ const ProductTable = () => {
                     fileMap.set(item.id, item);
                 }
             });
-    
+
             // Extract unique files and their IDs
             const uniqueImages = Array.from(fileMap.values());
             const filesArray = uniqueImages.map(item => item.file);
             Setimagelist(filesArray);
-    
+
             const newImageMap = {};
             uniqueImages.forEach(item => {
                 newImageMap[item.file.name] = item.id; // Map filename to ID
             });
-    
+
             setImageMap(newImageMap);
             setLoading2(false); // Stop loading when files are set
 
-        } catch (error){
+        } catch (error) {
             console.error("Error fetching images:", error);
             // Optionally, set some error state here if needed
-        } finally{
-            setLoading2(false); 
+        } finally {
+            setLoading2(false);
         }
 
 
-       
+
     };
 
 
@@ -945,7 +952,7 @@ const ProductTable = () => {
     //     try {
     //         console.log('rowData==>', rowData);
     //         setLoading2(true);  // Start loading
-    
+
     //         // Set product details
     //         Edited(rowData._id);
     //         Setname(rowData?.title);
@@ -955,7 +962,7 @@ const ProductTable = () => {
     //         Setsku(rowData?.sku);
     //         SetProductType(rowData?.productType);
     //         setCategoryName(rowData?.category);
-    
+
     //         // Fetch media and handle uniqueness
     //         const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
     //             const response = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`, { mode: 'cors' });  // Ensure 'cors' mode is set
@@ -967,9 +974,9 @@ const ProductTable = () => {
     //             const file = new File([blob], fileName, { type: blob.type });
     //             return { file, id: mediaItem._id }; // Return file with its ID
     //         }));
-    
+
     //         console.log('existingImages', existingImages);
-    
+
     //         // Handle file uniqueness
     //         const fileMap = new Map();
     //         existingImages.forEach(item => {
@@ -977,19 +984,19 @@ const ProductTable = () => {
     //                 fileMap.set(item.id, item);
     //             }
     //         });
-    
+
     //         const uniqueImages = Array.from(fileMap.values());
     //         const filesArray = uniqueImages.map(item => item.file);
     //         Setimagelist(filesArray);
-    
+
     //         const newImageMap = {};
     //         uniqueImages.forEach(item => {
     //             newImageMap[item.file.name] = item.id; // Map filename to ID
     //         });
-    
+
     //         setImageMap(newImageMap);
     //         setLoading2(false);
-    
+
     //     } catch (error) {
     //         console.error("Error fetching images:", error);
     //         // Handle error state
@@ -997,7 +1004,7 @@ const ProductTable = () => {
     //         setLoading2(false);
     //     }
     // };
-    
+
 
     const handleDelete = (deletedFile) => {
         console.log('deletedFile', deletedFile);
@@ -1060,21 +1067,21 @@ const ProductTable = () => {
     };
 
 
-    
-  const [filterSubcategoryData, setFilterSubcategoryData] = useState([]);
 
-  useEffect(() => {
-    if (CategoryName) {
-      // Filter the subcategories based on the selected category
-      const filterSubCategory = CategoryDropdown?.filter(
-        (a) => a?._id === CategoryName
-      );
-      // Update the state with the filtered subcategories
-      setFilterSubcategoryData(filterSubCategory);
-    }
-  }, [CategoryName, CategoryDropdown]);
-  
-  console.log('dropdownSubcategory==>State', filterSubcategoryData);
+    const [filterSubcategoryData, setFilterSubcategoryData] = useState([]);
+
+    useEffect(() => {
+        if (CategoryName) {
+            // Filter the subcategories based on the selected category
+            const filterSubCategory = CategoryDropdown?.filter(
+                (a) => a?._id === CategoryName
+            );
+            // Update the state with the filtered subcategories
+            setFilterSubcategoryData(filterSubCategory);
+        }
+    }, [CategoryName, CategoryDropdown]);
+
+    console.log('dropdownSubcategory==>State', filterSubcategoryData);
 
 
     // const dropdownSubcategory=CategoryDropdown.filter((a)=>a._id == CategoryName)
@@ -1214,6 +1221,7 @@ const ProductTable = () => {
 
 
 
+
             {/* add Product modal */}
             {show && (<Modal show={show} onHide={handleClose}>
                 <Modal.Header >
@@ -1222,301 +1230,347 @@ const ProductTable = () => {
 
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={(e) => e.preventDefault()}>
+                    <Tabs defaultActiveKey="productDetails" id="product-modal-tabs" className="mb-3">
+                        {/* First Tab: Product Details */}
+                        <Tab eventKey="productDetails" title="Product Details">
+                            <Form onSubmit={(e) => e.preventDefault()}>
 
 
 
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Name"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setFname2)}
-                                onChange={(e) => Setname(e.target.value)}
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Title</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Name"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setFname2)}
+                                        onChange={(e) => Setname(e.target.value)}
 
-                            />
-                            
-{errorFlag && !name  && (<p style={{color:'red',marginTop:'10px'}} >{'Name is Required'}</p>) }
-                        </Form.Group>
+                                    />
 
-
-
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Brand Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Brand Name"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setbrandname(e.target.value)}
-
-                            />
-
-{errorFlag && !brandname  && (<p style={{color:'red',marginTop:'10px'}} >{'Brand Name is Required'}</p>) }
-
-                        </Form.Group> 
-
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Author Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Author Name"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => SetAuthorName(e.target.value)}
-                            />
-   {errorFlag && !authorName  && (<p style={{color:'red',marginTop:'10px'}} >{'Author Name is Required'}</p>) }
-                        </Form.Group>
-
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Price</Form.Label>
-                            <Form.Control
-                                type="number"
-                                min="0"
-                                placeholder="Price"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setprice(e.target.value)}
+                                    {errorFlag && !name && (<p style={{ color: 'red', marginTop: '10px' }} >{'Name is Required'}</p>)}
+                                </Form.Group>
 
 
-                            />
-{errorFlag && !price  && (<p style={{color:'red',marginTop:'10px'}} >{'Price is Required'}</p>) }
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Quantity</Form.Label>
-                            <Form.Control
-                                type="number"
-                                min="0"
-                                placeholder="Quantity"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => SetQuantity(e.target.value)}
 
-                            />
-                           
-{errorFlag && !Quantity  && (<p style={{color:'red',marginTop:'10px'}} >{'Quantity is Required'}</p>) }
-</Form.Group>
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Brand Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Brand Name"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setLname2)}
+                                        onChange={(e) => Setbrandname(e.target.value)}
 
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>No of pages</Form.Label>
-                            <Form.Control
-                                type="number"
-                                min="0"
-                                placeholder="No of Pages"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setnoofpage(e.target.value)}
+                                    />
 
-                            />
+                                    {errorFlag && !brandname && (<p style={{ color: 'red', marginTop: '10px' }} >{'Brand Name is Required'}</p>)}
 
-{errorFlag && !noofpage  && (<p style={{color:'red',marginTop:'10px'}} >{'No of Pages is Required'}</p>) }
+                                </Form.Group>
 
-                        </Form.Group>
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Author Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Author Name"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setLname2)}
+                                        onChange={(e) => SetAuthorName(e.target.value)}
+                                    />
+                                    {errorFlag && !authorName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Author Name is Required'}</p>)}
+                                </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>sku</Form.Label>
-                            <Form.Control
-                                type="number"
-                                min="0"
-                                placeholder="Sku"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setsku(e.target.value)}
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Price</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        min="0"
+                                        placeholder="Price"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setLname2)}
+                                        onChange={(e) => Setprice(e.target.value)}
 
-                            />
 
-{errorFlag && !sku  && (<p style={{color:'red',marginTop:'10px'}} >{'Sku is Required'}</p>) }
+                                    />
+                                    {errorFlag && !price && (<p style={{ color: 'red', marginTop: '10px' }} >{'Price is Required'}</p>)}
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Quantity</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        min="0"
+                                        placeholder="Quantity"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setLname2)}
+                                        onChange={(e) => SetQuantity(e.target.value)}
 
-                        </Form.Group>
-                        {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Description"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setlongdescription(e.target.value)}
-                                
-                            />
+                                    />
 
-                        </Form.Group> */}
-                           
-                           <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                            <Form.Label>Dimension</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                placeholder="Dimension"
-                                rows="6" cols="50"
-                                autoFocus
-                                onChange={(e) => Setdimension(e.target.value)}
-                            />
+                                    {errorFlag && !Quantity && (<p style={{ color: 'red', marginTop: '10px' }} >{'Quantity is Required'}</p>)}
+                                </Form.Group>
 
-{errorFlag && !dimension  && (<p style={{color:'red',marginTop:'10px'}} >{'Dimension is Required'}</p>) }
-                        </Form.Group>
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>No of pages</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        min="0"
+                                        placeholder="No of Pages"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setLname2)}
+                                        onChange={(e) => Setnoofpage(e.target.value)}
 
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                placeholder="Description"
-                                rows="6" cols="50"
-                                autoFocus
-                                onChange={(e) => Setlongdescription(e.target.value)}
-                            />
+                                    />
 
-{errorFlag && !longdescription  && (<p style={{color:'red',marginTop:'10px'}} >{'Description is Required'}</p>) }
-                        </Form.Group>
+                                    {errorFlag && !noofpage && (<p style={{ color: 'red', marginTop: '10px' }} >{'No of Pages is Required'}</p>)}
 
-                        {/* <div className="col-md-12 col-sm-6">
-                                <div className="form-group"> */}
-                        {/* <TextField id="standard-basic" label="Description" variant="outlined"
-                                        fullWidth
-                                        multiline
-                                        defaultValue={Description}
-                                        value={Description} onChange={(e) => {
-                                            Description(e.target.value)
-                                        }} /> */}
-                        {/* <Editor
-                                        editorState={editorState}
-                                        onEditorStateChange={handleEditorChange}
-                                        wrapperClassName="wrapper-class"
-                                        editorClassName="editor-class"
-                                        toolbarClassName="toolbar-class"
-                                        editorStyle={{
-                                            border: "1px solid #F0F0F0",
-                                            padding: 15,
-                                            minHeight: 350,
+                                </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>sku</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        min="0"
+                                        placeholder="Sku"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setLname2)}
+                                        onChange={(e) => Setsku(e.target.value)}
+
+                                    />
+
+                                    {errorFlag && !sku && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sku is Required'}</p>)}
+
+                                </Form.Group>
+                                {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+    <Form.Label>Description</Form.Label>
+    <Form.Control
+        type="text"
+        placeholder="Description"
+        autoFocus
+        // onChange={(e) => handleEdited(e, setLname2)}
+        onChange={(e) => Setlongdescription(e.target.value)}
+        
+    />
+
+</Form.Group> */}
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                                    <Form.Label>Dimension</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        placeholder="Dimension"
+                                        rows="6" cols="50"
+                                        autoFocus
+                                        onChange={(e) => Setdimension(e.target.value)}
+                                    />
+
+                                    {errorFlag && !dimension && (<p style={{ color: 'red', marginTop: '10px' }} >{'Dimension is Required'}</p>)}
+                                </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                                    <Form.Label>Description</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        placeholder="Description"
+                                        rows="6" cols="50"
+                                        autoFocus
+                                        onChange={(e) => Setlongdescription(e.target.value)}
+                                    />
+
+                                    {errorFlag && !longdescription && (<p style={{ color: 'red', marginTop: '10px' }} >{'Description is Required'}</p>)}
+                                </Form.Group>
+
+                                {/* <div className="col-md-12 col-sm-6">
+        <div className="form-group"> */}
+                                {/* <TextField id="standard-basic" label="Description" variant="outlined"
+                fullWidth
+                multiline
+                defaultValue={Description}
+                value={Description} onChange={(e) => {
+                    Description(e.target.value)
+                }} /> */}
+                                {/* <Editor
+                editorState={editorState}
+                onEditorStateChange={handleEditorChange}
+                wrapperClassName="wrapper-class"
+                editorClassName="editor-class"
+                toolbarClassName="toolbar-class"
+                editorStyle={{
+                    border: "1px solid #F0F0F0",
+                    padding: 15,
+                    minHeight: 350,
+                }}
+            /> */}
+                                {/* <div className="preview" dangerouslySetInnerHTML={createMarkup(convertedContent)}></div> */}
+
+                                {/* </div>
+    </div> */}
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Product Type</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Product Type"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setLname2)}
+                                        onChange={(e) => SetProductType(e.target.value)}
+
+                                    />
+
+                                    {errorFlag && !ProductType && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Category ID</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        value={CategoryName}
+                                        onChange={e => {
+                                            console.log("e.target.value", e.target.value);
+                                            setCategoryName(e.target.value);
                                         }}
-                                    /> */}
-                        {/* <div className="preview" dangerouslySetInnerHTML={createMarkup(convertedContent)}></div> */}
-
-                        {/* </div>
-                            </div> */}
-
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Product Type</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Product Type"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => SetProductType(e.target.value)}
-
-                            />
-
-{errorFlag && !ProductType  && (<p style={{color:'red',marginTop:'10px'}} >{'Product Type is Required'}</p>) }
-
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Category ID</Form.Label>
-                            <Form.Control
-                                as="select"
-                                value={CategoryName}
-                                onChange={e => {
-                                    console.log("e.target.value", e.target.value);
-                                    setCategoryName(e.target.value);
-                                }}
-                            // value={categoryid}
-                            >
-                                <option value="selectcatgory">Select Catogary</option>
-                                {
-                                    CategoryDropdown?.map((a) => {
-                                        // console.log("safdar",a.name)
-                                        return (
-                                            <>
-                                                <option value={a._id}>{a.title}</option>
-                                            </>
-                                        )
-                                    })
-                                }
-
-
-                            </Form.Control>
-                            {errorFlag && !CategoryName  && (<p style={{color:'red',marginTop:'10px'}} >{'Product Type is Required'}</p>) }
-
-                        </Form.Group>
-
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Sub Category ID</Form.Label>
-                            <Form.Control
-                                as="select"
-                                value={CategoryName2}
-                                onChange={e => {
-                                    console.log("e.target.value", e.target.value);
-                                    setCategoryName2(e.target.value);
-                                }}
-                            // value={categoryid}
-                            >
-                                <option value="selectcatgory">Select Sub Catogary</option>
-                                {
-                                    filterSubcategoryData[0]?.subcategories?.map((a) => {
-                                        // console.log("safdar",a.name)
-                                        return (
-                                            <>
-                                                <option value={a._id}>{a.title}</option>
-                                            </>
-                                        )
-                                    })
-                                }
-
-
-                            </Form.Control>
-                            {errorFlag && !CategoryName2  && (<p style={{color:'red',marginTop:'10px'}} >{'Product Type is Required'}</p>) }
-
-                        </Form.Group>
-
-                          {/* Language Dropdown */}
-        <Form.Group className="mb-3" controlId="languageDropdown">
-          <Form.Label>Language</Form.Label>
-          <Form.Control
-            as="select"
-            value={selectedLanguage} // replace with your state variable for language
-            onChange={e => setSelectedLanguage(e.target.value)} // replace with your handler for language selection
-          >
-            <option value="">Select Language --</option>
-            {
-              languagedropdwon.map((language, index) => (
-                <option key={index} value={language.value}>
-                  {language.label}
-                </option>
-              ))
-            }
-          </Form.Control>
-          {errorFlag && !selectedLanguage && (
-            <p style={{color: 'red', marginTop: '10px'}}>
-              {'Language is Required'}
-            </p>
-          )}
-        </Form.Group>
-
-        {/* Existing form fields */}
-
-
-                        <div className="row">
-
-                            <div className='col-md-12 mb-2' >
-                                <DropzoneArea
-                                    acceptedFiles={['image/*']}
-                                    filesLimit={5}
-                                    showAlerts={false}
-                                    // initialFiles={imagelist &&imagelist}
-                                    onDelete={handleDelete}
-                                    onChange={
-                                        (files) => {
-                                            console.log('Files:', files)
-                                            Setimagelist(files)
+                                    // value={categoryid}
+                                    >
+                                        <option value="selectcatgory">Select Catogary</option>
+                                        {
+                                            CategoryDropdown?.map((a) => {
+                                                // console.log("safdar",a.name)
+                                                return (
+                                                    <>
+                                                        <option value={a._id}>{a.title}</option>
+                                                    </>
+                                                )
+                                            })
                                         }
-                                    }
-                                />
-
-{errorFlag && !imagelist.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Image are Required'}</p>) }
-
-                            </div>
-                        </div>
 
 
-                    </Form>
+                                    </Form.Control>
+                                    {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+
+                                </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Sub Category ID</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        value={CategoryName2}
+                                        onChange={e => {
+                                            console.log("e.target.value", e.target.value);
+                                            setCategoryName2(e.target.value);
+                                        }}
+                                    // value={categoryid}
+                                    >
+                                        <option value="selectcatgory">Select Sub Catogary</option>
+                                        {
+                                            filterSubcategoryData[0]?.subcategories?.map((a) => {
+                                                // console.log("safdar",a.name)
+                                                return (
+                                                    <>
+                                                        <option value={a._id}>{a.title}</option>
+                                                    </>
+                                                )
+                                            })
+                                        }
+
+
+                                    </Form.Control>
+                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+
+                                </Form.Group>
+
+                                {/* Language Dropdown */}
+                                <Form.Group className="mb-3" controlId="languageDropdown">
+                                    <Form.Label>Language</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        value={selectedLanguage} // replace with your state variable for language
+                                        onChange={e => setSelectedLanguage(e.target.value)} // replace with your handler for language selection
+                                    >
+                                        <option value="">Select Language --</option>
+                                        {
+                                            languagedropdwon.map((language, index) => (
+                                                <option key={index} value={language.value}>
+                                                    {language.label}
+                                                </option>
+                                            ))
+                                        }
+                                    </Form.Control>
+                                    {errorFlag && !selectedLanguage && (
+                                        <p style={{ color: 'red', marginTop: '10px' }}>
+                                            {'Language is Required'}
+                                        </p>
+                                    )}
+                                </Form.Group>
+
+                                {/* Existing form fields */}
+
+
+                                <div className="row">
+
+                                    <div className='col-md-12 mb-2' >
+                                        <DropzoneArea
+                                            acceptedFiles={['image/*']}
+                                            filesLimit={5}
+                                            showAlerts={false}
+                                            // initialFiles={imagelist &&imagelist}
+                                            onDelete={handleDelete}
+                                            onChange={
+                                                (files) => {
+                                                    console.log('Files:', files)
+                                                    Setimagelist(files)
+                                                }
+                                            }
+                                        />
+
+                                        {errorFlag && !imagelist.length > 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Image are Required'}</p>)}
+
+                                    </div>
+                                </div>
+
+
+                            </Form>
+                        </Tab>
+
+                        {/* Second Tab: Others */}
+                        <Tab eventKey="others" title="Others">
+                            <Form onSubmit={(e) => e.preventDefault()}>
+                                <Form.Group className="mb-3" controlId="otherField1">
+                                    <Form.Label>Field 1</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter Field 1 Value"
+                                        onChange={(e) => setOtherField1(e.target.value)}
+                                    />
+                                    {errorFlag && !otherField1 && (
+                                        <p style={{ color: 'red', marginTop: '10px' }}>{'Field 1 is Required'}</p>
+                                    )}
+                                </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="otherField2">
+                                    <Form.Label>Field 2</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter Field 2 Value"
+                                        onChange={(e) => setOtherField2(e.target.value)}
+                                    />
+                                    {errorFlag && !otherField2 && (
+                                        <p style={{ color: 'red', marginTop: '10px' }}>{'Field 2 is Required'}</p>
+                                    )}
+                                </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="otherField3">
+                                    <Form.Label>Field 3</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Enter Field 3 Value"
+                                        onChange={(e) => setOtherField3(e.target.value)}
+                                    />
+                                    {errorFlag && !otherField3 && (
+                                        <p style={{ color: 'red', marginTop: '10px' }}>{'Field 3 is Required'}</p>
+                                    )}
+                                </Form.Group>
+                            </Form>
+                        </Tab>
+                    </Tabs>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
@@ -1557,8 +1611,8 @@ const ProductTable = () => {
                                 onChange={(e) => Setname(e.target.value)}
                                 value={name}
                             />
-                               {errorFlag && !name  && (<p style={{color:'red',marginTop:'10px'}} >{'Name is Required'}</p>) }
-                    
+                            {errorFlag && !name && (<p style={{ color: 'red', marginTop: '10px' }} >{'Name is Required'}</p>)}
+
                         </Form.Group>
 
 
@@ -1573,7 +1627,7 @@ const ProductTable = () => {
                                 onChange={(e) => Setbrandname(e.target.value)}
                                 value={brandname}
                             />
-   {errorFlag && !brandname  && (<p style={{color:'red',marginTop:'10px'}} >{'Brand Name is Required'}</p>) }
+                            {errorFlag && !brandname && (<p style={{ color: 'red', marginTop: '10px' }} >{'Brand Name is Required'}</p>)}
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1586,7 +1640,7 @@ const ProductTable = () => {
                                 onChange={(e) => SetAuthorName(e.target.value)}
                                 value={authorName}
                             />
-   {errorFlag && !authorName  && (<p style={{color:'red',marginTop:'10px'}} >{'Author Name is Required'}</p>) }
+                            {errorFlag && !authorName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Author Name is Required'}</p>)}
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1601,7 +1655,7 @@ const ProductTable = () => {
                                 value={price}
 
                             />
-{errorFlag && !price  && (<p style={{color:'red',marginTop:'10px'}} >{'Price is Required'}</p>) }
+                            {errorFlag && !price && (<p style={{ color: 'red', marginTop: '10px' }} >{'Price is Required'}</p>)}
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1616,7 +1670,7 @@ const ProductTable = () => {
                                 value={Quantity}
 
                             />
-{errorFlag && !Quantity  && (<p style={{color:'red',marginTop:'10px'}} >{'Quantity is Required'}</p>) }
+                            {errorFlag && !Quantity && (<p style={{ color: 'red', marginTop: '10px' }} >{'Quantity is Required'}</p>)}
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>No of Page</Form.Label>
@@ -1629,7 +1683,7 @@ const ProductTable = () => {
                                 onChange={(e) => Setnoofpage(e.target.value)}
                                 value={noofpage}
                             />
-{errorFlag && !noofpage  && (<p style={{color:'red',marginTop:'10px'}} >{'No of Pages is Required'}</p>) }
+                            {errorFlag && !noofpage && (<p style={{ color: 'red', marginTop: '10px' }} >{'No of Pages is Required'}</p>)}
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1643,7 +1697,7 @@ const ProductTable = () => {
                                 onChange={(e) => Setsku(e.target.value)}
                                 value={sku}
                             />
-{errorFlag && !sku  && (<p style={{color:'red',marginTop:'10px'}} >{'Sku is Required'}</p>) }
+                            {errorFlag && !sku && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sku is Required'}</p>)}
                         </Form.Group>
                         {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Description</Form.Label>
@@ -1660,15 +1714,15 @@ const ProductTable = () => {
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Dimension</Form.Label>
                             <Form.Control
-                                 type="text"
+                                type="text"
                                 placeholder="Dimension"
                                 autoFocus
                                 onChange={(e) => Setdimension(e.target.value)}
                                 value={dimension}
                             />
 
-{errorFlag && !dimension  && (<p style={{color:'red',marginTop:'10px'}} >{'Dimension is Required'}</p>) }
-</Form.Group>
+                            {errorFlag && !dimension && (<p style={{ color: 'red', marginTop: '10px' }} >{'Dimension is Required'}</p>)}
+                        </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Description</Form.Label>
                             <Form.Control
@@ -1679,7 +1733,7 @@ const ProductTable = () => {
                                 onChange={(e) => Setlongdescription(e.target.value)}
                                 value={longdescription}
                             />
-                            {errorFlag && !longdescription  && (<p style={{color:'red',marginTop:'10px'}} >{'Description is Required'}</p>) }
+                            {errorFlag && !longdescription && (<p style={{ color: 'red', marginTop: '10px' }} >{'Description is Required'}</p>)}
                         </Form.Group>
 
 
@@ -1720,7 +1774,7 @@ const ProductTable = () => {
                                 onChange={(e) => SetProductType(e.target.value)}
                                 value={ProductType}
                             />
-      {errorFlag && !ProductType  && (<p style={{color:'red',marginTop:'10px'}} >{'Product Type is Required'}</p>) }
+                            {errorFlag && !ProductType && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Category ID</Form.Label>
@@ -1742,11 +1796,11 @@ const ProductTable = () => {
                                         )
                                     })
                                 }
-                              
-                            </Form.Control>
-                            {errorFlag && !CategoryName  && (<p style={{color:'red',marginTop:'10px'}} >{'Category is Required'}</p>) }
 
-                            
+                            </Form.Control>
+                            {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Category is Required'}</p>)}
+
+
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -1769,38 +1823,38 @@ const ProductTable = () => {
                                         )
                                     })
                                 }
-                              
+
                             </Form.Control>
-                            {errorFlag && !CategoryName2  && (<p style={{color:'red',marginTop:'10px'}} >{'Category is Required'}</p>) }
+                            {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Category is Required'}</p>)}
 
-                            
+
                         </Form.Group>
-                           
-                             {/* Language Dropdown */}
-        <Form.Group className="mb-3" controlId="languageDropdown">
-          <Form.Label>Language</Form.Label>
-          <Form.Control
-            as="select"
-            value={selectedLanguage} // replace with your state variable for language
-            onChange={e => setSelectedLanguage(e.target.value)} // replace with your handler for language selection
-          >
-            <option value="">Select Language --</option>
-            {
-              languagedropdwon?.map((language, index) => (
-                <option key={index} value={language.value}>
-                  {language.label}
-                </option>
-              ))
-            }
-          </Form.Control>
-          {errorFlag && !selectedLanguage && (
-            <p style={{color: 'red', marginTop: '10px'}}>
-              {'Language is Required'}
-            </p>
-          )}
-        </Form.Group>
 
-        {/* Existing form fields */}
+                        {/* Language Dropdown */}
+                        <Form.Group className="mb-3" controlId="languageDropdown">
+                            <Form.Label>Language</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={selectedLanguage} // replace with your state variable for language
+                                onChange={e => setSelectedLanguage(e.target.value)} // replace with your handler for language selection
+                            >
+                                <option value="">Select Language --</option>
+                                {
+                                    languagedropdwon?.map((language, index) => (
+                                        <option key={index} value={language.value}>
+                                            {language.label}
+                                        </option>
+                                    ))
+                                }
+                            </Form.Control>
+                            {errorFlag && !selectedLanguage && (
+                                <p style={{ color: 'red', marginTop: '10px' }}>
+                                    {'Language is Required'}
+                                </p>
+                            )}
+                        </Form.Group>
+
+                        {/* Existing form fields */}
 
                         <div className="row">
                             {
@@ -1823,7 +1877,7 @@ const ProductTable = () => {
                                     </div>)}
 
 
-                                    {errorFlag && !imagelist.length > 0  && (<p style={{color:'red',marginTop:'10px'}} >{'Image are Required'}</p>) }
+                            {errorFlag && !imagelist.length > 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Image are Required'}</p>)}
 
                         </div>
 
@@ -1860,34 +1914,34 @@ const ProductTable = () => {
 
                     {/* {ImageLoader == 'true' ? <Loader fullPage loading /> : null  } */}
                     {ImageLoader ?
-                     (<Loader fullPage loading />):(
-                        <div className="row">
-                        {
-        ViewimagelistData?.media?.length > 0 ? (
-            ViewimagelistData.media.map((item, itemIndex) => (
-                <div className='col-md-6' key={itemIndex}>
-                    <img
-                        style={{ marginBottom: 20 }}
-                        width={200}
-                        height={200}
-                        src={Baseurl.baseUrl + item?.file}
-                        alt="Image not found" // Optional: Add an alt attribute for accessibility
-                        onError={(e) => { e.target.src = '/path-to-placeholder.png'; }} // Fallback image on error
-                    />
-                </div>
-            ))
-        ) : (
-            <div className="col-12">
-                <p>No images found for this entry.</p>
-            </div>
-        )
-    }
-    
-    
-                       
-    
-    
-                            {/* {
+                        (<Loader fullPage loading />) : (
+                            <div className="row">
+                                {
+                                    ViewimagelistData?.media?.length > 0 ? (
+                                        ViewimagelistData.media.map((item, itemIndex) => (
+                                            <div className='col-md-6' key={itemIndex}>
+                                                <img
+                                                    style={{ marginBottom: 20 }}
+                                                    width={200}
+                                                    height={200}
+                                                    src={Baseurl.baseUrl + item?.file}
+                                                    alt="Image not found" // Optional: Add an alt attribute for accessibility
+                                                    onError={(e) => { e.target.src = '/path-to-placeholder.png'; }} // Fallback image on error
+                                                />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="col-12">
+                                            <p>No images found for this entry.</p>
+                                        </div>
+                                    )
+                                }
+
+
+
+
+
+                                {/* {
     
                                 ViewimagelistData?.map((result, key) => {
     
@@ -1905,9 +1959,9 @@ const ProductTable = () => {
                             }
     
     } */}
-                            
-    
-                            {/* 
+
+
+                                {/* 
                             // {
     
                             //     ViewimagelistData?.map((result, key) => {
@@ -1925,8 +1979,8 @@ const ProductTable = () => {
                             //     })
                             // }
                              */}
-    
-                            {/* {ViewimagelistData?.map((result, resultIndex) => {
+
+                                {/* {ViewimagelistData?.map((result, resultIndex) => {
                                 return result?.media.length > 0 ? (
                                     result?.media.map((item, itemIndex) => (
                                         <div className='col-md-6' key={`${resultIndex}-${itemIndex}`}>
@@ -1946,11 +2000,11 @@ const ProductTable = () => {
                                     </div>
                                 );
                             })} */}
-    
-    
-    
-    
-                            {/* <div className="col-md-12 image-holder">
+
+
+
+
+                                {/* <div className="col-md-12 image-holder">
                                 <div className="panel panel-default">
                                     <div className="panel-body">
                                         <a
@@ -1971,13 +2025,13 @@ const ProductTable = () => {
                                 </div>
                             </div>
                             <section></section> */}
-                        </div>
-                     )
-                    
-                     }
-                    
+                            </div>
+                        )
 
-                   
+                    }
+
+
+
 
 
                     {/* <Form>

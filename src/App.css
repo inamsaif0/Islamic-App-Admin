@@ -32,6 +32,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -56,8 +57,18 @@ body.vertical-layout.vertical-menu-modern.menu-collapsed .main-menu {
   width: 168px;
   height: 46px;
 }
-.header-navbar .navbar-header .navbar-brand {
-  padding: 12px 22px;
+
+.navbar-brand {
+  /* height: 55px !important; */
+  /* border: 1px solid red !important; */
+}
+
+.navbar-brand {
+  /* border: 1px solid white !important; */
+}
+
+.header-navbar .navbar-header {
+  /* padding: 12px 22px; */
 }
 
 
@@ -84,9 +95,8 @@ form.form-horizontal .form-group .label-control {
   border-radius: 0;
 }
 
-.flexlist{
+.flexlist {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap
 }
-

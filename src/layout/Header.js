@@ -3,7 +3,7 @@ import { FaBeer } from 'react-icons/fa';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import {
 
-    Link,useNavigate
+    Link, useNavigate
 } from "react-router-dom";
 import { navbartoggle } from "../Redux/Action/ActionFunction";
 
@@ -38,45 +38,44 @@ const Header = () => {
     const [Togglebtn, setTogglebtn] = useState(false)
 
     // const [Togglemobile, setTogglemobile] = useState(false)
-    const [Toglemobile,setToglemobile] = useState(false)
+    const [Toglemobile, setToglemobile] = useState(false)
 
 
     const [Profilebtn, setProfilebtn] = useState(false)
 
-    const[ProfileImage,SetProfileImage]=useState(null)
+    const [ProfileImage, SetProfileImage] = useState(null)
 
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const Navigate=useNavigate()
+    const Navigate = useNavigate()
 
-    const [Name,SetName] =useState('')
+    const [Name, SetName] = useState('')
 
     const Token = localStorage.getItem("AdminToken")
 
-    const UserRole =localStorage.getItem("role")
+    const UserRole = localStorage.getItem("role")
     // useEffect get api of admin
 
     // useEffect(()=>{
-       
+
     //     // AdminDatafunction()
-         
+
     // },[])
 
-    
-    useEffect(()=>{
 
-        if(Token === null)
-        {
-          Navigate('/')
+    useEffect(() => {
+
+        if (Token === null) {
+            Navigate('/')
         }
-    
-      },[])
+
+    }, [])
 
     // const AdminDatafunction = () => {
-      
+
     //     var requestOptions = {
     //         method: 'GET',
     //         headers: {
@@ -100,7 +99,7 @@ const Header = () => {
     //         .catch(error => console.log('error', error));
     // }
 
-    
+
 
     const myopenfunction = () => {
 
@@ -151,7 +150,7 @@ const Header = () => {
 
     const [isHovering2, setIsHovering2] = useState(false);
 
-    
+
     const handleMouseOver = () => {
         setIsHovering(true);
     };
@@ -254,7 +253,7 @@ const Header = () => {
 
     window.addEventListener("resize", function () {
         if (window.matchMedia("(max-width: 700px)").matches) {
-        // if (window.matchMedia("(max-width: 768px)").matches) {
+            // if (window.matchMedia("(max-width: 768px)").matches) {
             // let bdy = document.getElementsByTagName("BODY")[0];
             // console.log("Screen width is at least 761px",bdy.classList)
             document.body.classList.add(
@@ -302,12 +301,11 @@ const Header = () => {
         Navigate("/");
     }
 
-    const togglebtnfun = () =>{
+    const togglebtnfun = () => {
         // setToglesmall(!Toglesmall)
         setToglemobile(!Toglemobile)
 
-        if(Toglemobile == false)
-        {
+        if (Toglemobile == false) {
             // document.body.classList.add(
             //     "menu-hide"
 
@@ -317,49 +315,49 @@ const Header = () => {
             //     "menu-open"
 
             //     )
-            
+
             document.body.classList.add(
 
-                
+
                 // "vertical-layout", "2-columns", "fixed-navbar", "vertical-overlay-menu", "pace-done", "menu-hide"
                 "vertical-layout", "2-columns", "fixed-navbar", "vertical-overlay-menu", "pace-done", "menu-hide"
 
                 // vertical-layout 2-columns fixed-navbar  menu-hide vertical-overlay-menu pace-done
 
-                
+
 
             );
 
 
             document.body.classList.remove(
 
-                
+
                 // vertical-layout vertical-menu-modern 2-columns fixed-navbar pace-done menu-expanded
                 //  "vertical-menu-modern"  , "menu-expanded" ,"menu-open",
-                 "vertical-menu-modern" 
-                   ,"menu-open",
+                "vertical-menu-modern"
+                , "menu-open",
             );
 
 
         }
-        else{
+        else {
 
             document.body.classList.add(
                 "menu-open",
                 // "vertical-overlay-menu"
-                
+
 
             )
 
             document.body.classList.remove(
                 "menu-hide",
                 // "menu-expanded"
-                
 
-                )
+
+            )
 
         }
-    //    open
+        //    open
         // vertical-layout 2-columns fixed-navbar vertical-overlay-menu pace-done menu-open
 
         // close
@@ -376,29 +374,29 @@ const Header = () => {
                 <div className="navbar-wrapper">
                     {/* working */}
                     <div className="navbar-header " >
-                    {/* <div className={isHovering ? 'navbar-header expanded  ' : 'navbar-header '}
+                        {/* <div className={isHovering ? 'navbar-header expanded  ' : 'navbar-header '}
                         onMouseOver={handleMouseOver}
                         onMouseOut={handleMouseOut}
                     > */}
-                        <ul className="nav navbar-nav flex-row">
+                        <ul className="nav navbar-nav flex-row  ">
                             <li className="nav-item mobile-menu d-md-none mr-auto">
                                 <a onClick={togglebtnfun} className="nav-link nav-menu-main menu-toggle hidden-xs" href="#">
                                     <i className="ft-menu font-large-1" />
                                 </a>
                             </li>
-                            <li className="nav-item mr-auto">
+                            <li className="nav-item p-0 mx-auto">
                                 <Link to={"/dashboard"} >
-                                <a className="navbar-brand" >
-                                    {/* <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/logo/logo.png" /> */}
-                                    {/* yeh  */}
-                                    <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/portrait/small/adminprofile.jpeg" />
-                                    {/* <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/logo/Pyurelywhite-01.png" /> */}
+                                    <a className="navbar-brand " >
+                                        {/* <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/logo/logo.png" /> */}
+                                        {/* yeh  */}
+                                        <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/portrait/small/adminprofile.jpeg" style={{ height: "60px" }} />
+                                        {/* <img className="brand-logo" alt="modern admin logo" src="../../../app-assets/images/logo/Pyurelywhite-01.png" /> */}
 
 
-                                    {/* public\app-assets\images\logo\Pyurely-01.jpg */}
-                                    
-                                    {/* <h3 className="brand-text">Pyurely</h3> */}
-                                </a>
+                                        {/* public\app-assets\images\logo\Pyurely-01.jpg */}
+
+                                        {/* <h3 className="brand-text">Pyurely</h3> */}
+                                    </a>
                                 </Link>
                             </li>
                             {/*  */}
@@ -412,9 +410,9 @@ const Header = () => {
                             </li> */}
                         </ul>
                     </div>
-                    <div className="navbar-container content">
-                        <div className="collapse navbar-collapse" id="navbar-mobile">
-                            <ul className="nav navbar-nav mr-auto float-left">
+                    <div className="navbar-container content ">
+                        <div className="collapse navbar-collapse " id="navbar-mobile">
+                            <ul className="nav navbar-nav mr-auto float-left ">
                                 {/* <li className="nav-item d-none d-md-block"><a className="nav-link nav-link-expand" href="#"><i className="ficon ft-maximize" /></a></li>
                                 <li className="dropdown nav-item mega-dropdown"><a className="dropdown-toggle nav-link" href="#" data-toggle="dropdown">Mega</a>
                                     <ul className="mega-dropdown-menu dropdown-menu row">
@@ -550,19 +548,19 @@ const Header = () => {
                                         </span>
                                         <span className="avatar avatar-online">
                                             {/* <img src="../../../app-assets/images/portrait/small/avatar-s-19.png" alt="avatar" /><i /></span> */}
-                                            <img src={ProfileImage == null ? "../../../app-assets/images/portrait/small/avatar-s-19.png" : Baseurl.imgUrl + ProfileImage } alt="avatar" /><i /></span>
+                                            <img src={ProfileImage == null ? "../../../app-assets/images/portrait/small/avatar-s-19.png" : Baseurl.imgUrl + ProfileImage} alt="avatar" /><i /></span>
 
-                                            
+
                                     </a>
                                     <div className={Profilebtn ? "dropdown-menu dropdown-menu-right show" : "dropdown-menu dropdown-menu-right"}>
-                                    {/* <Link to={"/profile"} > */}
-                                    <Link to={"#"} >
-                                    <a className="dropdown-item" ><i className="ft-user" /> Edit Profile</a>
-                                    </Link>  
-                                     
-                                     
+                                        {/* <Link to={"/profile"} > */}
+                                        <Link to={"#"} >
+                                            <a className="dropdown-item" ><i className="ft-user" /> Edit Profile</a>
+                                        </Link>
+
+
                                         {/* <a className="dropdown-item " onClick={handleShow} ><i className="ft-user" /> Change Password</a> */}
-                                     
+
                                         {/* <a className="dropdown-item" href="#"><i className="ft-check-square" /> Task</a>
                                         <a className="dropdown-item" href="#"><i className="ft-message-square" /> Chats</a> */}
                                         <div className="dropdown-divider" /><a className="dropdown-item" onClick={logout}><i className="ft-power" /> Logout</a>
@@ -738,7 +736,7 @@ const Header = () => {
 
                 data-scroll-to-active="true">
                 <div className="main-menu-content">
-                    <Scrollbars style={{ maxWidth: 260, height: "90vh" }}>
+                    <Scrollbars style={{ maxWidth: 260, height: "90vh", marginTop: "40px" }}>
                         <ul className="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
                             {/* <li className={mystate ? " nav-item has-sub open " : " nav-item has-sub "}  >
                                 <a onClick={() => dispatch(navbartoggle(!mystate))} >
@@ -760,74 +758,74 @@ const Header = () => {
                             </li> */}
                             <li className=" nav-item">
                                 <Link to={"/dashboard"} >
-                                <a >
-                                    <i className="la la-home" />
-                                
-                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Dashboard</span>
-                                </a>
-                                
+                                    <a >
+                                        <i className="la la-home" />
+
+                                        <span className="menu-title" data-i18n="nav.support_raise_support.main">Dashboard</span>
+                                    </a>
+
                                 </Link>
-                                
+
                             </li>
                             <li className=" nav-item">
                                 <Link to={"/addcategory"} >
-                                <a >
-                                    <i className="la la-tablet" />
-                                
-                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Category</span>
-                                </a>
-                                
+                                    <a >
+                                        <i className="la la-tablet" />
+
+                                        <span className="menu-title" data-i18n="nav.support_raise_support.main">Category</span>
+                                    </a>
+
                                 </Link>
-                                
+
                             </li>
                             <li className=" nav-item">
                                 <Link to={"/addsubcategory"} >
-                                <a >
-                                    <i className="la la-tablet" />
-                                
-                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Sub Category</span>
-                                </a>
-                                
+                                    <a >
+                                        <i className="la la-tablet" />
+
+                                        <span className="menu-title" data-i18n="nav.support_raise_support.main">Sub Category</span>
+                                    </a>
+
                                 </Link>
-                                
+
                             </li>
                             <li className=" nav-item">
                                 <Link to={"/addproduct"} >
-                                <a >
-                                    <i className="la la-upload" />
-                                
-                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Product</span>
-                                </a>
-                                
+                                    <a >
+                                        <i className="la la-upload" />
+
+                                        <span className="menu-title" data-i18n="nav.support_raise_support.main">Product</span>
+                                    </a>
+
                                 </Link>
-                                
+
                             </li>
                             <li className=" nav-item">
                                 <Link to={"/addpackage"} >
-                                <a >
-                                    <i className="la la-cart-arrow-down" />
-                                
-                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Packages</span>
-                                </a>
-                                
+                                    <a >
+                                        <i className="la la-cart-arrow-down" />
+
+                                        <span className="menu-title" data-i18n="nav.support_raise_support.main">Packages</span>
+                                    </a>
+
                                 </Link>
-                                
+
                             </li>
 
-                           {
-                            UserRole == 'admin' ? ( <li className=" nav-item">
-                                <Link to={"/orders"} >
-                                <a >
-                                    <i className="la la-support" />
-                                
-                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Order</span>
-                                </a>
-                                
-                                </Link>
-                                
-                            </li>) : null
-                           } 
-                           
+                            {
+                                UserRole == 'admin' ? (<li className=" nav-item">
+                                    <Link to={"/orders"} >
+                                        <a >
+                                            <i className="la la-support" />
+
+                                            <span className="menu-title" data-i18n="nav.support_raise_support.main">Order</span>
+                                        </a>
+
+                                    </Link>
+
+                                </li>) : null
+                            }
+
                             {/* <li className=" nav-item">
                                 <Link to={"/addcustomer"} >
                                 <a >
@@ -851,24 +849,24 @@ const Header = () => {
                                 
                             </li> */}
                             <li className=" nav-item">
-                                
-                                <a  onClick={logout} >
+
+                                <a onClick={logout} >
                                     <i className="ft-power" />
-                                
-                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Logout</span>
+
+                                    <span className="menu-title" data-i18n="nav.support_raise_support.main">Logout</span>
                                 </a>
-                                
-                                
-                                
+
+
+
                             </li>
-                       
+
                         </ul>
                     </Scrollbars>
                 </div>
             </div>
 
             {/* change password modal */}
-            
+
             {/* modal*/}
             <Modal show={show} onHide={handleClose}>
                 {/* <Modal.Header closeButton>
@@ -879,7 +877,7 @@ const Header = () => {
                     {/* <i className='fa fa-close'>baloch</i>
                     <AiFillCloseCircle fontSize={20} /> */}
                     <Modal.Title>Change Password </Modal.Title>
-                    <AiFillCloseCircle onClick={handleClose} style={{marginLeft:"160",cursor:"pointer"}} fontSize={40} />
+                    <AiFillCloseCircle onClick={handleClose} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
 
                 </Modal.Header>
                 <Modal.Body>
@@ -892,7 +890,7 @@ const Header = () => {
                                 type="password"
                                 placeholder="Old Password"
                                 autoFocus
-                                // onChange={(e) => handleInputChange(e, setOldPassword)}
+                            // onChange={(e) => handleInputChange(e, setOldPassword)}
                             />
 
                         </Form.Group>
@@ -902,7 +900,7 @@ const Header = () => {
                                 type="password"
                                 placeholder="New Password"
                                 autoFocus
-                                // onChange={(e) => handleInputChange(e, setNewPassword)}
+                            // onChange={(e) => handleInputChange(e, setNewPassword)}
                             />
 
                         </Form.Group>
@@ -912,7 +910,7 @@ const Header = () => {
                                 type="password"
                                 placeholder="Confirm Password"
                                 autoFocus
-                                // onChange={(e) => handleInputChange(e, setConfirmNewPassword)}
+                            // onChange={(e) => handleInputChange(e, setConfirmNewPassword)}
                             />
 
                         </Form.Group>
