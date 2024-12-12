@@ -99,10 +99,9 @@ const ProductTable = () => {
     const [imagelist, Setimagelist] = useState([])
 
     console.log('imagelist', imagelist)
-  // States for Others Tab
-  const [otherField1, setOtherField1] = useState(""); // Field 1 in Others tab
-  const [otherField2, setOtherField2] = useState(""); // Field 2 in Others tab
-  const [otherField3, setOtherField3] = useState(""); // Field 3 in Others tab
+    // States for Others Tab
+
+    const [tabs, setTabs] = useState("productDetails")
 
 
     const [CategoryName, setCategoryName] = useState('')
@@ -253,46 +252,84 @@ const ProductTable = () => {
             }
             );
     }
+    const [imagePreview, setImagePreview] = useState(null);
 
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result); // Set the image preview
+            };
+            reader.readAsDataURL(file); // Read the file as a data URL
+
+
+            console.log('Files:', event.target.files);
+            Setimagelist(event.target.files);
+
+        }
+    };
+    console.log(errorFlag, "else")
+    console.log(name, price, imagelist.length > 0, CategoryName, CategoryName2, Quantity)
+    console.log(name, Quantity)
     const AddProduct = () => {
 
-        if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !selectedLanguage || !dimension || !noofpage || !authorName || !Quantity) {
-            SeterrorFlag(true)
-            return
-        }
-
-        //
-
-
-
         var formdata = new FormData();
-        formdata.append("title", name);
-        formdata.append("brandName", brandname);
+        console.log(tabs)
+        if (tabs === "productDetails") {
+            if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !selectedLanguage || !dimension || !noofpage || !authorName || !Quantity) {
+                SeterrorFlag(true)
+                return
+            }
 
-        formdata.append("price", price);
-        formdata.append("quantity", Quantity);
-        formdata.append("sku", sku);
-        formdata.append("description", longdescription);
-        // formdata.append("description", convertedContent);
+            formdata.append("title", name);
+            formdata.append("brandName", brandname);
 
-
-        formdata.append("productType", ProductType);
-        formdata.append("category", CategoryName);
-        formdata.append("subCategory", CategoryName2);
-        formdata.append("language", selectedLanguage);
-
-        formdata.append("dimension", dimension);
-        formdata.append("author", authorName);
-        formdata.append("noofpages", noofpage);
+            formdata.append("price", price);
+            formdata.append("quantity", Quantity);
+            formdata.append("sku", sku);
+            formdata.append("description", longdescription);
+            // formdata.append("description", convertedContent);
 
 
-        // formdata.append("image", image);
-        for (var i = 0; i < imagelist.length; i++) {
-            formdata.append("media", imagelist[i]);
+            formdata.append("productType", ProductType);
+            formdata.append("category", CategoryName);
+            formdata.append("subCategory", CategoryName2);
+            formdata.append("language", selectedLanguage);
+
+            formdata.append("dimension", dimension);
+            formdata.append("author", authorName);
+            formdata.append("noofpages", noofpage);
+
+
+            // formdata.append("image", image);
+            for (var i = 0; i < imagelist.length; i++) {
+                formdata.append("media", imagelist[i]);
+
+            }
+
+            console.log("value of image list is ", imagelist)
 
         }
+        else {
 
-        console.log("value of image list is ", imagelist)
+            if (!name || !price || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !Quantity) {
+                SeterrorFlag(true)
+                return
+            }
+
+            formdata.append("title", name);
+            formdata.append("price", price);
+            formdata.append("quantity", Quantity);
+            formdata.append("category", CategoryName);
+            formdata.append("subCategory", CategoryName2);
+            // formdata.append("image", image);
+            for (var i = 0; i < imagelist.length; i++) {
+                formdata.append("media", imagelist[i]);
+
+            }
+            console.log("value of image list is ", imagelist)
+        }
 
         var requestOptions = {
             method: 'POST',
@@ -373,12 +410,6 @@ const ProductTable = () => {
             }
 
             );
-
-
-
-
-
-
     }
 
     const UpdateProduct = () => {
@@ -894,45 +925,46 @@ const ProductTable = () => {
             setSelectedLanguage(rowData?.language);
 
             // Fetch media and handle uniqueness
-            const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
-                let ahmed = `${Baseurl.baseUrl}${mediaItem?.file}`
-                console.log('mediaItem==>1', mediaItem)
-                console.log('mediaItem==>2', ahmed)
+            // const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
+            //     let ahmed = `${Baseurl.baseUrl}${mediaItem?.file}`
+            //     console.log('mediaItem==>1', mediaItem)
+            //     console.log('mediaItem==>2', ahmed)
 
-                // const response2 = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
+            //     // const response2 = await fetch(`${Baseurl.baseUrl}${mediaItem.file}`);
 
-                // console.log('mediaItem==>2',response2)
+            //     // console.log('mediaItem==>2',response2)
 
-                const response = await fetch(`${Baseurl.baseUrl}${mediaItem?.file}`, { mode: 'no-cors' });
-                console.log('mediaItem==>response==>', response)
-                const blob = await response.blob();
-                const fileName = mediaItem.file.split('/').pop(); // Use original file name
-                const file = new File([blob], fileName, { type: blob.type });
+            //     const response = await fetch(`${Baseurl.baseUrl}${mediaItem?.file}`, { mode: 'no-cors' });
+            //     console.log('mediaItem==>response==>', response)
+            //     const blob = await response.blob();
+            //     const fileName = mediaItem.file.split('/').pop(); // Use original file name
+            //     const file = new File([blob], fileName, { type: blob.type });
 
-                return { file, id: mediaItem?._id }; // Return file with its ID
-            }));
+            //     return { file, id: mediaItem?._id }; // Return file with its ID
+            // }));
 
-            console.log('existingImages', existingImages);
+            // console.log('existingImages', existingImages);
 
-            // Ensure no duplicate files are added
-            const fileMap = new Map();
-            existingImages.forEach(item => {
-                if (!fileMap.has(item.id)) {
-                    fileMap.set(item.id, item);
-                }
-            });
+            // // Ensure no duplicate files are added
+            // const fileMap = new Map();
+            // existingImages.forEach(item => {
+            //     if (!fileMap.has(item.id)) {
+            //         fileMap.set(item.id, item);
+            //     }
+            // });
 
-            // Extract unique files and their IDs
-            const uniqueImages = Array.from(fileMap.values());
-            const filesArray = uniqueImages.map(item => item.file);
-            Setimagelist(filesArray);
+            // // Extract unique files and their IDs
+            // const uniqueImages = Array.from(fileMap.values());
+            // const filesArray = uniqueImages.map(item => item.file);
+            // console.log(filesArray)
+            setImagePreview(rowData.media.map((mediaItem) => `${Baseurl.baseUrl}${mediaItem.file}`));
 
-            const newImageMap = {};
-            uniqueImages.forEach(item => {
-                newImageMap[item.file.name] = item.id; // Map filename to ID
-            });
+            // const newImageMap = {};
+            // uniqueImages.forEach(item => {
+            //     newImageMap[item.file.name] = item.id; // Map filename to ID
+            // });
 
-            setImageMap(newImageMap);
+            // setImageMap(newImageMap);
             setLoading2(false); // Stop loading when files are set
 
         } catch (error) {
@@ -1088,6 +1120,12 @@ const ProductTable = () => {
 
     // console.log('dropdownSubcategory==>',dropdownSubcategory)
 
+
+
+
+
+
+
     return (
         <>
             {loader == true ?
@@ -1230,13 +1268,18 @@ const ProductTable = () => {
 
                 </Modal.Header>
                 <Modal.Body>
-                    <Tabs defaultActiveKey="productDetails" id="product-modal-tabs" className="mb-3">
+                    <Tabs defaultActiveKey="productDetails" id="product-modal-tabs" className="mb-3"
+                        onSelect={(key) => {
+                            if (key === "productDetails") {
+                                setTabs("productDetails");
+                            } else if (key === "others") {
+                                setTabs("others");
+                            }
+                        }}
+                    >
                         {/* First Tab: Product Details */}
                         <Tab eventKey="productDetails" title="Product Details">
                             <Form onSubmit={(e) => e.preventDefault()}>
-
-
-
                                 <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                     <Form.Label>Title</Form.Label>
                                     <Form.Control
@@ -1250,8 +1293,6 @@ const ProductTable = () => {
 
                                     {errorFlag && !name && (<p style={{ color: 'red', marginTop: '10px' }} >{'Name is Required'}</p>)}
                                 </Form.Group>
-
-
 
                                 <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                     <Form.Label>Brand Name</Form.Label>
@@ -1289,11 +1330,10 @@ const ProductTable = () => {
                                         autoFocus
                                         // onChange={(e) => handleEdited(e, setLname2)}
                                         onChange={(e) => Setprice(e.target.value)}
-
-
                                     />
                                     {errorFlag && !price && (<p style={{ color: 'red', marginTop: '10px' }} >{'Price is Required'}</p>)}
                                 </Form.Group>
+
                                 <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                     <Form.Label>Quantity</Form.Label>
                                     <Form.Control
@@ -1303,7 +1343,6 @@ const ProductTable = () => {
                                         autoFocus
                                         // onChange={(e) => handleEdited(e, setLname2)}
                                         onChange={(e) => SetQuantity(e.target.value)}
-
                                     />
 
                                     {errorFlag && !Quantity && (<p style={{ color: 'red', marginTop: '10px' }} >{'Quantity is Required'}</p>)}
@@ -1430,7 +1469,7 @@ const ProductTable = () => {
                                         }}
                                     // value={categoryid}
                                     >
-                                        <option value="selectcatgory">Select Catogary</option>
+                                        <option value="selectcatgory">Select Category</option>
                                         {
                                             CategoryDropdown?.map((a) => {
                                                 // console.log("safdar",a.name)
@@ -1459,7 +1498,7 @@ const ProductTable = () => {
                                         }}
                                     // value={categoryid}
                                     >
-                                        <option value="selectcatgory">Select Sub Catogary</option>
+                                        <option value="selectcatgory">Select Sub Category</option>
                                         {
                                             filterSubcategoryData[0]?.subcategories?.map((a) => {
                                                 // console.log("safdar",a.name)
@@ -1502,8 +1541,6 @@ const ProductTable = () => {
                                 </Form.Group>
 
                                 {/* Existing form fields */}
-
-
                                 <div className="row">
 
                                     <div className='col-md-12 mb-2' >
@@ -1525,51 +1562,278 @@ const ProductTable = () => {
 
                                     </div>
                                 </div>
-
-
                             </Form>
                         </Tab>
-
                         {/* Second Tab: Others */}
                         <Tab eventKey="others" title="Others">
                             <Form onSubmit={(e) => e.preventDefault()}>
-                                <Form.Group className="mb-3" controlId="otherField1">
-                                    <Form.Label>Field 1</Form.Label>
+                                {/* Name Field */}
+                                <Form.Group className="mb-3" controlId="nameField">
+                                    <Form.Label>Name</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        placeholder="Enter Field 1 Value"
-                                        onChange={(e) => setOtherField1(e.target.value)}
+                                        placeholder="Enter Name"
+                                        onChange={(e) => Setname(e.target.value)}
                                     />
-                                    {errorFlag && !otherField1 && (
-                                        <p style={{ color: 'red', marginTop: '10px' }}>{'Field 1 is Required'}</p>
+                                    {errorFlag && !name && (
+                                        <p style={{ color: 'red', marginTop: '10px' }}>{'Name is Required'}</p>
                                     )}
                                 </Form.Group>
 
-                                <Form.Group className="mb-3" controlId="otherField2">
-                                    <Form.Label>Field 2</Form.Label>
+                                {/* Price Field */}
+                                <Form.Group className="mb-3" controlId="priceField">
+                                    <Form.Label>Price</Form.Label>
                                     <Form.Control
-                                        type="text"
-                                        placeholder="Enter Field 2 Value"
-                                        onChange={(e) => setOtherField2(e.target.value)}
+                                        type="number"
+                                        placeholder="Enter Price"
+                                        onChange={(e) => Setprice(e.target.value)}
                                     />
-                                    {errorFlag && !otherField2 && (
-                                        <p style={{ color: 'red', marginTop: '10px' }}>{'Field 2 is Required'}</p>
+                                    {errorFlag && !price && (
+                                        <p style={{ color: 'red', marginTop: '10px' }}>{'Price is Required'}</p>
                                     )}
                                 </Form.Group>
 
-                                <Form.Group className="mb-3" controlId="otherField3">
-                                    <Form.Label>Field 3</Form.Label>
+                                {/* Quantity Field */}
+                                <Form.Group className="mb-3" controlId="quantityField">
+                                    <Form.Label>Quantity</Form.Label>
                                     <Form.Control
-                                        type="text"
-                                        placeholder="Enter Field 3 Value"
-                                        onChange={(e) => setOtherField3(e.target.value)}
+                                        type="number"
+                                        placeholder="Enter Quantity"
+                                        onChange={(e) => SetQuantity(e.target.value)}
                                     />
-                                    {errorFlag && !otherField3 && (
-                                        <p style={{ color: 'red', marginTop: '10px' }}>{'Field 3 is Required'}</p>
+                                    {errorFlag && !Quantity && (
+                                        <p style={{ color: 'red', marginTop: '10px' }}>{'Quantity is Required'}</p>
                                     )}
                                 </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Category ID</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        value={CategoryName}
+                                        onChange={e => {
+                                            console.log("e.target.value", e.target.value);
+                                            setCategoryName(e.target.value);
+                                        }}
+                                    // value={categoryid}
+                                    >
+                                        <option value="selectcatgory">Select Category</option>
+                                        {
+                                            CategoryDropdown?.map((a) => {
+                                                // console.log("safdar",a.name)
+                                                return (
+                                                    <>
+                                                        <option value={a._id}>{a.title}</option>
+                                                    </>
+                                                )
+                                            })
+                                        }
+
+
+                                    </Form.Control>
+                                    {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+
+                                </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Sub Category ID</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        value={CategoryName2}
+                                        onChange={e => {
+                                            console.log("e.target.value", e.target.value);
+                                            setCategoryName2(e.target.value);
+                                        }}
+                                    // value={categoryid}
+                                    >
+                                        <option value="selectcatgory">Select Sub Category</option>
+                                        {
+                                            filterSubcategoryData[0]?.subcategories?.map((a) => {
+                                                // console.log("safdar",a.name)
+                                                return (
+                                                    <>
+                                                        <option value={a._id}>{a.title}</option>
+                                                    </>
+                                                )
+                                            })
+                                        }
+
+
+                                    </Form.Control>
+                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+
+                                </Form.Group>
+
+                                <div className="row">
+                                    <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
+                                        {/* Image preview shown above the input and label */}
+                                        {/* Image preview shown above the input and label */}
+                                        {imagePreview && (
+                                            <div style={{
+                                                position: "absolute",
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                zIndex: 1, // Lower z-index to place image behind input
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center"
+                                            }}>
+                                                <img
+                                                    src={imagePreview}
+                                                    alt="Preview"
+                                                    style={{
+                                                        maxWidth: "400px",
+                                                        maxHeight: "200px",
+                                                        margin: "10px auto",
+                                                        border: "2px solid #ccc",
+                                                        padding: "10px",
+                                                        backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                        borderRadius: "10px"
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+
+                                        {/* File input and label */}
+                                        <div style={{
+                                            position: "relative",
+                                            zIndex: 2, // Ensure file input and label are above the image preview
+                                        }}>
+                                            <input
+                                                type="file"
+                                                id="cateogryImg"
+                                                style={{
+                                                    display: "none",
+                                                    zIndex: 3, // Ensure the input stays above the image preview
+                                                    position: "absolute", // Position the input field on top
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    top: 0,
+                                                    left: 0,
+                                                    cursor: "pointer",
+                                                }}
+                                                onChange={handleImageChange}
+                                            />
+                                            <label
+                                                htmlFor="cateogryImg"
+                                                style={{
+                                                    // border: "2px solid gray",
+                                                    // height: "40vh",
+                                                    cursor: "pointer",
+                                                    position: "relative",
+                                                    zIndex: 3,
+                                                    display: "flex", // Flexbox for centering
+                                                    alignItems: "center", // Vertically center text
+                                                    justifyContent: "center", // Horizontally center text
+                                                    marginTop: imagePreview ? "10px" : "0px",
+                                                }}
+                                            >
+                                                Drag and drop a file here or click
+                                            </label>
+
+                                        </div>
+                                        {/* Dropzone Area */}
+
+
+                                        {errorFlag && !imagelist.length > 0 && (
+                                            <p style={{ color: 'red', marginTop: '10px' }}>
+                                                {'Image is Required'}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    {/* <DropzoneArea
+                                    acceptedFiles={['image/*']}
+                                    filesLimit={1}
+                                    showAlerts={false}
+                                    onChange={(files) => {
+                                        console.log('Files:', files);
+                                        Setimagelist(files);
+                                    }}
+                                /> */}
+
+                                    {/* <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
+
+                                {imagePreview && (
+                                    <div style={{
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        zIndex: 1, // Lower z-index to place image behind input
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        <img
+                                            src={imagePreview}
+                                            alt="Preview"
+                                            style={{
+                                                maxWidth: "400px",
+                                                maxHeight: "200px",
+                                                margin: "10px auto",
+                                                border: "2px solid #ccc",
+                                                padding: "10px",
+                                                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                borderRadius: "10px"
+                                            }}
+                                        />
+                                    </div>
+                                )}
+
+                                <div style={{
+                                    position: "relative",
+                                    zIndex: 2, // Ensure file input and label are above the image preview
+                                }}>
+                                    <input
+                                        type="file"
+                                        id="cateogryImg"
+                                        style={{
+                                            display: "none",
+                                            zIndex: 3, // Ensure the input stays above the image preview
+                                            position: "absolute", // Position the input field on top
+                                            width: "100%",
+                                            height: "100%",
+                                            top: 0,
+                                            left: 0,
+                                            cursor: "pointer",
+                                        }}
+                                        onChange={handleImageChange}
+                                    />
+                                    <label
+                                        htmlFor="cateogryImg"
+                                        style={{
+                                            border: "2px solid gray",
+                                            height: "40vh",
+                                            cursor: "pointer",
+                                            position: "relative",
+                                            zIndex: 3,
+                                            display: "flex", // Flexbox for centering
+                                            alignItems: "center", // Vertically center text
+                                            justifyContent: "center", // Horizontally center text
+                                            marginTop: imagePreview ? "10px" : "0px",
+                                        }}
+                                    >
+                                        Drag and drop a file here or click
+                                    </label>
+
+                                </div>
+
+                                {errorFlag && !imagelist.length > 0 && (
+                                    <p style={{ color: 'red', marginTop: '10px' }}>
+                                        {'Image is Required'}
+                                    </p>
+                                )}
+                            </div> */}
+                                </div>
+
+
                             </Form>
                         </Tab>
+
                     </Tabs>
                 </Modal.Body>
                 <Modal.Footer>
@@ -1860,7 +2124,86 @@ const ProductTable = () => {
                             {
                                 Loading2 == true ? (<Loader fullPage loading />)
                                     : (<div className='col-md-12 mb-2' >
-                                        <DropzoneArea
+                                        <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
+                                            {/* Image preview shown above the input and label */}
+                                            {/* Image preview shown above the input and label */}
+                                            {imagePreview && (
+                                                <div style={{
+                                                    position: "absolute",
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    bottom: 0,
+                                                    zIndex: 1, // Lower z-index to place image behind input
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "center"
+                                                }}>
+                                                    <img
+                                                        src={imagePreview}
+                                                        alt="Preview"
+                                                        style={{
+                                                            maxWidth: "400px",
+                                                            maxHeight: "200px",
+                                                            margin: "10px auto",
+                                                            border: "2px solid #ccc",
+                                                            padding: "10px",
+                                                            backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                            borderRadius: "10px"
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {/* File input and label */}
+                                            <div style={{
+                                                position: "relative",
+                                                zIndex: 2, // Ensure file input and label are above the image preview
+                                            }}>
+                                                <input
+                                                    type="file"
+                                                    id="cateogryImg"
+                                                    style={{
+                                                        display: "none",
+                                                        zIndex: 3, // Ensure the input stays above the image preview
+                                                        position: "absolute", // Position the input field on top
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        top: 0,
+                                                        left: 0,
+                                                        cursor: "pointer",
+                                                    }}
+                                                    onChange={handleImageChange}
+                                                />
+                                                <label
+                                                    htmlFor="cateogryImg"
+                                                    style={{
+                                                        // border: "2px solid gray",
+                                                        // height: "40vh",
+                                                        cursor: "pointer",
+                                                        position: "relative",
+                                                        zIndex: 3,
+                                                        display: "flex", // Flexbox for centering
+                                                        alignItems: "center", // Vertically center text
+                                                        justifyContent: "center", // Horizontally center text
+                                                        marginTop: imagePreview ? "10px" : "0px",
+                                                    }}
+                                                >
+                                                    Drag and drop a file here or click
+                                                </label>
+
+                                            </div>
+
+
+                                            {errorFlag && !imagelist.length > 0 && (
+                                                <p style={{ color: 'red', marginTop: '10px' }}>
+                                                    {'Image is Required'}
+                                                </p>
+                                            )}
+                                        </div>
+
+
+                                        {/* <DropzoneArea
                                             acceptedFiles={['image/*']}
                                             filesLimit={5}
                                             showAlerts={false}
@@ -1872,7 +2215,7 @@ const ProductTable = () => {
                                                     Setimagelist(files)
                                                 }
                                             }
-                                        />
+                                        /> */}
 
                                     </div>)}
 

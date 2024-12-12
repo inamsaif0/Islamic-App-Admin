@@ -201,6 +201,24 @@ const SubCategoryTable = () => {
             );
     }
 
+    const [imagePreview, setImagePreview] = useState(null);
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result); // Set the image preview
+            };
+            reader.readAsDataURL(file); // Read the file as a data URL
+
+
+            console.log('Files:', event.target.files);
+            Setimagelist(event.target.files);
+
+        }
+    };
+
+
     const addCategory = (e) => {
         e.preventDefault()
 
@@ -503,6 +521,10 @@ const SubCategoryTable = () => {
             // Set initial state
             Settitle(rowData.title);
             setCategoryName(rowData?.category);
+
+            console.log(rowData)
+            console.log(Baseurl.baseUrl + rowData.media.file)
+            setImagePreview(Baseurl?.baseUrl + rowData?.media[0]?.file);
             Edited(rowData._id);
 
             // Fetch media and handle uniqueness
@@ -551,45 +573,45 @@ const SubCategoryTable = () => {
 
     // const handleEdit2 = async (rowData) => {
     //     setLoading2(true); // Start loading
-    
+
     //     try {
     //         // Set initial state
     //         Settitle(rowData.title);
     //         setCategoryName(rowData?.category);
     //         Edited(rowData._id);
-    
+
     //         // Fetch media and handle uniqueness
     //         const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
     //             try {
     //                 const imageUrl = `${Baseurl.baseUrl}${mediaItem?.file}`;
     //                 console.log('Fetching image from URL:', imageUrl);
-    
+
     //                 const response = await fetch(imageUrl);
-    
+
     //                 if (!response.ok) {
     //                     throw new Error(`HTTP error! Status: ${response.status}`);
     //                 }
-    
+
     //                 const blob = await response.blob();
     //                 if (blob.size === 0) {
     //                     throw new Error('Received empty blob');
     //                 }
-    
+
     //                 console.log('Blob:', blob);
     //                 console.log('Blob MIME Type:', blob.type);
-    
+
     //                 const fileName = mediaItem.file.split('/').pop(); // Extract file name
     //                 const file = new File([blob], fileName, { type: blob.type });
-    
+
     //                 console.log('Created File:', file);
-    
+
     //                 return { file, id: mediaItem._id }; // Return file with its ID
     //             } catch (error) {
     //                 console.error('Error fetching file:', error);
     //                 return null; // Ensure null values are handled
     //             }
     //         }));
-    
+
     //         // Ensure no duplicate files are added
     //         const fileMap = new Map();
     //         existingImages.forEach(item => {
@@ -599,29 +621,29 @@ const SubCategoryTable = () => {
     //                 }
     //             }
     //         });
-    
+
     //         // Extract unique files
     //         const uniqueImages = Array.from(fileMap.values());
     //         const filesArray = uniqueImages.map(item => item.file);
-    
+
     //         console.log('Unique images:', uniqueImages);
     //         console.log('Files array:', filesArray);
-    
+
     //         // Set files to state
     //         Setimagelist(filesArray);
-    
+
     //     } catch (error) {
     //         console.error("Error fetching images:", error);
     //     } finally {
     //         setLoading2(false); // Stop loading
     //     }
     // };
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
 
 
 
@@ -786,8 +808,85 @@ const SubCategoryTable = () => {
                         </Form.Group>
 
                         <div className="row">
+                            <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
+                                {/* Image preview shown above the input and label */}
+                                {/* Image preview shown above the input and label */}
+                                {imagePreview && (
+                                    <div style={{
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        zIndex: 1, // Lower z-index to place image behind input
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        <img
+                                            src={imagePreview}
+                                            alt="Preview"
+                                            style={{
+                                                maxWidth: "400px",
+                                                maxHeight: "200px",
+                                                margin: "10px auto",
+                                                border: "2px solid #ccc",
+                                                padding: "10px",
+                                                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                borderRadius: "10px"
+                                            }}
+                                        />
+                                    </div>
+                                )}
 
-                            <div className='col-md-12 mb-2' >
+                                {/* File input and label */}
+                                <div style={{
+                                    position: "relative",
+                                    zIndex: 2, // Ensure file input and label are above the image preview
+                                }}>
+                                    <input
+                                        type="file"
+                                        id="cateogryImg"
+                                        style={{
+                                            display: "none",
+                                            zIndex: 3, // Ensure the input stays above the image preview
+                                            position: "absolute", // Position the input field on top
+                                            width: "100%",
+                                            height: "100%",
+                                            top: 0,
+                                            left: 0,
+                                            cursor: "pointer",
+                                        }}
+                                        onChange={handleImageChange}
+                                    />
+                                    <label
+                                        htmlFor="cateogryImg"
+                                        style={{
+                                            // border: "2px solid gray",
+                                            // height: "40vh",
+                                            cursor: "pointer",
+                                            position: "relative",
+                                            zIndex: 3,
+                                            display: "flex", // Flexbox for centering
+                                            alignItems: "center", // Vertically center text
+                                            justifyContent: "center", // Horizontally center text
+                                            marginTop: imagePreview ? "10px" : "0px",
+                                        }}
+                                    >
+                                        Drag and drop a file here or click
+                                    </label>
+
+                                </div>
+                                {/* Dropzone Area */}
+
+
+                                {errorFlag && !imagelist.length > 0 && (
+                                    <p style={{ color: 'red', marginTop: '10px' }}>
+                                        {'Image is Required'}
+                                    </p>
+                                )}
+                            </div>
+                            {/* <div className='col-md-12 mb-2' >
                                 <DropzoneArea
 
                                     acceptedFiles={['image/*']}
@@ -806,7 +905,7 @@ const SubCategoryTable = () => {
 
 
 
-                            </div>
+                            </div> */}
 
 
                         </div>
@@ -904,8 +1003,85 @@ const SubCategoryTable = () => {
     }}
     onDelete={handleDelete}
 /> */}
+                                            <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
+                                                {/* Image preview shown above the input and label */}
+                                                {/* Image preview shown above the input and label */}
+                                                {imagePreview && (
+                                                    <div style={{
+                                                        position: "absolute",
+                                                        top: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        bottom: 0,
+                                                        zIndex: 1, // Lower z-index to place image behind input
+                                                        display: "flex",
+                                                        justifyContent: "center",
+                                                        alignItems: "center"
+                                                    }}>
+                                                        <img
+                                                            src={imagePreview}
+                                                            alt="Preview"
+                                                            style={{
+                                                                maxWidth: "400px",
+                                                                maxHeight: "200px",
+                                                                margin: "10px auto",
+                                                                border: "2px solid #ccc",
+                                                                padding: "10px",
+                                                                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                                borderRadius: "10px"
+                                                            }}
+                                                        />
+                                                    </div>
+                                                )}
 
-                                            <DropzoneArea
+                                                {/* File input and label */}
+                                                <div style={{
+                                                    position: "relative",
+                                                    zIndex: 2, // Ensure file input and label are above the image preview
+                                                }}>
+                                                    <input
+                                                        type="file"
+                                                        id="cateogryImg"
+                                                        style={{
+                                                            display: "none",
+                                                            zIndex: 3, // Ensure the input stays above the image preview
+                                                            position: "absolute", // Position the input field on top
+                                                            width: "100%",
+                                                            height: "100%",
+                                                            top: 0,
+                                                            left: 0,
+                                                            cursor: "pointer",
+                                                        }}
+                                                        onChange={handleImageChange}
+                                                    />
+                                                    <label
+                                                        htmlFor="cateogryImg"
+                                                        style={{
+                                                            // border: "2px solid gray",
+                                                            // height: "40vh",
+                                                            cursor: "pointer",
+                                                            position: "relative",
+                                                            zIndex: 3,
+                                                            display: "flex", // Flexbox for centering
+                                                            alignItems: "center", // Vertically center text
+                                                            justifyContent: "center", // Horizontally center text
+                                                            marginTop: imagePreview ? "10px" : "0px",
+                                                        }}
+                                                    >
+                                                        Drag and drop a file here or click
+                                                    </label>
+
+                                                </div>
+                                                {/* Dropzone Area */}
+
+
+                                                {errorFlag && !imagelist.length > 0 && (
+                                                    <p style={{ color: 'red', marginTop: '10px' }}>
+                                                        {'Image is Required'}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {/* <DropzoneArea
                                                 key={imagelist.length} // Ensures re-render
                                                 acceptedFiles={['image/*']}
                                                 filesLimit={1}
@@ -916,7 +1092,7 @@ const SubCategoryTable = () => {
                                                     Setimagelist(uploadedFiles);
                                                     console.log('Files:', uploadedFiles);
                                                 }}
-                                            />
+                                            /> */}
                                         </>
 
 
