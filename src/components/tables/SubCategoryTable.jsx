@@ -808,106 +808,85 @@ const SubCategoryTable = () => {
                         </Form.Group>
 
                         <div className="row">
-                            <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
-                                {/* Image preview shown above the input and label */}
-                                {/* Image preview shown above the input and label */}
-                                {imagePreview && (
-                                    <div style={{
-                                        position: "absolute",
-                                        top: 0,
-                                        left: 0,
-                                        right: 0,
-                                        bottom: 0,
-                                        zIndex: 1, // Lower z-index to place image behind input
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center"
-                                    }}>
-                                        <img
-                                            src={imagePreview}
-                                            alt="Preview"
-                                            style={{
-                                                maxWidth: "400px",
-                                                maxHeight: "200px",
-                                                margin: "10px auto",
-                                                border: "2px solid #ccc",
-                                                padding: "10px",
-                                                backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                                borderRadius: "10px"
-                                            }}
-                                        />
-                                    </div>
-                                )}
-
-                                {/* File input and label */}
-                                <div style={{
-                                    position: "relative",
-                                    zIndex: 2, // Ensure file input and label are above the image preview
-                                }}>
-                                    <input
-                                        type="file"
-                                        id="cateogryImg"
+                            {Loading2 ? (
+                                <Loader fullPage loading />
+                            ) : (
+                                <div className="col-md-12 mb-2">
+                                    <div
+                                        className="col-md-12 mb-2"
                                         style={{
-                                            display: "none",
-                                            zIndex: 3, // Ensure the input stays above the image preview
-                                            position: "absolute", // Position the input field on top
-                                            width: "100%",
-                                            height: "100%",
-                                            top: 0,
-                                            left: 0,
-                                            cursor: "pointer",
-                                        }}
-                                        onChange={handleImageChange}
-                                    />
-                                    <label
-                                        htmlFor="cateogryImg"
-                                        style={{
-                                            // border: "2px solid gray",
-                                            // height: "40vh",
-                                            cursor: "pointer",
-                                            position: "relative",
-                                            zIndex: 3,
-                                            display: "flex", // Flexbox for centering
-                                            alignItems: "center", // Vertically center text
-                                            justifyContent: "center", // Horizontally center text
-                                            marginTop: imagePreview ? "10px" : "0px",
+                                            minHeight: "50vh",
+                                            height: "auto",
+                                            // border: "1px solid red",
+                                            display: "flex",
+                                            flexDirection: "column", // Stack content vertically
+                                            alignItems: "center", // Center content horizontally
+                                            gap: "20px", // Space between previews and input
                                         }}
                                     >
-                                        Drag and drop a file here or click
-                                    </label>
+                                        {/* File Input and Label */}
+                                        <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
+                                            <input
+                                                type="file"
+                                                id="cateogryImg"
+                                                style={{
+                                                    display: "none",
+                                                }}
+                                                multiple // Allow multiple file selection
+                                                onChange={handleImageChange}
+                                            />
+                                            <label
+                                                htmlFor="cateogryImg"
+                                                style={{
+                                                    cursor: "pointer",
+                                                    display: "inline-block",
+                                                    padding: "10px 20px",
+                                                    backgroundColor: "#f0f0f0",
+                                                    borderRadius: "5px",
+                                                    border: "1px solid #ccc",
+                                                    transition: "background-color 0.3s",
+                                                }}
+                                                onMouseEnter={(e) => (e.target.style.backgroundColor = "#e0e0e0")}
+                                                onMouseLeave={(e) => (e.target.style.backgroundColor = "#f0f0f0")}
+                                            >
+                                                Drag and drop files here or click
+                                            </label>
+                                        </div>
+                                        {/* Image Previews */}
+                                        {imagePreview?.length > 0 && (
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    flexWrap: "wrap", // Allow wrapping for multiple images
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    gap: "10px", // Space between images
+                                                }}
+                                            >
+                                                <img
+                                                    src={imagePreview}
+                                                    style={{
+                                                        maxWidth: "150px",
+                                                        maxHeight: "100px",
+                                                        border: "2px solid #ccc",
+                                                        padding: "10px",
+                                                        backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                        borderRadius: "10px",
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
 
+
+
+                                        {errorFlag && !imagelist.length > 0 && (
+                                            <p style={{ color: "red", marginTop: "10px" }}>
+                                                {"Image is Required"}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
-                                {/* Dropzone Area */}
-
-
-                                {errorFlag && !imagelist.length > 0 && (
-                                    <p style={{ color: 'red', marginTop: '10px' }}>
-                                        {'Image is Required'}
-                                    </p>
-                                )}
-                            </div>
-                            {/* <div className='col-md-12 mb-2' >
-                                <DropzoneArea
-
-                                    acceptedFiles={['image/*']}
-                                    filesLimit={1}
-                                    showAlerts={false}
-                                    onChange={
-                                        (files) => {
-                                            console.log('Files:', files)
-                                            Setimagelist(files)
-                                        }
-
-                                    }
-                                />
-
-                                {errorFlag && !imagelist.length > 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Image are Required'}</p>)}
-
-
-
-                            </div> */}
-
-
+                            )}
                         </div>
 
                     </Form>
@@ -972,140 +951,87 @@ const SubCategoryTable = () => {
                         </Form.Control>
                         {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Category is Required'}</p>)}
 
-                        <div className="row">
-
-                            <div className='col-md-12 mb-2' >
-
-
-                                {
-                                    Loading2 == true ? (<Loader fullPage loading />) : (
-                                        <>
-                                            <>
-                                                {/* Custom Dropzone Component for handling file uploads */}
-                                                {/* <CustomDropzone
-              multiple={true} // or false if only single file is allowed
-              initialFiles={imagelist} // Pass pre-existing images
-              onFileChange={(updatedFiles) => Setimagelist(updatedFiles)}
-            /> */}
-                                            </>
-
-                                            {/* <DropzoneArea
-    acceptedFiles={['image/*']}
-    filesLimit={5}
-    initialFiles={imagelist} // This should be an array of File objects
-    showAlerts={false}
-    showPreviews={true}
-    showPreviewsInDropzone={false}
-    previewText="Selected files:"
-    onChange={(uploadedFiles) => {
-        Setimagelist(uploadedFiles);
-        console.log('Uploaded Files:', uploadedFiles);
-    }}
-    onDelete={handleDelete}
-/> */}
-                                            <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
-                                                {/* Image preview shown above the input and label */}
-                                                {/* Image preview shown above the input and label */}
-                                                {imagePreview && (
-                                                    <div style={{
-                                                        position: "absolute",
-                                                        top: 0,
-                                                        left: 0,
-                                                        right: 0,
-                                                        bottom: 0,
-                                                        zIndex: 1, // Lower z-index to place image behind input
-                                                        display: "flex",
-                                                        justifyContent: "center",
-                                                        alignItems: "center"
-                                                    }}>
-                                                        <img
-                                                            src={imagePreview}
-                                                            alt="Preview"
-                                                            style={{
-                                                                maxWidth: "400px",
-                                                                maxHeight: "200px",
-                                                                margin: "10px auto",
-                                                                border: "2px solid #ccc",
-                                                                padding: "10px",
-                                                                backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                                                borderRadius: "10px"
-                                                            }}
-                                                        />
-                                                    </div>
-                                                )}
-
-                                                {/* File input and label */}
-                                                <div style={{
-                                                    position: "relative",
-                                                    zIndex: 2, // Ensure file input and label are above the image preview
-                                                }}>
-                                                    <input
-                                                        type="file"
-                                                        id="cateogryImg"
-                                                        style={{
-                                                            display: "none",
-                                                            zIndex: 3, // Ensure the input stays above the image preview
-                                                            position: "absolute", // Position the input field on top
-                                                            width: "100%",
-                                                            height: "100%",
-                                                            top: 0,
-                                                            left: 0,
-                                                            cursor: "pointer",
-                                                        }}
-                                                        onChange={handleImageChange}
-                                                    />
-                                                    <label
-                                                        htmlFor="cateogryImg"
-                                                        style={{
-                                                            // border: "2px solid gray",
-                                                            // height: "40vh",
-                                                            cursor: "pointer",
-                                                            position: "relative",
-                                                            zIndex: 3,
-                                                            display: "flex", // Flexbox for centering
-                                                            alignItems: "center", // Vertically center text
-                                                            justifyContent: "center", // Horizontally center text
-                                                            marginTop: imagePreview ? "10px" : "0px",
-                                                        }}
-                                                    >
-                                                        Drag and drop a file here or click
-                                                    </label>
-
-                                                </div>
-                                                {/* Dropzone Area */}
-
-
-                                                {errorFlag && !imagelist.length > 0 && (
-                                                    <p style={{ color: 'red', marginTop: '10px' }}>
-                                                        {'Image is Required'}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            {/* <DropzoneArea
-                                                key={imagelist.length} // Ensures re-render
-                                                acceptedFiles={['image/*']}
-                                                filesLimit={1}
-                                                onDelete={handleDelete}
-                                                initialFiles={imagelist && imagelist}
-                                                showAlerts={false}
-                                                onChange={(uploadedFiles) => {
-                                                    Setimagelist(uploadedFiles);
-                                                    console.log('Files:', uploadedFiles);
+                        <div className="row mt-2">
+                            {Loading2 ? (
+                                <Loader fullPage loading />
+                            ) : (
+                                <div className="col-md-12 mb-2">
+                                    <div
+                                        className="col-md-12 mb-2"
+                                        style={{
+                                            minHeight: "50vh",
+                                            height: "auto",
+                                            // border: "1px solid red",
+                                            display: "flex",
+                                            flexDirection: "column", // Stack content vertically
+                                            alignItems: "center", // Center content horizontally
+                                            gap: "20px", // Space between previews and input
+                                        }}
+                                    >
+                                        {/* File Input and Label */}
+                                        <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
+                                            <input
+                                                type="file"
+                                                id="cateogryImg"
+                                                style={{
+                                                    display: "none",
                                                 }}
-                                            /> */}
-                                        </>
+                                                multiple // Allow multiple file selection
+                                                onChange={handleImageChange}
+                                            />
+                                            <label
+                                                htmlFor="cateogryImg"
+                                                style={{
+                                                    cursor: "pointer",
+                                                    display: "inline-block",
+                                                    padding: "10px 20px",
+                                                    backgroundColor: "#f0f0f0",
+                                                    borderRadius: "5px",
+                                                    border: "1px solid #ccc",
+                                                    transition: "background-color 0.3s",
+                                                }}
+                                                onMouseEnter={(e) => (e.target.style.backgroundColor = "#e0e0e0")}
+                                                onMouseLeave={(e) => (e.target.style.backgroundColor = "#f0f0f0")}
+                                            >
+                                                Drag and drop files here or click
+                                            </label>
+                                        </div>
+                                        {/* Image Previews */}
+                                        {imagePreview?.length > 0 && (
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    flexWrap: "wrap", // Allow wrapping for multiple images
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    gap: "10px", // Space between images
+                                                }}
+                                            >
+                                                <img
+                                                    src={imagePreview}
+                                                    style={{
+                                                        maxWidth: "150px",
+                                                        maxHeight: "100px",
+                                                        border: "2px solid #ccc",
+                                                        padding: "10px",
+                                                        backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                        borderRadius: "10px",
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
 
 
-                                    )
-                                }
-                                {errorFlag && !imagelist.length > 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Image are Required'}</p>)}
-                            </div>
 
-
+                                        {errorFlag && !imagelist.length > 0 && (
+                                            <p style={{ color: "red", marginTop: "10px" }}>
+                                                {"Image is Required"}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
-
-
-
 
                     </Form>
                 </Modal.Body>

@@ -69,17 +69,18 @@ const tableIcons = {
 const ProductTable = () => {
 
     const [errorFlag, SeterrorFlag] = useState(false)
+    const [imagePreview, setImagePreview] = useState(null);
 
     console.log('errorFlag', errorFlag)
     const [show, setShow] = useState(false);
-    const handleClose = () => { setShow(false); SeterrorFlag(false); }
+    const handleClose = () => { setShow(false); SeterrorFlag(false); setImagePreview(null); }
     const handleShow = () => setShow(true);
     // modal state forimages
     const [show2, setShow2] = useState(false);
-    const handleClose2 = () => setShow2(false);
+    const handleClose2 = () => { setShow2(false); setImagePreview(null); }
     const handleShow2 = () => setShow2(true);
     const [show3, setShow3] = useState(false);
-    const handleClose3 = () => setShow3(false);
+    const handleClose3 = () => { setShow3(false); setImagePreview(null); }
     const handleShow3 = () => setShow3(true);
     const [name, Setname] = useState('')
     const [brandname, Setbrandname] = useState('')
@@ -252,23 +253,30 @@ const ProductTable = () => {
             }
             );
     }
-    const [imagePreview, setImagePreview] = useState(null);
 
     const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result); // Set the image preview
-            };
-            reader.readAsDataURL(file); // Read the file as a data URL
+        const files = Array.from(event.target.files); // Convert FileList to array
+        if (files.length > 0) {
+            // Generate previews for all selected files
+            const previewUrls = [];
+            files.forEach((file) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    previewUrls.push(reader.result);
 
+                    // Ensure the previews are updated after all files are read
+                    if (previewUrls.length === files.length) {
+                        setImagePreview([...imagePreview || [], ...previewUrls]); // Update all previews
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
 
-            console.log('Files:', event.target.files);
-            Setimagelist(event.target.files);
-
+            // Update the imagelist state
+            Setimagelist(files);
         }
     };
+
     console.log(errorFlag, "else")
     console.log(name, price, imagelist.length > 0, CategoryName, CategoryName2, Quantity)
     console.log(name, Quantity)
@@ -282,6 +290,7 @@ const ProductTable = () => {
                 return
             }
 
+            formdata.append("type", "book");
             formdata.append("title", name);
             formdata.append("brandName", brandname);
 
@@ -313,16 +322,23 @@ const ProductTable = () => {
         }
         else {
 
-            if (!name || !price || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !Quantity) {
+            if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !Quantity) {
                 SeterrorFlag(true)
                 return
             }
 
+            formdata.append("type", "others");
             formdata.append("title", name);
             formdata.append("price", price);
             formdata.append("quantity", Quantity);
             formdata.append("category", CategoryName);
             formdata.append("subCategory", CategoryName2);
+            formdata.append("productType", ProductType);
+            formdata.append("description", longdescription);
+            formdata.append("sku", sku);
+            formdata.append("brandName", brandname);
+
+            // formdata.append("language", selectedLanguage);
             // formdata.append("image", image);
             for (var i = 0; i < imagelist.length; i++) {
                 formdata.append("media", imagelist[i]);
@@ -957,8 +973,15 @@ const ProductTable = () => {
             // const uniqueImages = Array.from(fileMap.values());
             // const filesArray = uniqueImages.map(item => item.file);
             // console.log(filesArray)
-            setImagePreview(rowData.media.map((mediaItem) => `${Baseurl.baseUrl}${mediaItem.file}`));
+            // setImagePreview(`${Baseurl.baseUrl}${rowData.media.file}`);
+            setImagePreview(rowData.media.map((mediaItem) =>
+                `${Baseurl.baseUrl}${mediaItem.file}`
+            ));
+            rowData.media.map((mediaItem) => {
+                // `${Baseurl.baseUrl}${mediaItem.file}`
+                console.log(`${Baseurl.baseUrl}${mediaItem.file}`)
 
+            })
             // const newImageMap = {};
             // uniqueImages.forEach(item => {
             //     newImageMap[item.file.name] = item.id; // Map filename to ID
@@ -1542,25 +1565,89 @@ const ProductTable = () => {
 
                                 {/* Existing form fields */}
                                 <div className="row">
+                                    {Loading2 ? (
+                                        <Loader fullPage loading />
+                                    ) : (
+                                        <div className="col-md-12 mb-2">
+                                            <div
+                                                className="col-md-12 mb-2"
+                                                style={{
+                                                    minHeight: "50vh",
+                                                    height: "auto",
+                                                    // border: "1px solid red",
+                                                    display: "flex",
+                                                    flexDirection: "column", // Stack content vertically
+                                                    alignItems: "center", // Center content horizontally
+                                                    gap: "20px", // Space between previews and input
+                                                }}
+                                            >
+                                                {/* File Input and Label */}
+                                                <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
+                                                    <input
+                                                        type="file"
+                                                        id="cateogryImg"
+                                                        style={{
+                                                            display: "none",
+                                                        }}
+                                                        multiple // Allow multiple file selection
+                                                        onChange={handleImageChange}
+                                                    />
+                                                    <label
+                                                        htmlFor="cateogryImg"
+                                                        style={{
+                                                            cursor: "pointer",
+                                                            display: "inline-block",
+                                                            padding: "10px 20px",
+                                                            backgroundColor: "#f0f0f0",
+                                                            borderRadius: "5px",
+                                                            border: "1px solid #ccc",
+                                                            transition: "background-color 0.3s",
+                                                        }}
+                                                        onMouseEnter={(e) => (e.target.style.backgroundColor = "#e0e0e0")}
+                                                        onMouseLeave={(e) => (e.target.style.backgroundColor = "#f0f0f0")}
+                                                    >
+                                                        Drag and drop files here or click
+                                                    </label>
+                                                </div>
+                                                {/* Image Previews */}
+                                                {imagePreview?.length > 0 && (
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            flexWrap: "wrap", // Allow wrapping for multiple images
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                            gap: "10px", // Space between images
+                                                        }}
+                                                    >
+                                                        {imagePreview.map((preview, index) => (
+                                                            <img
+                                                                key={index}
+                                                                src={preview}
+                                                                alt={`Preview ${index + 1}`}
+                                                                style={{
+                                                                    maxWidth: "150px",
+                                                                    maxHeight: "100px",
+                                                                    border: "2px solid #ccc",
+                                                                    padding: "10px",
+                                                                    backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                                    borderRadius: "10px",
+                                                                }}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                )}
 
-                                    <div className='col-md-12 mb-2' >
-                                        <DropzoneArea
-                                            acceptedFiles={['image/*']}
-                                            filesLimit={5}
-                                            showAlerts={false}
-                                            // initialFiles={imagelist &&imagelist}
-                                            onDelete={handleDelete}
-                                            onChange={
-                                                (files) => {
-                                                    console.log('Files:', files)
-                                                    Setimagelist(files)
-                                                }
-                                            }
-                                        />
 
-                                        {errorFlag && !imagelist.length > 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Image are Required'}</p>)}
 
-                                    </div>
+                                                {errorFlag && !imagelist.length > 0 && (
+                                                    <p style={{ color: "red", marginTop: "10px" }}>
+                                                        {"Image is Required"}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </Form>
                         </Tab>
@@ -1664,172 +1751,144 @@ const ProductTable = () => {
 
                                 </Form.Group>
 
-                                <div className="row">
-                                    <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
-                                        {/* Image preview shown above the input and label */}
-                                        {/* Image preview shown above the input and label */}
-                                        {imagePreview && (
-                                            <div style={{
-                                                position: "absolute",
-                                                top: 0,
-                                                left: 0,
-                                                right: 0,
-                                                bottom: 0,
-                                                zIndex: 1, // Lower z-index to place image behind input
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                alignItems: "center"
-                                            }}>
-                                                <img
-                                                    src={imagePreview}
-                                                    alt="Preview"
-                                                    style={{
-                                                        maxWidth: "400px",
-                                                        maxHeight: "200px",
-                                                        margin: "10px auto",
-                                                        border: "2px solid #ccc",
-                                                        padding: "10px",
-                                                        backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                                        borderRadius: "10px"
-                                                    }}
-                                                />
-                                            </div>
-                                        )}
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                                    <Form.Label>Description</Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        placeholder="Description"
+                                        rows="6" cols="50"
+                                        autoFocus
+                                        onChange={(e) => Setlongdescription(e.target.value)}
+                                    />
 
-                                        {/* File input and label */}
-                                        <div style={{
-                                            position: "relative",
-                                            zIndex: 2, // Ensure file input and label are above the image preview
-                                        }}>
-                                            <input
-                                                type="file"
-                                                id="cateogryImg"
+                                    {errorFlag && !longdescription && (<p style={{ color: 'red', marginTop: '10px' }} >{'Description is Required'}</p>)}
+                                </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Product Type</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Product Type"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setLname2)}
+                                        onChange={(e) => SetProductType(e.target.value)}
+                                        value={ProductType}
+                                    />
+                                    {errorFlag && !ProductType && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+                                </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Brand Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Brand Name"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setLname2)}
+                                        onChange={(e) => Setbrandname(e.target.value)}
+                                        value={brandname}
+                                    />
+                                    {errorFlag && !brandname && (<p style={{ color: 'red', marginTop: '10px' }} >{'Brand Name is Required'}</p>)}
+                                </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>sku</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        min="0"
+                                        placeholder="Sku"
+                                        autoFocus
+                                        // onChange={(e) => handleEdited(e, setLname2)}
+                                        onChange={(e) => Setsku(e.target.value)}
+                                        value={sku}
+                                    />
+                                    {errorFlag && !sku && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sku is Required'}</p>)}
+                                </Form.Group>
+
+                                <div className="row">
+                                    {Loading2 ? (
+                                        <Loader fullPage loading />
+                                    ) : (
+                                        <div className="col-md-12 mb-2">
+                                            <div
+                                                className="col-md-12 mb-2"
                                                 style={{
-                                                    display: "none",
-                                                    zIndex: 3, // Ensure the input stays above the image preview
-                                                    position: "absolute", // Position the input field on top
-                                                    width: "100%",
-                                                    height: "100%",
-                                                    top: 0,
-                                                    left: 0,
-                                                    cursor: "pointer",
-                                                }}
-                                                onChange={handleImageChange}
-                                            />
-                                            <label
-                                                htmlFor="cateogryImg"
-                                                style={{
-                                                    // border: "2px solid gray",
-                                                    // height: "40vh",
-                                                    cursor: "pointer",
-                                                    position: "relative",
-                                                    zIndex: 3,
-                                                    display: "flex", // Flexbox for centering
-                                                    alignItems: "center", // Vertically center text
-                                                    justifyContent: "center", // Horizontally center text
-                                                    marginTop: imagePreview ? "10px" : "0px",
+                                                    minHeight: "50vh",
+                                                    height: "auto",
+                                                    // border: "1px solid red",
+                                                    display: "flex",
+                                                    flexDirection: "column", // Stack content vertically
+                                                    alignItems: "center", // Center content horizontally
+                                                    gap: "20px", // Space between previews and input
                                                 }}
                                             >
-                                                Drag and drop a file here or click
-                                            </label>
+                                                {/* File Input and Label */}
+                                                <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
+                                                    <input
+                                                        type="file"
+                                                        id="cateogryImg"
+                                                        style={{
+                                                            display: "none",
+                                                        }}
+                                                        multiple // Allow multiple file selection
+                                                        onChange={handleImageChange}
+                                                    />
+                                                    <label
+                                                        htmlFor="cateogryImg"
+                                                        style={{
+                                                            cursor: "pointer",
+                                                            display: "inline-block",
+                                                            padding: "10px 20px",
+                                                            backgroundColor: "#f0f0f0",
+                                                            borderRadius: "5px",
+                                                            border: "1px solid #ccc",
+                                                            transition: "background-color 0.3s",
+                                                        }}
+                                                        onMouseEnter={(e) => (e.target.style.backgroundColor = "#e0e0e0")}
+                                                        onMouseLeave={(e) => (e.target.style.backgroundColor = "#f0f0f0")}
+                                                    >
+                                                        Drag and drop files here or click
+                                                    </label>
+                                                </div>
+                                                {/* Image Previews */}
+                                                {imagePreview?.length > 0 && (
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            flexWrap: "wrap", // Allow wrapping for multiple images
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                            gap: "10px", // Space between images
+                                                        }}
+                                                    >
+                                                        {imagePreview.map((preview, index) => (
+                                                            <img
+                                                                key={index}
+                                                                src={preview}
+                                                                alt={`Preview ${index + 1}`}
+                                                                style={{
+                                                                    maxWidth: "150px",
+                                                                    maxHeight: "100px",
+                                                                    border: "2px solid #ccc",
+                                                                    padding: "10px",
+                                                                    backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                                    borderRadius: "10px",
+                                                                }}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                )}
 
+
+
+                                                {errorFlag && !imagelist.length > 0 && (
+                                                    <p style={{ color: "red", marginTop: "10px" }}>
+                                                        {"Image is Required"}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
-                                        {/* Dropzone Area */}
-
-
-                                        {errorFlag && !imagelist.length > 0 && (
-                                            <p style={{ color: 'red', marginTop: '10px' }}>
-                                                {'Image is Required'}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    {/* <DropzoneArea
-                                    acceptedFiles={['image/*']}
-                                    filesLimit={1}
-                                    showAlerts={false}
-                                    onChange={(files) => {
-                                        console.log('Files:', files);
-                                        Setimagelist(files);
-                                    }}
-                                /> */}
-
-                                    {/* <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
-
-                                {imagePreview && (
-                                    <div style={{
-                                        position: "absolute",
-                                        top: 0,
-                                        left: 0,
-                                        right: 0,
-                                        bottom: 0,
-                                        zIndex: 1, // Lower z-index to place image behind input
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center"
-                                    }}>
-                                        <img
-                                            src={imagePreview}
-                                            alt="Preview"
-                                            style={{
-                                                maxWidth: "400px",
-                                                maxHeight: "200px",
-                                                margin: "10px auto",
-                                                border: "2px solid #ccc",
-                                                padding: "10px",
-                                                backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                                borderRadius: "10px"
-                                            }}
-                                        />
-                                    </div>
-                                )}
-
-                                <div style={{
-                                    position: "relative",
-                                    zIndex: 2, // Ensure file input and label are above the image preview
-                                }}>
-                                    <input
-                                        type="file"
-                                        id="cateogryImg"
-                                        style={{
-                                            display: "none",
-                                            zIndex: 3, // Ensure the input stays above the image preview
-                                            position: "absolute", // Position the input field on top
-                                            width: "100%",
-                                            height: "100%",
-                                            top: 0,
-                                            left: 0,
-                                            cursor: "pointer",
-                                        }}
-                                        onChange={handleImageChange}
-                                    />
-                                    <label
-                                        htmlFor="cateogryImg"
-                                        style={{
-                                            border: "2px solid gray",
-                                            height: "40vh",
-                                            cursor: "pointer",
-                                            position: "relative",
-                                            zIndex: 3,
-                                            display: "flex", // Flexbox for centering
-                                            alignItems: "center", // Vertically center text
-                                            justifyContent: "center", // Horizontally center text
-                                            marginTop: imagePreview ? "10px" : "0px",
-                                        }}
-                                    >
-                                        Drag and drop a file here or click
-                                    </label>
-
+                                    )}
                                 </div>
-
-                                {errorFlag && !imagelist.length > 0 && (
-                                    <p style={{ color: 'red', marginTop: '10px' }}>
-                                        {'Image is Required'}
-                                    </p>
-                                )}
-                            </div> */}
-                                </div>
-
 
                             </Form>
                         </Tab>
@@ -2121,108 +2180,91 @@ const ProductTable = () => {
                         {/* Existing form fields */}
 
                         <div className="row">
-                            {
-                                Loading2 == true ? (<Loader fullPage loading />)
-                                    : (<div className='col-md-12 mb-2' >
-                                        <div className="col-md-12 mb-2" style={{ position: 'relative', height: "45vh" }}>
-                                            {/* Image preview shown above the input and label */}
-                                            {/* Image preview shown above the input and label */}
-                                            {imagePreview && (
-                                                <div style={{
-                                                    position: "absolute",
-                                                    top: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    bottom: 0,
-                                                    zIndex: 1, // Lower z-index to place image behind input
+                            {Loading2 ? (
+                                <Loader fullPage loading />
+                            ) : (
+                                <div className="col-md-12 mb-2">
+                                    <div
+                                        className="col-md-12 mb-2"
+                                        style={{
+                                            minHeight: "50vh",
+                                            height: "auto",
+                                            // border: "1px solid red",
+                                            display: "flex",
+                                            flexDirection: "column", // Stack content vertically
+                                            alignItems: "center", // Center content horizontally
+                                            gap: "20px", // Space between previews and input
+                                        }}
+                                    >
+                                        {/* File Input and Label */}
+                                        <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
+                                            <input
+                                                type="file"
+                                                id="cateogryImg"
+                                                style={{
+                                                    display: "none",
+                                                }}
+                                                multiple // Allow multiple file selection
+                                                onChange={handleImageChange}
+                                            />
+                                            <label
+                                                htmlFor="cateogryImg"
+                                                style={{
+                                                    cursor: "pointer",
+                                                    display: "inline-block",
+                                                    padding: "10px 20px",
+                                                    backgroundColor: "#f0f0f0",
+                                                    borderRadius: "5px",
+                                                    border: "1px solid #ccc",
+                                                    transition: "background-color 0.3s",
+                                                }}
+                                                onMouseEnter={(e) => (e.target.style.backgroundColor = "#e0e0e0")}
+                                                onMouseLeave={(e) => (e.target.style.backgroundColor = "#f0f0f0")}
+                                            >
+                                                Drag and drop files here or click
+                                            </label>
+                                        </div>
+                                        {/* Image Previews */}
+                                        {imagePreview?.length > 0 && (
+                                            <div
+                                                style={{
                                                     display: "flex",
+                                                    flexWrap: "wrap", // Allow wrapping for multiple images
                                                     justifyContent: "center",
-                                                    alignItems: "center"
-                                                }}>
+                                                    alignItems: "center",
+                                                    gap: "10px", // Space between images
+                                                }}
+                                            >
+                                                {imagePreview.map((preview, index) => (
                                                     <img
-                                                        src={imagePreview}
-                                                        alt="Preview"
+                                                        key={index}
+                                                        src={preview}
+                                                        alt={`Preview ${index + 1}`}
                                                         style={{
-                                                            maxWidth: "400px",
-                                                            maxHeight: "200px",
-                                                            margin: "10px auto",
+                                                            maxWidth: "150px",
+                                                            maxHeight: "100px",
                                                             border: "2px solid #ccc",
                                                             padding: "10px",
                                                             backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                                            borderRadius: "10px"
+                                                            borderRadius: "10px",
                                                         }}
                                                     />
-                                                </div>
-                                            )}
-
-                                            {/* File input and label */}
-                                            <div style={{
-                                                position: "relative",
-                                                zIndex: 2, // Ensure file input and label are above the image preview
-                                            }}>
-                                                <input
-                                                    type="file"
-                                                    id="cateogryImg"
-                                                    style={{
-                                                        display: "none",
-                                                        zIndex: 3, // Ensure the input stays above the image preview
-                                                        position: "absolute", // Position the input field on top
-                                                        width: "100%",
-                                                        height: "100%",
-                                                        top: 0,
-                                                        left: 0,
-                                                        cursor: "pointer",
-                                                    }}
-                                                    onChange={handleImageChange}
-                                                />
-                                                <label
-                                                    htmlFor="cateogryImg"
-                                                    style={{
-                                                        // border: "2px solid gray",
-                                                        // height: "40vh",
-                                                        cursor: "pointer",
-                                                        position: "relative",
-                                                        zIndex: 3,
-                                                        display: "flex", // Flexbox for centering
-                                                        alignItems: "center", // Vertically center text
-                                                        justifyContent: "center", // Horizontally center text
-                                                        marginTop: imagePreview ? "10px" : "0px",
-                                                    }}
-                                                >
-                                                    Drag and drop a file here or click
-                                                </label>
-
+                                                ))}
                                             </div>
+                                        )}
 
 
-                                            {errorFlag && !imagelist.length > 0 && (
-                                                <p style={{ color: 'red', marginTop: '10px' }}>
-                                                    {'Image is Required'}
-                                                </p>
-                                            )}
-                                        </div>
 
-
-                                        {/* <DropzoneArea
-                                            acceptedFiles={['image/*']}
-                                            filesLimit={5}
-                                            showAlerts={false}
-                                            initialFiles={imagelist && imagelist}
-                                            onDelete={handleDelete}
-                                            onChange={
-                                                (files) => {
-                                                    console.log('Files:', files)
-                                                    Setimagelist(files)
-                                                }
-                                            }
-                                        /> */}
-
-                                    </div>)}
-
-
-                            {errorFlag && !imagelist.length > 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Image are Required'}</p>)}
-
+                                        {errorFlag && !imagelist.length > 0 && (
+                                            <p style={{ color: "red", marginTop: "10px" }}>
+                                                {"Image is Required"}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
+
 
 
                     </Form>
