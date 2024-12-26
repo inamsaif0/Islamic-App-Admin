@@ -430,10 +430,10 @@ const ProductTable = () => {
 
     const UpdateProduct = () => {
 
-        if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !dimension || !noofpage || !authorName || !Quantity) {
-            SeterrorFlag(true)
-            return
-        }
+        // if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !dimension || !noofpage || !authorName || !Quantity) {
+        //     SeterrorFlag(true)
+        //     return
+        // }
 
         console.log('imagelist==>Update', imagelist)
 
@@ -1922,8 +1922,6 @@ const ProductTable = () => {
                 <Modal.Body>
                     <Form onSubmit={(e) => e.preventDefault()}>
 
-
-
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Title</Form.Label>
                             <Form.Control
@@ -1937,8 +1935,6 @@ const ProductTable = () => {
                             {errorFlag && !name && (<p style={{ color: 'red', marginTop: '10px' }} >{'Name is Required'}</p>)}
 
                         </Form.Group>
-
-
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Brand Name</Form.Label>
@@ -2149,10 +2145,7 @@ const ProductTable = () => {
 
                             </Form.Control>
                             {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Category is Required'}</p>)}
-
-
                         </Form.Group>
-
                         {/* Language Dropdown */}
                         <Form.Group className="mb-3" controlId="languageDropdown">
                             <Form.Label>Language</Form.Label>
@@ -2176,9 +2169,7 @@ const ProductTable = () => {
                                 </p>
                             )}
                         </Form.Group>
-
                         {/* Existing form fields */}
-
                         <div className="row">
                             {Loading2 ? (
                                 <Loader fullPage loading />
@@ -2264,9 +2255,6 @@ const ProductTable = () => {
                                 </div>
                             )}
                         </div>
-
-
-
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>

@@ -243,10 +243,10 @@ const CategoryTable = () => {
 
 
     const EditCategory = () => {
-        if (!imagelist.length > 0 || !title) {
-            SeterrorFlag(true)
-            return
-        }
+        // if (!imagelist.length > 0 || !title) {
+        //     SeterrorFlag(true)
+        //     return
+        // }
 
         var formdata = new FormData();
         formdata.append("categoryId", TabelId);

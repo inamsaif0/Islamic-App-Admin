@@ -366,6 +366,11 @@ const Header = () => {
 
     }
 
+ const [isSubCategoryOpen, setIsSubCategoryOpen] = useState(false);
+
+    const toggleSubCategory = () => {
+        setIsSubCategoryOpen(!isSubCategoryOpen);
+    };
 
     return (
         <>
@@ -738,128 +743,63 @@ const Header = () => {
                 <div className="main-menu-content">
                     <Scrollbars style={{ maxWidth: 260, height: "90vh", marginTop: "40px" }}>
                         <ul className="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
-                            {/* <li className={mystate ? " nav-item has-sub open " : " nav-item has-sub "}  >
-                                <a onClick={() => dispatch(navbartoggle(!mystate))} >
-
-                                    <i className="la la-home" />
-
-                                    <span className="menu-title" data-i18n="nav.dash.main">Dashboard</span>
-                                    <span className="badge badge badge-info badge-pill float-right mr-2">3 </span>
-                                </a>
-                                <ul className="menu-content">
-                                    <li className={mystate ? " is-shown " : " "} ><Link className="menu-item" to="/dashboardecommerce" >eCommerce</Link>
-                                    </li>
-                                    <li className={mystate ? " is-shown " : " "} ><Link className="menu-item" to="/dashboardcrypto" >Crypto</Link>
-                                    </li>
-                                    <li className={mystate ? " is-shown " : " "} ><Link className="menu-item" to="/dashboardsales" >Sales</Link>
-                                    </li>
-                                </ul>
-
-                            </li> */}
-                            <li className=" nav-item">
-                                <Link to={"/dashboard"} >
-                                    <a >
+                            <li className="nav-item">
+                                <Link to={"/dashboard"}>
+                                    <a>
                                         <i className="la la-home" />
-
                                         <span className="menu-title" data-i18n="nav.support_raise_support.main">Dashboard</span>
                                     </a>
-
                                 </Link>
-
                             </li>
-                            <li className=" nav-item">
-                                <Link to={"/addcategory"} >
-                                    <a >
-                                        <i className="la la-tablet" />
 
+                            <li className="nav-item">
+                                <Link to={"/addcategory"}>
+                                    <a>
+                                        <i className="la la-tablet" />
                                         <span className="menu-title" data-i18n="nav.support_raise_support.main">Category</span>
                                     </a>
-
                                 </Link>
-
                             </li>
-                            <li className=" nav-item">
-                                <Link to={"/addsubcategory"} >
-                                    <a >
-                                        <i className="la la-tablet" />
 
-                                        <span className="menu-title" data-i18n="nav.support_raise_support.main">Sub Category</span>
-                                    </a>
-
-                                </Link>
-
+                            {/* Sub Category Dropdown */}
+                            <li className={`nav-item has-sub ${isSubCategoryOpen ? 'open' : ''}`}>
+                                <a href="#" onClick={(e) => { e.preventDefault(); toggleSubCategory(); }}>
+                                    <i className="la la-tablet" />
+                                    <span className="menu-title" data-i18n="nav.support_raise_support.main">Sub Category</span>
+                                </a>
+                                <ul className="menu-content">
+                                    <li><Link className="menu-item" to="/addsubcategory">Sub Category 1</Link></li>
+                                    <li><Link className="menu-item" to="/addsubcategory2">Sub Category 2</Link></li>
+                                      <li><Link className="menu-item" to="/addsubcategory3">Sub Category 3</Link></li>
+                                </ul>
                             </li>
-                            <li className=" nav-item">
-                                <Link to={"/addproduct"} >
-                                    <a >
+
+                            <li className="nav-item">
+                                <Link to={"/addproduct"}>
+                                    <a>
                                         <i className="la la-upload" />
-
                                         <span className="menu-title" data-i18n="nav.support_raise_support.main">Product</span>
                                     </a>
-
                                 </Link>
-
-                            </li>
-                            <li className=" nav-item">
-                                <Link to={"/addpackage"} >
-                                    <a >
-                                        <i className="la la-cart-arrow-down" />
-
-                                        <span className="menu-title" data-i18n="nav.support_raise_support.main">Packages</span>
-                                    </a>
-
-                                </Link>
-
                             </li>
 
-                            {
-                                UserRole == 'admin' ? (<li className=" nav-item">
-                                    <Link to={"/orders"} >
-                                        <a >
+                            {UserRole === 'admin' && (
+                                <li className="nav-item">
+                                    <Link to={"/orders"}>
+                                        <a>
                                             <i className="la la-support" />
-
                                             <span className="menu-title" data-i18n="nav.support_raise_support.main">Order</span>
                                         </a>
-
                                     </Link>
+                                </li>
+                            )}
 
-                                </li>) : null
-                            }
-
-                            {/* <li className=" nav-item">
-                                <Link to={"/addcustomer"} >
-                                <a >
-                                    <i className="la la-users" />
-                                
-                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Customer</span>
-                                </a>
-                                
-                                </Link>
-                                
-                            </li> */}
-                            {/* <li className=" nav-item">
-                                <Link to={"/profile"} >
-                                <a >
-                                    <i className="la la-user" />
-                                
-                                <span className="menu-title" data-i18n="nav.support_raise_support.main">Profile</span>
-                                </a>
-                                
-                                </Link>
-                                
-                            </li> */}
-                            <li className=" nav-item">
-
-                                <a onClick={logout} >
+                            <li className="nav-item">
+                                <a onClick={logout}>
                                     <i className="ft-power" />
-
                                     <span className="menu-title" data-i18n="nav.support_raise_support.main">Logout</span>
                                 </a>
-
-
-
                             </li>
-
                         </ul>
                     </Scrollbars>
                 </div>

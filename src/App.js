@@ -30,6 +30,8 @@ const AddProduct = lazy(() => import('./pages/addproduct/AddProduct'));
 const Order = lazy(() => import('./pages/addorder/Order'));
 const AddCategory = lazy(() => import('./pages/addcategory/AddCategory'));
 const AddSubCategory = lazy(() => import('./pages/addsubcategory/AddSubCategory'));
+const AddSubCategory2 = lazy(() => import('./pages/addsubcategory/AddSubCategory2'));
+const AddSubCategory3 = lazy(() => import('./pages/addsubcategory/AddSubCategory3'));
 const AddCoupen = lazy(() => import('./pages/addcoupen/AddCoupen'));
 const Package = lazy(() => import('./pages/addpackage/AddPackage'));
 const ForgetPassword = lazy(() => import('./pages/auth/ForgetPassword'));
@@ -60,6 +62,8 @@ function App() {
             <Route path='/orders' element={<ProtectedRoute><Order /></ProtectedRoute>} />  
             <Route path='/addcategory' element={<ProtectedRoute><AddCategory /></ProtectedRoute>} />  
             <Route path='/addsubcategory' element={<ProtectedRoute><AddSubCategory /></ProtectedRoute>} />  
+            <Route path='/addsubcategory2' element={<ProtectedRoute><AddSubCategory2 /></ProtectedRoute>} />  
+            <Route path='/addsubcategory3' element={<ProtectedRoute><AddSubCategory3 /></ProtectedRoute>} />  
             <Route path='/addpackage' element={<ProtectedRoute><Package /></ProtectedRoute>} /> 
 
 

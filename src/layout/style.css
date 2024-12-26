@@ -1,0 +1,9 @@
+/* Hide the dropdown menu initially */
+.nav-item.has-sub > .menu-content {
+    display: none;
+}
+
+/* Show the dropdown menu when the parent item is clicked */
+.nav-item.has-sub.open > .menu-content {
+    display: block;
+}

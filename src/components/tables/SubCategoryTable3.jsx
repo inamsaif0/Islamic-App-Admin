@@ -54,7 +54,7 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-const SubCategoryTable = () => {
+const SubCategoryTable3 = () => {
 
     const [errorFlag, SeterrorFlag] = useState(false)
 
@@ -101,11 +101,11 @@ const SubCategoryTable = () => {
     useEffect(() => {
 
         GetSubCategoryData()
-        GetCategoryData()
+        GetSubChildCategoryData()
 
     }, [])
 
-    const GetCategoryData = () => {
+    const GetSubCategoryData = () => {
         var requestOptions = {
             method: 'GET',
             headers: {
@@ -115,7 +115,7 @@ const SubCategoryTable = () => {
         };
         // setloader(true)
 
-        fetch(`${Baseurl.baseUrl}api/categories/get`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/childsubcategories/get`, requestOptions)
 
             .then(response => response.json())
             .then(result => {
@@ -152,7 +152,7 @@ const SubCategoryTable = () => {
             );
     }
 
-    const GetSubCategoryData = () => {
+    const GetSubChildCategoryData = () => {
         var requestOptions = {
             method: 'GET',
             headers: {
@@ -162,13 +162,12 @@ const SubCategoryTable = () => {
         };
         setloader(true)
 
-        fetch(`${Baseurl.baseUrl}api/subcategories/get`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/rechildsubcategories/get`, requestOptions)
 
             .then(response => response.json())
             .then(result => {
                 if (result.status == true) {
                     setloader(false)
-                    console.log(result?.data?.result)
                     SetCategoryData(result?.data?.result)
                 }
                 else {
@@ -228,21 +227,15 @@ const SubCategoryTable = () => {
             return
         }
 
-
-
-
-
         var formdata = new FormData();
         formdata.append("title", title);
         formdata.append("category", CategoryName);
         for (var i = 0; i < imagelist.length; i++) {
             formdata.append("media", imagelist[i]);
-
         }
 
         var requestOptions = {
             method: 'POST',
-
             headers: {
                 token: Token
             },
@@ -250,14 +243,12 @@ const SubCategoryTable = () => {
             redirect: 'follow'
         };
         setloader(true)
-        fetch(`${Baseurl.baseUrl}api/subcategories/create`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/rechildsubcategories/create`, requestOptions)
             .then(response => response.json())
             .then(result => {
 
                 setloader(false)
                 if (result.status == true) {
-
-
                     console.log("getcustomerapi ===>", result)
                     Swal.fire({
                         title: "success",
@@ -268,11 +259,9 @@ const SubCategoryTable = () => {
                     Settitle('')
                     setCategoryName('')
                     setShow(false)
-                    GetSubCategoryData()
+                    GetSubChildCategoryData()
                     handleClose()
                     // Navigate('/addcustomer')
-
-
                 }
                 else {
                     setloader(false)
@@ -321,15 +310,15 @@ const SubCategoryTable = () => {
         //
 
         var formdata = new FormData();
-        formdata.append("category", CategoryName);
+        // formdata.append("category", CategoryName);
         formdata.append("title", title);
         formdata.append("subcategoryId", TabelId);
 
-        // if (imagelist) {
-        //     for (var i = 0; i < imagelist.length; i++) {
-        //         formdata.append("media", imagelist[i]);
-        //     }
-        // }
+        if (imagelist) {
+            for (var i = 0; i < imagelist.length; i++) {
+                formdata.append("media", imagelist[i]);
+            }
+        }
 
         var requestOptions = {
             method: 'Post',
@@ -340,7 +329,7 @@ const SubCategoryTable = () => {
             redirect: 'follow'
         };
 
-        fetch(`${Baseurl.baseUrl}api/subcategories/update`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/rechildsubcategories/update`, requestOptions)
             .then(response => response.json())
             .then(result => {
 
@@ -358,7 +347,7 @@ const SubCategoryTable = () => {
                     // setProfileImage('')
                     // setSelectProfileImage('')
                     setShow2(false)
-                    GetSubCategoryData()
+                    GetSubChildCategoryData()
 
                     // Navigate('/addcustomer')
 
@@ -373,8 +362,6 @@ const SubCategoryTable = () => {
                     });
 
                 }
-
-
 
             }
             )
@@ -442,7 +429,7 @@ const SubCategoryTable = () => {
         };
 
 
-        fetch(`${Baseurl.baseUrl}api/subcategories/delete`, requestOptions)
+        fetch(`${Baseurl.baseUrl}api/rechildsubcategories/delete`, requestOptions)
             .then(response => response.json())
             .then(result =>
             //     {
@@ -460,7 +447,7 @@ const SubCategoryTable = () => {
                         icon: "success",
                         confirmButtonColor: "#29BF12",
                     });
-                    GetSubCategoryData()
+                    GetSubChildCategoryData()
                 }
                 else {
                     Swal.fire({
@@ -572,81 +559,6 @@ const SubCategoryTable = () => {
         }
     };
 
-    // const handleEdit2 = async (rowData) => {
-    //     setLoading2(true); // Start loading
-
-    //     try {
-    //         // Set initial state
-    //         Settitle(rowData.title);
-    //         setCategoryName(rowData?.category);
-    //         Edited(rowData._id);
-
-    //         // Fetch media and handle uniqueness
-    //         const existingImages = await Promise.all(rowData?.media?.map(async (mediaItem) => {
-    //             try {
-    //                 const imageUrl = `${Baseurl.baseUrl}${mediaItem?.file}`;
-    //                 console.log('Fetching image from URL:', imageUrl);
-
-    //                 const response = await fetch(imageUrl);
-
-    //                 if (!response.ok) {
-    //                     throw new Error(`HTTP error! Status: ${response.status}`);
-    //                 }
-
-    //                 const blob = await response.blob();
-    //                 if (blob.size === 0) {
-    //                     throw new Error('Received empty blob');
-    //                 }
-
-    //                 console.log('Blob:', blob);
-    //                 console.log('Blob MIME Type:', blob.type);
-
-    //                 const fileName = mediaItem.file.split('/').pop(); // Extract file name
-    //                 const file = new File([blob], fileName, { type: blob.type });
-
-    //                 console.log('Created File:', file);
-
-    //                 return { file, id: mediaItem._id }; // Return file with its ID
-    //             } catch (error) {
-    //                 console.error('Error fetching file:', error);
-    //                 return null; // Ensure null values are handled
-    //             }
-    //         }));
-
-    //         // Ensure no duplicate files are added
-    //         const fileMap = new Map();
-    //         existingImages.forEach(item => {
-    //             if (item) { // Ensure item is not null
-    //                 if (!fileMap.has(item.id)) {
-    //                     fileMap.set(item.id, item);
-    //                 }
-    //             }
-    //         });
-
-    //         // Extract unique files
-    //         const uniqueImages = Array.from(fileMap.values());
-    //         const filesArray = uniqueImages.map(item => item.file);
-
-    //         console.log('Unique images:', uniqueImages);
-    //         console.log('Files array:', filesArray);
-
-    //         // Set files to state
-    //         Setimagelist(filesArray);
-
-    //     } catch (error) {
-    //         console.error("Error fetching images:", error);
-    //     } finally {
-    //         setLoading2(false); // Stop loading
-    //     }
-    // };
-
-
-
-
-
-
-
-
 
     const handleDelete = (deletedFile) => {
         console.log('deletedFile', deletedFile);
@@ -673,13 +585,6 @@ const SubCategoryTable = () => {
         }
     };
 
-    // useEffect(() => {
-    //     // Clean up object URLs to avoid memory leaks
-    //     return () => {
-    //         imageURLs.forEach(url => URL.revokeObjectURL(url));
-    //     };
-    // }, [imageURLs]);
-
     return (
         <>
             {loader == true ?
@@ -692,7 +597,7 @@ const SubCategoryTable = () => {
                         <div className="content-header-left col-md-6 col-12 mb-2 breadcrumb-new">
                             <h3 className="content-header-title mb-0 d-inline-block">
                                 {/* {Role == "addcustomer" ? "Add Customer" : "Upload File"} */}
-                                Add Sub Categories
+                                Add Sub-3 or Re-Child  Categories
                             </h3>
                         </div>
                         <div className="content-header-right col-md-6 col-12">
@@ -700,7 +605,7 @@ const SubCategoryTable = () => {
                                 <button
                                     onClick={handleShow}
                                     className="btn btn-danger  round btn-glow px-2 mb-2 mr-2" id="dropdownBreadcrumbButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {/* {Role == "addcustomer" ? "Add Customer" : "Bulk Upload"} */}Add Sub Category
+                                    {/* {Role == "addcustomer" ? "Add Customer" : "Bulk Upload"} */}Add Sub-3 or Re-Child  Category
                                 </button>
                             </div>
                         </div>
@@ -712,7 +617,7 @@ const SubCategoryTable = () => {
                                 columns={[
                                     {
                                         title: "Image", field: "media", render: item =>
-                                            <img src={item?.media?.file ? Baseurl.baseUrl + item?.media?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg'} alt="" border="3" height="50" width="100" />
+                                            <img src={item?.media[0]?.file ? Baseurl.baseUrl + item?.media[0]?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg'} alt="" border="3" height="50" width="100" />
                                     },
                                     { title: "Title", field: "title" },
                                     {
@@ -760,7 +665,7 @@ const SubCategoryTable = () => {
                 <Modal.Header >
                     {/* <i className='fa fa-close'>baloch</i>
                     <AiFillCloseCircle fontSize={20} /> */}
-                    <Modal.Title>Add Sub Category</Modal.Title>
+                    <Modal.Title>Add Sub-3 or Re-Child  Category</Modal.Title>
                     <AiFillCloseCircle onClick={handleClose} style={{ marginLeft: "160", cursor: "pointer" }} fontSize={40} />
 
                 </Modal.Header>
@@ -790,7 +695,7 @@ const SubCategoryTable = () => {
                                 }}
                             // value={categoryid}
                             >
-                                <option value="selectcatgory">Select Catogary</option>
+                                <option value="selectcatgory">Select Sub-Sub Catogery</option>
                                 {
                                     CategoryDropdown?.map((a) => {
                                         // console.log("safdar",a.name)
@@ -897,7 +802,7 @@ const SubCategoryTable = () => {
                         Close
                     </Button>
                     <Button variant="primary" type='button' onClick={(e) => { addCategory(e) }} >
-                        Add Sub Category
+                        Add Sub-3 or Re-Child  Category
                     </Button>
                 </Modal.Footer>
             </Modal>)}
@@ -938,7 +843,7 @@ const SubCategoryTable = () => {
                                 setCategoryName(e.target.value);
                             }}
                         >
-                            <option value="selectcatgory">Select Category</option>
+                            <option value="selectcatgory">Select Sub Category</option>
                             {
                                 CategoryDropdown?.map((a) => {
                                     return (
@@ -1049,4 +954,4 @@ const SubCategoryTable = () => {
     )
 }
 
-export default SubCategoryTable
+export default SubCategoryTable3
