@@ -108,6 +108,7 @@ const ProductTable = () => {
     const [CategoryName, setCategoryName] = useState('')
     // for sub-category
     const [CategoryName2, setCategoryName2] = useState('')
+    const [SubChildCategory, setSubChildCategory] = useState("")
     const [selectedLanguage, setSelectedLanguage] = useState('')
 
     console.log('selectedLanguage==>', selectedLanguage)
@@ -856,7 +857,10 @@ const ProductTable = () => {
         GetCategoryData()
 
     }, [])
-
+    // const [subCategory, setsubCategory] = useState([])
+    const [subCategories, setSubCategories] = useState([])
+    const [childsubcategories, setChildsubcategories] = useState([])
+    const [reChildSubcategories, setReChildsubcategories] = useState([])
     const GetCategoryData = () => {
         var requestOptions = {
             method: 'GET',
@@ -868,7 +872,6 @@ const ProductTable = () => {
         // setloader(true)
 
         fetch(`${Baseurl.baseUrl}api/categories/get`, requestOptions)
-
             .then(response => response.json())
             .then(result => {
 
@@ -896,7 +899,93 @@ const ProductTable = () => {
                 // setloader(false)
                 console.log('error', error)
             }
+            );
 
+        fetch(`${Baseurl.baseUrl}api/subcategories/get`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+
+                console.log('resultGetCategories', result)
+                if (result.status == true) {
+                    // setloader(false)
+                    setSubCategories(result?.data?.result)
+                }
+                else {
+                    console.log("result.message", result?.message)
+                    Swal.fire({
+                        title: "Oops",
+                        text: result.message,
+                        icon: "error",
+                        confirmButtonColor: "#29BF12",
+                    });
+
+                }
+
+            }
+                // console.log("result",result)
+            )
+            .catch(error => {
+                // setloader(false)
+                console.log('error', error)
+            }
+            );
+        fetch(`${Baseurl.baseUrl}api/childsubcategories/get`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+
+                console.log('resultGetCategories', result)
+                if (result.status == true) {
+                    // setloader(false)
+                    setChildsubcategories(result?.data?.result)
+
+                }
+                else {
+                    console.log("result.message", result?.message)
+                    Swal.fire({
+                        title: "Oops",
+                        text: result.message,
+                        icon: "error",
+                        confirmButtonColor: "#29BF12",
+                    });
+
+                }
+
+            }
+                // console.log("result",result)
+            )
+            .catch(error => {
+                // setloader(false)
+                console.log('error', error)
+            }
+            );
+        fetch(`${Baseurl.baseUrl}api/rechildsubcategories/get`, requestOptions)
+            .then(response => response.json())
+            .then(result => {
+
+                console.log('resultGetCategories', result)
+                if (result.status == true) {
+                    // setloader(false)
+                    setReChildsubcategories(result?.data?.result)
+
+                }
+                else {
+                    console.log("result.message", result?.message)
+                    Swal.fire({
+                        title: "Oops",
+                        text: result.message,
+                        icon: "error",
+                        confirmButtonColor: "#29BF12",
+                    });
+
+                }
+
+            }
+                // console.log("result",result)
+            )
+            .catch(error => {
+                // setloader(false)
+                console.log('error', error)
+            }
             );
     }
 
@@ -1396,24 +1485,9 @@ const ProductTable = () => {
                                         autoFocus
                                         // onChange={(e) => handleEdited(e, setLname2)}
                                         onChange={(e) => Setsku(e.target.value)}
-
                                     />
-
                                     {errorFlag && !sku && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sku is Required'}</p>)}
-
                                 </Form.Group>
-                                {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-    <Form.Label>Description</Form.Label>
-    <Form.Control
-        type="text"
-        placeholder="Description"
-        autoFocus
-        // onChange={(e) => handleEdited(e, setLname2)}
-        onChange={(e) => Setlongdescription(e.target.value)}
-        
-    />
-
-</Form.Group> */}
 
                                 <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                                     <Form.Label>Dimension</Form.Label>
@@ -1440,33 +1514,6 @@ const ProductTable = () => {
 
                                     {errorFlag && !longdescription && (<p style={{ color: 'red', marginTop: '10px' }} >{'Description is Required'}</p>)}
                                 </Form.Group>
-
-                                {/* <div className="col-md-12 col-sm-6">
-        <div className="form-group"> */}
-                                {/* <TextField id="standard-basic" label="Description" variant="outlined"
-                fullWidth
-                multiline
-                defaultValue={Description}
-                value={Description} onChange={(e) => {
-                    Description(e.target.value)
-                }} /> */}
-                                {/* <Editor
-                editorState={editorState}
-                onEditorStateChange={handleEditorChange}
-                wrapperClassName="wrapper-class"
-                editorClassName="editor-class"
-                toolbarClassName="toolbar-class"
-                editorStyle={{
-                    border: "1px solid #F0F0F0",
-                    padding: 15,
-                    minHeight: 350,
-                }}
-            /> */}
-                                {/* <div className="preview" dangerouslySetInnerHTML={createMarkup(convertedContent)}></div> */}
-
-                                {/* </div>
-    </div> */}
-
                                 <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                                     <Form.Label>Product Type</Form.Label>
                                     <Form.Control
@@ -1503,8 +1550,6 @@ const ProductTable = () => {
                                                 )
                                             })
                                         }
-
-
                                     </Form.Control>
                                     {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
 
@@ -1538,6 +1583,66 @@ const ProductTable = () => {
                                     {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
 
                                 </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Sub Child Category ID</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        value={CategoryName2}
+                                        onChange={e => {
+                                            console.log("e.target.value", e.target.value);
+                                            setCategoryName2(e.target.value);
+                                        }}
+                                    // value={categoryid}
+                                    >
+                                        <option value="selectcatgory">Select Sub Category</option>
+                                        {
+                                            filterSubcategoryData[0]?.subcategories?.map((a) => {
+                                                // console.log("safdar",a.name)
+                                                return (
+                                                    <>
+                                                        <option value={a._id}>{a.title}</option>
+                                                    </>
+                                                )
+                                            })
+                                        }
+
+
+                                    </Form.Control>
+                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+
+                                </Form.Group>
+
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Sub Re-child Category ID</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        value={CategoryName2}
+                                        onChange={e => {
+                                            console.log("e.target.value", e.target.value);
+                                            setCategoryName2(e.target.value);
+                                        }}
+                                    // value={categoryid}
+                                    >
+                                        <option value="selectcatgory">Select Sub Category</option>
+                                        {
+                                            filterSubcategoryData[0]?.subcategories?.map((a) => {
+                                                // console.log("safdar",a.name)
+                                                return (
+                                                    <>
+                                                        <option value={a._id}>{a.title}</option>
+                                                    </>
+                                                )
+                                            })
+                                        }
+
+
+                                    </Form.Control>
+                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+
+                                </Form.Group>
+
 
                                 {/* Language Dropdown */}
                                 <Form.Group className="mb-3" controlId="languageDropdown">
@@ -1772,7 +1877,7 @@ const ProductTable = () => {
                                         autoFocus
                                         // onChange={(e) => handleEdited(e, setLname2)}
                                         onChange={(e) => SetProductType(e.target.value)}
-                                        value={ProductType}
+                                    // value={ProductType}
                                     />
                                     {errorFlag && !ProductType && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
                                 </Form.Group>
@@ -1785,7 +1890,7 @@ const ProductTable = () => {
                                         autoFocus
                                         // onChange={(e) => handleEdited(e, setLname2)}
                                         onChange={(e) => Setbrandname(e.target.value)}
-                                        value={brandname}
+                                    // value={brandname}
                                     />
                                     {errorFlag && !brandname && (<p style={{ color: 'red', marginTop: '10px' }} >{'Brand Name is Required'}</p>)}
                                 </Form.Group>
@@ -1799,7 +1904,7 @@ const ProductTable = () => {
                                         autoFocus
                                         // onChange={(e) => handleEdited(e, setLname2)}
                                         onChange={(e) => Setsku(e.target.value)}
-                                        value={sku}
+
                                     />
                                     {errorFlag && !sku && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sku is Required'}</p>)}
                                 </Form.Group>
@@ -2014,7 +2119,7 @@ const ProductTable = () => {
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setLname2)}
                                 onChange={(e) => Setsku(e.target.value)}
-                                value={sku}
+                            // value={sku}
                             />
                             {errorFlag && !sku && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sku is Required'}</p>)}
                         </Form.Group>

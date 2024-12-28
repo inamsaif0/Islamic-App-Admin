@@ -25,7 +25,7 @@ const Dashboardecommerce = () => {
                                     <div className="card-body">
                                         <div className="media d-flex">
                                             <div className="media-body text-left">
-                                                <h3 className="info">850</h3>
+                                                <h3 className="info">0</h3>
                                                 <h6>Products Sold</h6>
                                             </div>
                                             <div>
@@ -45,7 +45,7 @@ const Dashboardecommerce = () => {
                                     <div className="card-body">
                                         <div className="media d-flex">
                                             <div className="media-body text-left">
-                                                <h3 className="warning">$748</h3>
+                                                <h3 className="warning">$0</h3>
                                                 <h6>Net Profit</h6>
                                             </div>
                                             <div>
@@ -65,7 +65,7 @@ const Dashboardecommerce = () => {
                                     <div className="card-body">
                                         <div className="media d-flex">
                                             <div className="media-body text-left">
-                                                <h3 className="success">146</h3>
+                                                <h3 className="success">0</h3>
                                                 <h6>New Customers</h6>
                                             </div>
                                             <div>
@@ -85,7 +85,7 @@ const Dashboardecommerce = () => {
                                     <div className="card-body">
                                         <div className="media d-flex">
                                             <div className="media-body text-left">
-                                                <h3 className="danger">99.89 %</h3>
+                                                <h3 className="danger">0.00 %</h3>
                                                 <h6>Customer Satisfaction</h6>
                                             </div>
                                             <div>

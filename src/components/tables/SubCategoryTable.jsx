@@ -790,7 +790,7 @@ const SubCategoryTable = () => {
                                 }}
                             // value={categoryid}
                             >
-                                <option value="selectcatgory">Select Catogary</option>
+                                <option value="selectcatgory">Select Category</option>
                                 {
                                     CategoryDropdown?.map((a) => {
                                         // console.log("safdar",a.name)
