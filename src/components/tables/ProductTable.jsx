@@ -912,6 +912,7 @@ const ProductTable = () => {
             .then(result => {
 
                 console.log('resultGetCategories', result)
+                console.log("all subcateogurt",result?.data?.result)
                 if (result.status == true) {
                     // setloader(false)
                     setSubCategories(result?.data?.result)
@@ -996,33 +997,50 @@ const ProductTable = () => {
     }
 
     const [filterSubcategoryData, setFilterSubcategoryData] = useState([]);
-
+    const [filterSubChildCategory, setFilterSubChildCategory] = useState([])
+    const [filterSubReChildCategory, setFilterSubReChildCategory] = useState([])
     useEffect(() => {
         if (CategoryName) {
+            console.log("CategoryDropdown ", CategoryDropdown)
+            console.log("SubChildCategory ", SubChildCategory)
             // Filter the subcategories based on the selected category
             const filterSubCategory = CategoryDropdown?.filter(
-                (a) => a?._id === SubChildCategory
+                (a) => a?._id === CategoryName
             );
             // Update the state with the filtered subcategories
             setFilterSubcategoryData(filterSubCategory);
         }
     }, [CategoryName, CategoryDropdown]);
 
-    const filterSubChildCategory = subCategories?.filter(
-        (a) => a?._id === CategoryName2
-    );
-    // Update the state with the filtered subcategories
-    setsubChildCategoryDropdown(filterSubChildCategory);
+    useEffect(() => {
+        if (CategoryName2) {
+            console.log("subCategories ", subCategories)
+            console.log("SubChildCategory ", SubChildCategory)
+            // Filter the subcategories based on the selected category
+            const filterSubChildCategry = subCategories?.filter(
+                (a) => a?.categoryId === CategoryName2
+            );
+            // Update the state with the filtered subcategories
+            setFilterSubChildCategory(filterSubChildCategry);
 
-    console.log('dropdownSub child category==>State', filterSubChildCategory);
+        }
+    }, [CategoryName2, SubCategoryDropdown]);
 
-    const filterSubReChildCategory = childsubcategories?.filter(
-        (a) => a?._id === SubChildCategory
-    );
-    // Update the state with the filtered subcategories
-    setsubChildReCategoryDropdown(filterSubReChildCategory);
+    useEffect(() => {
+        if (SubChildCategory) {
+            // Filter the subcategories based on the selected category
+            const filterSubReChildCategry = childsubcategories?.filter(
+                (a) => a?.categoryId === SubChildCategory
+            );
+            // Update the state with the filtered subcategories
+            setFilterSubReChildCategory(filterSubReChildCategry);
 
-    console.log('dropdown filterSubReChildCategory==>State', filterSubReChildCategory);
+        }
+    }, [SubChildCategory, subChildCategoryDropdown]);
+    // console.log('dropdownSub child category==>State', filterSubChildCategory);
+
+
+    console.log('dropdown filterSubReChildCategory==>State', subChildReCategoryDropdown);
 
 
     function convertTimestamp(isoString, dateFormat = "YYYY-MM-DD HH:mm:ss") {
