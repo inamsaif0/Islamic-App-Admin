@@ -912,7 +912,7 @@ const ProductTable = () => {
             .then(result => {
 
                 console.log('resultGetCategories', result)
-                console.log("all subcateogurt",result?.data?.result)
+                console.log("all subcateogurt", result?.data?.result)
                 if (result.status == true) {
                     // setloader(false)
                     setSubCategories(result?.data?.result)
@@ -999,28 +999,38 @@ const ProductTable = () => {
     const [filterSubcategoryData, setFilterSubcategoryData] = useState([]);
     const [filterSubChildCategory, setFilterSubChildCategory] = useState([])
     const [filterSubReChildCategory, setFilterSubReChildCategory] = useState([])
+    // wokring done
     useEffect(() => {
         if (CategoryName) {
+            console.log("CategoryName", CategoryName)
             console.log("CategoryDropdown ", CategoryDropdown)
-            console.log("SubChildCategory ", SubChildCategory)
+            console.log("subCategories ", subCategories)
             // Filter the subcategories based on the selected category
-            const filterSubCategory = CategoryDropdown?.filter(
+            const filterCategory = CategoryDropdown?.filter(
                 (a) => a?._id === CategoryName
             );
+            console.log("filterCategory", filterCategory)
+            const filterSubCategory = subCategories.filter((item) => filterCategory[0]?.subcategoryId?.includes(item._id))
+
+            console.log(filterSubCategory)
             // Update the state with the filtered subcategories
             setFilterSubcategoryData(filterSubCategory);
         }
     }, [CategoryName, CategoryDropdown]);
 
+    // working done
     useEffect(() => {
         if (CategoryName2) {
-            console.log("subCategories ", subCategories)
-            console.log("SubChildCategory ", SubChildCategory)
+            console.log("childsubcategories ", childsubcategories)
+            // console.log("SubChildCategory ", SubChildCategory)
             // Filter the subcategories based on the selected category
-            const filterSubChildCategry = subCategories?.filter(
-                (a) => a?.categoryId === CategoryName2
+            const filterSubCategory = subCategories?.filter(
+                (a) => a?._id === CategoryName2
             );
+            console.log(filterSubCategory)
+            const filterSubChildCategry = childsubcategories.filter((item) => filterSubCategory[0]?.subcategoryId?.includes(item?._id))
             // Update the state with the filtered subcategories
+            console.log(filterSubChildCategry)
             setFilterSubChildCategory(filterSubChildCategry);
 
         }
@@ -1028,10 +1038,15 @@ const ProductTable = () => {
 
     useEffect(() => {
         if (SubChildCategory) {
+            console.log("reChildSubcategories ", reChildSubcategories)
+
             // Filter the subcategories based on the selected category
-            const filterSubReChildCategry = childsubcategories?.filter(
-                (a) => a?.categoryId === SubChildCategory
+            const filterSubChildCategry = childsubcategories?.filter(
+                (a) => a?._id === SubChildCategory
             );
+            console.log(filterSubChildCategry)
+            const filterSubReChildCategry = reChildSubcategories.filter((item) => filterSubChildCategry[0].subcategoryId.includes(item._id))
+            console.log(filterSubReChildCategry)
             // Update the state with the filtered subcategories
             setFilterSubReChildCategory(filterSubReChildCategry);
 
@@ -1607,7 +1622,7 @@ const ProductTable = () => {
                                     >
                                         <option value="selectcatgory">Select Sub Category</option>
                                         {
-                                            filterSubcategoryData[0]?.subcategories?.map((a) => {
+                                            filterSubcategoryData?.map((a) => {
                                                 // console.log("safdar",a.name)
                                                 return (
                                                     <>
@@ -1636,7 +1651,7 @@ const ProductTable = () => {
                                     >
                                         <option value="selectcatgory">Select Sub-Child Category</option>
                                         {
-                                            filterSubChildCategory[0]?.subcategories?.map((a) => {
+                                            filterSubChildCategory?.map((a) => {
                                                 // console.log("safdar",a.name)
                                                 return (
                                                     <>
@@ -1666,7 +1681,7 @@ const ProductTable = () => {
                                     >
                                         <option value="selectcatgory">Select Sub Re-child Category</option>
                                         {
-                                            filterSubReChildCategory[0]?.subcategories?.map((a) => {
+                                            filterSubReChildCategory?.map((a) => {
                                                 // console.log("safdar",a.name)
                                                 return (
                                                     <>

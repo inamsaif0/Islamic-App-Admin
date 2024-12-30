@@ -66,6 +66,8 @@ const SubCategoryTable = () => {
     const [imagelist, Setimagelist] = useState([])
     console.log('imagelist==>', imagelist)
     const [imageURLs, setImageURLs] = useState([]); // State to store image URLs
+
+    const [imagePreview, setImagePreview] = useState(null);
     const [description, Setdescription] = useState('')
 
     const [TabelId, SetTabelId] = useState('')
@@ -77,7 +79,7 @@ const SubCategoryTable = () => {
     const [show, setShow] = useState(false);
 
     const handleClose = () => {
-        setShow(false); SeterrorFlag(false); Settitle('');
+        setShow(false); SeterrorFlag(false); Settitle(''); Setimagelist([]); setImagePreview(null)
     }
     const handleShow = () => setShow(true);
 
@@ -90,6 +92,8 @@ const SubCategoryTable = () => {
 
     const handleClose2 = () => {
         setShow2(false); SeterrorFlag(false);
+        Setimagelist([]);
+        setImagePreview(null);
     }
     const handleShow2 = () => setShow2(true);
 
@@ -202,7 +206,6 @@ const SubCategoryTable = () => {
             );
     }
 
-    const [imagePreview, setImagePreview] = useState(null);
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -229,16 +232,13 @@ const SubCategoryTable = () => {
         }
 
 
-
-
-
         var formdata = new FormData();
         formdata.append("title", title);
         formdata.append("category", CategoryName);
         for (var i = 0; i < imagelist.length; i++) {
             formdata.append("media", imagelist[i]);
-
         }
+        console.log(title, CategoryName)
 
         var requestOptions = {
             method: 'POST',
@@ -318,17 +318,17 @@ const SubCategoryTable = () => {
         //     SeterrorFlag(true)
         //     return
         // }
-        //
 
+        console.log(CategoryName, title, TabelId)
         var formdata = new FormData();
         formdata.append("category", CategoryName);
         formdata.append("title", title);
         formdata.append("subcategoryId", TabelId);
 
-        // if (imagelist) {
-        //     for (var i = 0; i < imagelist.length; i++) {
-        //         formdata.append("media", imagelist[i]);
-        //     }
+        // if (imagelist !=null) {
+            for (var i = 0; i < imagelist.length; i++) {
+                formdata.append("media", imagelist[i]);
+            }
         // }
 
         var requestOptions = {
@@ -712,7 +712,7 @@ const SubCategoryTable = () => {
                                 columns={[
                                     {
                                         title: "Image", field: "media", render: item =>
-                                            <img src={item?.media?.file ? Baseurl.baseUrl + item?.media?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg'} alt="" border="3" height="50" width="100" />
+                                            <img src={item?.media[0]?.file ? Baseurl.baseUrl + item?.media[0]?.file : '../../../app-assets/images/portrait/medium/avatar-m-25.jpg'} alt="" border="3" height="50" width="100" />
                                     },
                                     { title: "Title", field: "title" },
                                     {

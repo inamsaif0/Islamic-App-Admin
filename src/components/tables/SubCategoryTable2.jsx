@@ -77,7 +77,8 @@ const SubCategoryTable2 = () => {
     const [show, setShow] = useState(false);
 
     const handleClose = () => {
-        setShow(false); SeterrorFlag(false); Settitle('');
+        setShow(false); SeterrorFlag(false); Settitle(''); Setimagelist([]);
+        setImagePreview(null);
     }
     const handleShow = () => setShow(true);
 
@@ -90,6 +91,8 @@ const SubCategoryTable2 = () => {
 
     const handleClose2 = () => {
         setShow2(false); SeterrorFlag(false);
+        //     Setimagelist([]);
+        // setImagePreview(null);
     }
     const handleShow2 = () => setShow2(true);
 
@@ -314,12 +317,12 @@ const SubCategoryTable2 = () => {
         // formdata.append("category", CategoryName);
         formdata.append("title", title);
         formdata.append("subcategoryId", TabelId);
-
-        if (imagelist) {
-            for (var i = 0; i < imagelist.length; i++) {
-                formdata.append("media", imagelist[i]);
-            }
+        console.log(imagelist)
+        // if (imagelist) {
+        for (var i = 0; i < imagelist.length; i++) {
+            formdata.append("media", imagelist[i]);
         }
+        // }
 
         var requestOptions = {
             method: 'Post',
@@ -512,7 +515,7 @@ const SubCategoryTable2 = () => {
             setCategoryName(rowData?.category);
 
             console.log(rowData)
-            console.log(Baseurl.baseUrl + rowData.media.file)
+            console.log(Baseurl.baseUrl + rowData.media[0].file)
             setImagePreview(Baseurl?.baseUrl + rowData?.media[0]?.file);
             Edited(rowData._id);
 
