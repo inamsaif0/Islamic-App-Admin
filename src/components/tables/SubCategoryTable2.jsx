@@ -320,6 +320,8 @@ const SubCategoryTable2 = () => {
         console.log(imagelist)
         // if (imagelist) {
         for (var i = 0; i < imagelist.length; i++) {
+            console.log(imagelist)
+            console.log(imagelist[i])
             formdata.append("media", imagelist[i]);
         }
         // }

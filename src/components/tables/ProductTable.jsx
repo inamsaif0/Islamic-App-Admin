@@ -859,9 +859,7 @@ const ProductTable = () => {
     // }
 
     useEffect(() => {
-
         GetCategoryData()
-
     }, [])
     // const [subCategory, setsubCategory] = useState([])
     const [subCategories, setSubCategories] = useState([])
@@ -1002,56 +1000,82 @@ const ProductTable = () => {
     // wokring done
     useEffect(() => {
         if (CategoryName) {
-            console.log("CategoryName", CategoryName)
-            console.log("CategoryDropdown ", CategoryDropdown)
-            console.log("subCategories ", subCategories)
+            console.log("CategoryName", CategoryName);
+            console.log("CategoryDropdown ", CategoryDropdown);
+            console.log("subCategories ", subCategories);
+
+            // Reset dependent states
+            setFilterSubcategoryData([]);
+            setFilterSubChildCategory([]);
+            setFilterSubReChildCategory([]);
+
             // Filter the subcategories based on the selected category
-            const filterCategory = CategoryDropdown?.filter(
-                (a) => a?._id === CategoryName
-            );
-            console.log("filterCategory", filterCategory)
-            const filterSubCategory = subCategories.filter((item) => filterCategory[0]?.subcategoryId?.includes(item._id))
+            const filterCategory = CategoryDropdown?.filter((a) => a?._id === CategoryName);
+            console.log("filterCategory", filterCategory);
 
-            console.log(filterSubCategory)
-            // Update the state with the filtered subcategories
-            setFilterSubcategoryData(filterSubCategory);
+            if (filterCategory?.length) {
+                const filterSubCategory = subCategories.filter((item) =>
+                    filterCategory[0]?.subcategoryId?.includes(item._id)
+                );
+                console.log(filterSubCategory);
+                setFilterSubcategoryData(filterSubCategory);
+            }
+        } else {
+            // Reset state if no category is selected
+            setFilterSubcategoryData([]);
         }
-    }, [CategoryName, CategoryDropdown]);
+    }, [CategoryName, CategoryDropdown, subCategories]);
 
-    // working done
     useEffect(() => {
         if (CategoryName2) {
-            console.log("childsubcategories ", childsubcategories)
-            // console.log("SubChildCategory ", SubChildCategory)
-            // Filter the subcategories based on the selected category
-            const filterSubCategory = subCategories?.filter(
-                (a) => a?._id === CategoryName2
-            );
-            console.log(filterSubCategory)
-            const filterSubChildCategry = childsubcategories.filter((item) => filterSubCategory[0]?.subcategoryId?.includes(item?._id))
-            // Update the state with the filtered subcategories
-            console.log(filterSubChildCategry)
-            setFilterSubChildCategory(filterSubChildCategry);
+            console.log("childsubcategories ", childsubcategories);
 
+            // Reset dependent states
+            setFilterSubChildCategory([]);
+            setFilterSubReChildCategory([]);
+
+            // Filter the subcategories based on the selected category
+            const filterSubCategory = subCategories?.filter((a) => a?._id === CategoryName2);
+            console.log(filterSubCategory);
+
+            if (filterSubCategory?.length) {
+                const filterSubChildCategry = childsubcategories.filter((item) =>
+                    filterSubCategory[0]?.subcategoryId?.includes(item?._id)
+                );
+                console.log(filterSubChildCategry);
+                setFilterSubChildCategory(filterSubChildCategry);
+            }
+        } else {
+            // Reset state if no subcategory is selected
+            setFilterSubChildCategory([]);
         }
-    }, [CategoryName2, SubCategoryDropdown]);
+    }, [CategoryName2, SubCategoryDropdown, subCategories, childsubcategories]);
 
     useEffect(() => {
         if (SubChildCategory) {
-            console.log("reChildSubcategories ", reChildSubcategories)
+            console.log("reChildSubcategories ", reChildSubcategories);
 
-            // Filter the subcategories based on the selected category
+            // Reset dependent state
+            setFilterSubReChildCategory([]);
+
+            // Filter the subcategories based on the selected subcategory
             const filterSubChildCategry = childsubcategories?.filter(
                 (a) => a?._id === SubChildCategory
             );
-            console.log(filterSubChildCategry)
-            const filterSubReChildCategry = reChildSubcategories.filter((item) => filterSubChildCategry[0].subcategoryId.includes(item._id))
-            console.log(filterSubReChildCategry)
-            // Update the state with the filtered subcategories
-            setFilterSubReChildCategory(filterSubReChildCategry);
+            console.log(filterSubChildCategry);
 
+            if (filterSubChildCategry?.length) {
+                const filterSubReChildCategry = reChildSubcategories.filter((item) =>
+                    filterSubChildCategry[0]?.subcategoryId?.includes(item._id)
+                );
+                console.log(filterSubReChildCategry);
+                setFilterSubReChildCategory(filterSubReChildCategry);
+            }
+        } else {
+            // Reset state if no subchild category is selected
+            setFilterSubReChildCategory([]);
         }
-    }, [SubChildCategory, subChildCategoryDropdown]);
+    }, [SubChildCategory, subChildCategoryDropdown, childsubcategories, reChildSubcategories]);
     // console.log('dropdownSub child category==>State', filterSubChildCategory);
 
 
@@ -1874,8 +1898,6 @@ const ProductTable = () => {
                                                 )
                                             })
                                         }
-
-
                                     </Form.Control>
                                     {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
 
@@ -1894,7 +1916,7 @@ const ProductTable = () => {
                                     >
                                         <option value="selectcatgory">Select Sub Category</option>
                                         {
-                                            filterSubcategoryData[0]?.subcategories?.map((a) => {
+                                            filterSubcategoryData?.map((a) => {
                                                 // console.log("safdar",a.name)
                                                 return (
                                                     <>
@@ -1906,9 +1928,69 @@ const ProductTable = () => {
 
 
                                     </Form.Control>
-                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub category is Required'}</p>)}
 
                                 </Form.Group>
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Sub Child Category ID</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        value={SubChildCategory}
+                                        onChange={e => {
+                                            console.log("e.target.value", e.target.value);
+                                            setSubChildCategory(e.target.value);
+                                        }}
+                                    // value={categoryid}
+                                    >
+                                        <option value="selectcatgory">Select Sub-Child Category</option>
+                                        {
+                                            filterSubChildCategory?.map((a) => {
+                                                // console.log("safdar",a.name)
+                                                return (
+                                                    <>
+                                                        <option value={a._id}>{a.title}</option>
+                                                    </>
+                                                )
+                                            })
+                                        }
+
+
+                                    </Form.Control>
+                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Child Category is Required'}</p>)}
+
+                                </Form.Group>
+
+
+                                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                    <Form.Label>Sub Re-child Category ID</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        value={subReChildCategory}
+                                        onChange={e => {
+                                            console.log("e.target.value", e.target.value);
+                                            setsubReChildCategory(e.target.value);
+                                        }}
+                                    // value={categoryid}
+                                    >
+                                        <option value="selectcatgory">Select Sub Re-child Category</option>
+                                        {
+                                            filterSubReChildCategory?.map((a) => {
+                                                // console.log("safdar",a.name)
+                                                return (
+                                                    <>
+                                                        <option value={a._id}>{a.title}</option>
+                                                    </>
+                                                )
+                                            })
+                                        }
+
+
+                                    </Form.Control>
+                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Re-child category is Required'}</p>)}
+
+                                </Form.Group>
+
 
                                 <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                                     <Form.Label>Description</Form.Label>
@@ -2263,10 +2345,12 @@ const ProductTable = () => {
                                     console.log("e.target.value", e.target.value);
                                     setCategoryName(e.target.value);
                                 }}
+                            // value={categoryid}
                             >
                                 <option value="selectcatgory">Select Category</option>
                                 {
                                     CategoryDropdown?.map((a) => {
+                                        // console.log("safdar",a.name)
                                         return (
                                             <>
                                                 <option value={a._id}>{a.title}</option>
@@ -2274,10 +2358,8 @@ const ProductTable = () => {
                                         )
                                     })
                                 }
-
                             </Form.Control>
-                            {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Category is Required'}</p>)}
-
+                            {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
 
                         </Form.Group>
 
@@ -2290,10 +2372,12 @@ const ProductTable = () => {
                                     console.log("e.target.value", e.target.value);
                                     setCategoryName2(e.target.value);
                                 }}
+                            // value={categoryid}
                             >
                                 <option value="selectcatgory">Select Sub Category</option>
                                 {
-                                    filterSubcategoryData[0]?.subcategories?.map((a) => {
+                                    filterSubcategoryData?.map((a) => {
+                                        // console.log("safdar",a.name)
                                         return (
                                             <>
                                                 <option value={a._id}>{a.title}</option>
@@ -2302,9 +2386,71 @@ const ProductTable = () => {
                                     })
                                 }
 
+
                             </Form.Control>
-                            {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Category is Required'}</p>)}
+                            {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub category is Required'}</p>)}
+
                         </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Sub Child Category ID</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={SubChildCategory}
+                                onChange={e => {
+                                    console.log("e.target.value", e.target.value);
+                                    setSubChildCategory(e.target.value);
+                                }}
+                            // value={categoryid}
+                            >
+                                <option value="selectcatgory">Select Sub-Child Category</option>
+                                {
+                                    filterSubChildCategory?.map((a) => {
+                                        // console.log("safdar",a.name)
+                                        return (
+                                            <>
+                                                <option value={a._id}>{a.title}</option>
+                                            </>
+                                        )
+                                    })
+                                }
+
+
+                            </Form.Control>
+                            {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Child Category is Required'}</p>)}
+
+                        </Form.Group>
+
+
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label>Sub Re-child Category ID</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={subReChildCategory}
+                                onChange={e => {
+                                    console.log("e.target.value", e.target.value);
+                                    setsubReChildCategory(e.target.value);
+                                }}
+                            // value={categoryid}
+                            >
+                                <option value="selectcatgory">Select Sub Re-child Category</option>
+                                {
+                                    filterSubReChildCategory?.map((a) => {
+                                        // console.log("safdar",a.name)
+                                        return (
+                                            <>
+                                                <option value={a._id}>{a.title}</option>
+                                            </>
+                                        )
+                                    })
+                                }
+
+
+                            </Form.Control>
+                            {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Re-child category is Required'}</p>)}
+
+                        </Form.Group>
+
                         {/* Language Dropdown */}
                         <Form.Group className="mb-3" controlId="languageDropdown">
                             <Form.Label>Language</Form.Label>
