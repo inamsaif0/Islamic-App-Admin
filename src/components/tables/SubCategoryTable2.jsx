@@ -207,6 +207,7 @@ const SubCategoryTable2 = () => {
     }
 
     const [imagePreview, setImagePreview] = useState(null);
+    const [isNewImg, setIsNewImg] = useState(false)
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -219,7 +220,7 @@ const SubCategoryTable2 = () => {
 
             console.log('Files:', event.target.files);
             Setimagelist(event.target.files);
-
+            setIsNewImg(true)
         }
     };
 
@@ -320,13 +321,13 @@ const SubCategoryTable2 = () => {
         formdata.append("title", title);
         formdata.append("subcategoryId", TabelId);
         console.log(imagelist)
-        // if (imagelist) {
-        for (var i = 0; i < imagelist.length; i++) {
-            console.log(imagelist)
-            console.log(imagelist[i])
-            formdata.append("media", imagelist[i]);
+        if (imagelist && isNewImg) {
+            for (var i = 0; i < imagelist.length; i++) {
+                console.log(imagelist)
+                console.log(imagelist[i])
+                formdata.append("media", imagelist[i]);
+            }
         }
-        // }
 
         var requestOptions = {
             method: 'Post',

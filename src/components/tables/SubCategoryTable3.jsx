@@ -204,6 +204,7 @@ const SubCategoryTable3 = () => {
     }
 
     const [imagePreview, setImagePreview] = useState(null);
+    const [isNewImg, setIsNewImg] = useState(false)
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -216,7 +217,7 @@ const SubCategoryTable3 = () => {
 
             console.log('Files:', event.target.files);
             Setimagelist(event.target.files);
-
+            setIsNewImg(true)
         }
     };
 
@@ -317,7 +318,7 @@ const SubCategoryTable3 = () => {
         formdata.append("subcategoryId", TabelId);
         console.log("CategoryName", CategoryName)
 
-        if (imagelist) {
+        if (imagelist && isNewImg) {
             for (var i = 0; i < imagelist.length; i++) {
                 console.log(imagelist)
                 console.log(imagelist[i])
