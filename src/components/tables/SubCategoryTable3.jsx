@@ -78,6 +78,7 @@ const SubCategoryTable3 = () => {
 
     const handleClose = () => {
         setShow(false); SeterrorFlag(false); Settitle('');
+        setCategoryName("");
     }
     const handleShow = () => setShow(true);
 
@@ -90,6 +91,7 @@ const SubCategoryTable3 = () => {
 
     const handleClose2 = () => {
         setShow2(false); SeterrorFlag(false);
+        setCategoryName("")
     }
     const handleShow2 = () => setShow2(true);
 
@@ -310,12 +312,15 @@ const SubCategoryTable3 = () => {
         //
 
         var formdata = new FormData();
-        // formdata.append("category", CategoryName);
+        formdata.append("category", CategoryName);
         formdata.append("title", title);
         formdata.append("subcategoryId", TabelId);
+        console.log("CategoryName", CategoryName)
 
         if (imagelist) {
             for (var i = 0; i < imagelist.length; i++) {
+                console.log(imagelist)
+                console.log(imagelist[i])
                 formdata.append("media", imagelist[i]);
             }
         }
@@ -504,11 +509,14 @@ const SubCategoryTable3 = () => {
     // old
     const handleEdit2 = async (rowData) => {
         setLoading2(true);  // Start loading
-
+        console.log(rowData)
         try {
             // Set initial state
             Settitle(rowData.title);
-            setCategoryName(rowData?.category);
+            console.log(CategoryDropdown)
+            const filterCategory = CategoryDropdown.filter((item) => item.subcategoryId.some((id) => id === rowData?._id))
+            console.log("filter cateogr", filterCategory)
+            setCategoryName(filterCategory[0]?._id);
 
             console.log(rowData)
             console.log(Baseurl.baseUrl + rowData.media.file)
@@ -649,7 +657,8 @@ const SubCategoryTable3 = () => {
                                     ]
                                 }
                                 options={{
-                                    actionsColumnIndex: -1
+                                    actionsColumnIndex: -1,
+                                    headerStyle: { fontSize: "14px", fontWeight: "500" }
                                 }}
                                 title=""
                             />
@@ -734,6 +743,7 @@ const SubCategoryTable3 = () => {
                                         <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
                                             <input
                                                 type="file"
+                                                accept="image/*"
                                                 id="cateogryImg"
                                                 style={{
                                                     display: "none",
@@ -878,6 +888,7 @@ const SubCategoryTable3 = () => {
                                         <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
                                             <input
                                                 type="file"
+                                                accept="image/*"
                                                 id="cateogryImg"
                                                 style={{
                                                     display: "none",

@@ -671,7 +671,9 @@ const CategoryTable = () => {
 
                                 }
                                 options={{
-                                    actionsColumnIndex: -1
+                                    actionsColumnIndex: -1,
+                                    headerStyle: { fontSize: "14px", fontWeight: "500" }
+
                                 }}
                                 title=""
                             />
@@ -734,6 +736,7 @@ const CategoryTable = () => {
                                             style={{
                                                 display: "none",
                                             }}
+                                            accept="image/*"
                                             multiple // Allow multiple file selection
                                             onChange={handleImageChange}
                                         />
@@ -941,6 +944,7 @@ const CategoryTable = () => {
                                                 style={{
                                                     display: "none",
                                                 }}
+                                                accept="image/*"
                                                 multiple // Allow multiple file selection
                                                 onChange={handleImageChange}
                                             />

@@ -80,7 +80,7 @@ const ProductTable = () => {
     const handleClose2 = () => { setShow2(false); setImagePreview(null); }
     const handleShow2 = () => setShow2(true);
     const [show3, setShow3] = useState(false);
-    const handleClose3 = () => { setShow3(false); setImagePreview(null); }
+    const handleClose3 = () => { setShow3(false); setImagePreview(null); setSelectedLanguage(""); setCategoryName2(""); setCategoryName("") }
     const handleShow3 = () => setShow3(true);
     const [name, Setname] = useState('')
     const [brandname, Setbrandname] = useState('')
@@ -283,12 +283,16 @@ const ProductTable = () => {
 
     console.log(errorFlag, "else")
     console.log(name, price, imagelist.length > 0, CategoryName, CategoryName2, Quantity)
-    console.log(name, Quantity)
+    // console.log(name, Quantity)
 
     const AddProduct = () => {
 
         var formdata = new FormData();
         console.log(tabs)
+        console.log("category ", CategoryName)
+        console.log("sub category ", CategoryName2)
+        console.log("sub child category ", SubChildCategory)
+        console.log("sub re-child category", subReChildCategory)
         if (tabs === "productDetails") {
             if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !selectedLanguage || !dimension || !noofpage || !authorName || !Quantity) {
                 SeterrorFlag(true)
@@ -309,8 +313,8 @@ const ProductTable = () => {
             formdata.append("productType", ProductType);
             formdata.append("category", CategoryName);
             formdata.append("subCategory", CategoryName2);
-            formdata.append("subChildCategory", SubChildCategory);
-            formdata.append("subReChildCategory", subReChildCategory);
+            formdata.append("childSubCategory", SubChildCategory);
+            formdata.append("reChildSubCategory", subReChildCategory);
             formdata.append("language", selectedLanguage);
 
             formdata.append("dimension", dimension);
@@ -321,7 +325,6 @@ const ProductTable = () => {
             // formdata.append("image", image);
             for (var i = 0; i < imagelist.length; i++) {
                 formdata.append("media", imagelist[i]);
-
             }
 
             console.log("value of image list is ", imagelist)
@@ -414,12 +417,7 @@ const ProductTable = () => {
                     });
 
                 }
-
-
-
-            }
-
-            )
+            })
             .catch(error => {
                 setLoader(false)
                 console.log('error', error)
@@ -865,6 +863,7 @@ const ProductTable = () => {
     const [subCategories, setSubCategories] = useState([])
     const [childsubcategories, setChildsubcategories] = useState([])
     const [reChildSubcategories, setReChildsubcategories] = useState([])
+
     const GetCategoryData = () => {
         var requestOptions = {
             method: 'GET',
@@ -1081,6 +1080,11 @@ const ProductTable = () => {
 
     console.log('dropdown filterSubReChildCategory==>State', subChildReCategoryDropdown);
 
+    console.log("category ", CategoryName)
+    console.log("sub category ", CategoryName2)
+    console.log("sub child category ", SubChildCategory)
+    console.log("sub re-child category", subReChildCategory)
+
 
     function convertTimestamp(isoString, dateFormat = "YYYY-MM-DD HH:mm:ss") {
         return moment(isoString).format(dateFormat);
@@ -1116,9 +1120,13 @@ const ProductTable = () => {
             Setprice(rowData?.price);
             SetQuantity(rowData?.quantity);
             Setsku(rowData?.sku);
+            console.log(rowData?.sku)
             SetProductType(rowData?.productType);
             setCategoryName(rowData?.category);
             setCategoryName2(rowData?.subCategory);
+            setSubChildCategory(rowData?.childSubCategory);
+            setsubReChildCategory(rowData?.reChildSubCategory);
+
             setSelectedLanguage(rowData?.language);
 
             // Fetch media and handle uniqueness
@@ -1304,18 +1312,6 @@ const ProductTable = () => {
 
 
 
-
-
-    // const dropdownSubcategory=CategoryDropdown.filter((a)=>a._id == CategoryName)
-
-    // console.log('dropdownSubcategory==>',dropdownSubcategory)
-
-
-
-
-
-
-
     return (
         <>
             {loader == true ?
@@ -1436,7 +1432,8 @@ const ProductTable = () => {
 
                                 }
                                 options={{
-                                    actionsColumnIndex: -1
+                                    actionsColumnIndex: -1,
+                                    headerStyle: { fontSize: "14px", fontWeight: "500" }
                                 }}
                                 title=""
                             />
@@ -1444,8 +1441,6 @@ const ProductTable = () => {
                     </div>
                 </div>
             </div>
-
-
 
 
 
@@ -1768,6 +1763,7 @@ const ProductTable = () => {
                                                 <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
                                                     <input
                                                         type="file"
+                                                        accept="image/*"
                                                         id="cateogryImg"
                                                         style={{
                                                             display: "none",
@@ -2066,6 +2062,7 @@ const ProductTable = () => {
                                                 <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
                                                     <input
                                                         type="file"
+                                                        accept="image/*"
                                                         id="cateogryImg"
                                                         style={{
                                                             display: "none",
@@ -2255,7 +2252,7 @@ const ProductTable = () => {
                                 autoFocus
                                 // onChange={(e) => handleEdited(e, setLname2)}
                                 onChange={(e) => Setsku(e.target.value)}
-                            // value={sku}
+                                value={sku}
                             />
                             {errorFlag && !sku && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sku is Required'}</p>)}
                         </Form.Group>
@@ -2496,6 +2493,7 @@ const ProductTable = () => {
                                         <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
                                             <input
                                                 type="file"
+                                                accept="image/*"
                                                 id="cateogryImg"
                                                 style={{
                                                     display: "none",

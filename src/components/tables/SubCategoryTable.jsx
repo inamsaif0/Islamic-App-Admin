@@ -94,6 +94,7 @@ const SubCategoryTable = () => {
         setShow2(false); SeterrorFlag(false);
         Setimagelist([]);
         setImagePreview(null);
+        setCategoryName("")
     }
     const handleShow2 = () => setShow2(true);
 
@@ -326,9 +327,9 @@ const SubCategoryTable = () => {
         formdata.append("subcategoryId", TabelId);
 
         // if (imagelist !=null) {
-            for (var i = 0; i < imagelist.length; i++) {
-                formdata.append("media", imagelist[i]);
-            }
+        for (var i = 0; i < imagelist.length; i++) {
+            formdata.append("media", imagelist[i]);
+        }
         // }
 
         var requestOptions = {
@@ -521,7 +522,12 @@ const SubCategoryTable = () => {
         try {
             // Set initial state
             Settitle(rowData.title);
-            setCategoryName(rowData?.category);
+            const selectedCategory = CategoryDropdown.filter((item) =>
+                item.subcategoryId.some((id) => id === rowData._id)
+            )
+            // console.log("CategoryDropdown ", CategoryDropdown)
+            console.log("fitler Category ", selectedCategory)
+            setCategoryName(selectedCategory[0]?._id);
 
             console.log(rowData)
             console.log(Baseurl.baseUrl + rowData.media.file)
@@ -744,7 +750,8 @@ const SubCategoryTable = () => {
                                     ]
                                 }
                                 options={{
-                                    actionsColumnIndex: -1
+                                    actionsColumnIndex: -1,
+                                    headerStyle: { fontSize: "14px", fontWeight: "500" }
                                 }}
                                 title=""
                             />
@@ -833,6 +840,7 @@ const SubCategoryTable = () => {
                                                 style={{
                                                     display: "none",
                                                 }}
+                                                accept="image/*"
                                                 multiple // Allow multiple file selection
                                                 onChange={handleImageChange}
                                             />
@@ -978,6 +986,7 @@ const SubCategoryTable = () => {
                                                     display: "none",
                                                 }}
                                                 multiple // Allow multiple file selection
+                                                accept="image/*"
                                                 onChange={handleImageChange}
                                             />
                                             <label

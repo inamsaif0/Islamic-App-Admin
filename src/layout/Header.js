@@ -415,7 +415,7 @@ const Header = () => {
                             </li> */}
                         </ul>
                     </div>
-                    <div className="navbar-container content ">
+                    <div className="navbar-container content hidden">
                         <div className="collapse navbar-collapse " id="navbar-mobile">
                             <ul className="nav navbar-nav mr-auto float-left ">
                                 {/* <li className="nav-item d-none d-md-block"><a className="nav-link nav-link-expand" href="#"><i className="ficon ft-maximize" /></a></li>

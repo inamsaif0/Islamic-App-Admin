@@ -79,6 +79,7 @@ const SubCategoryTable2 = () => {
     const handleClose = () => {
         setShow(false); SeterrorFlag(false); Settitle(''); Setimagelist([]);
         setImagePreview(null);
+        setCategoryName("")
     }
     const handleShow = () => setShow(true);
 
@@ -91,6 +92,7 @@ const SubCategoryTable2 = () => {
 
     const handleClose2 = () => {
         setShow2(false); SeterrorFlag(false);
+        setCategoryName("")
         //     Setimagelist([]);
         // setImagePreview(null);
     }
@@ -314,7 +316,7 @@ const SubCategoryTable2 = () => {
         //
 
         var formdata = new FormData();
-        // formdata.append("category", CategoryName);
+        formdata.append("category", CategoryName);
         formdata.append("title", title);
         formdata.append("subcategoryId", TabelId);
         console.log(imagelist)
@@ -514,7 +516,10 @@ const SubCategoryTable2 = () => {
         try {
             // Set initial state
             Settitle(rowData.title);
-            setCategoryName(rowData?.category);
+            console.log(CategoryDropdown)
+            const filterCategory = CategoryDropdown.filter((item) => item.subcategoryId.some((id) => id === rowData?._id))
+            console.log("filter cateogr", filterCategory)
+            setCategoryName(filterCategory[0]?._id);
 
             console.log(rowData)
             console.log(Baseurl.baseUrl + rowData.media[0].file)
@@ -655,7 +660,8 @@ const SubCategoryTable2 = () => {
                                     ]
                                 }
                                 options={{
-                                    actionsColumnIndex: -1
+                                    actionsColumnIndex: -1,
+                                    headerStyle: { fontSize: "14px", fontWeight: "500" }
                                 }}
                                 title=""
                             />
@@ -701,7 +707,7 @@ const SubCategoryTable2 = () => {
                                 }}
                             // value={categoryid}
                             >
-                                <option value="selectcatgory">Select Catogary</option>
+                                <option value="selectcatgory">Select category</option>
                                 {
                                     CategoryDropdown?.map((a) => {
                                         // console.log("safdar",a.name)
@@ -740,6 +746,7 @@ const SubCategoryTable2 = () => {
                                         <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
                                             <input
                                                 type="file"
+                                                accept="image/*"
                                                 id="cateogryImg"
                                                 style={{
                                                     display: "none",
@@ -884,6 +891,7 @@ const SubCategoryTable2 = () => {
                                         <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
                                             <input
                                                 type="file"
+                                                accept="image/*"
                                                 id="cateogryImg"
                                                 style={{
                                                     display: "none",
