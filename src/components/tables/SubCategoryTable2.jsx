@@ -93,8 +93,8 @@ const SubCategoryTable2 = () => {
     const handleClose2 = () => {
         setShow2(false); SeterrorFlag(false);
         setCategoryName("")
-        //     Setimagelist([]);
-        // setImagePreview(null);
+            Setimagelist([]);
+        setImagePreview(null);
     }
     const handleShow2 = () => setShow2(true);
 
@@ -266,6 +266,7 @@ const SubCategoryTable2 = () => {
                     Settitle('')
                     setCategoryName('')
                     setShow(false)
+                    setIsNewImg(false);
                     GetSubChildCategoryData()
                     handleClose()
                     // Navigate('/addcustomer')
@@ -310,84 +311,67 @@ const SubCategoryTable2 = () => {
 
 
     const EditCategory = () => {
-        // if (!imagelist.length > 0 || !title || !CategoryName) {
-        //     SeterrorFlag(true)
-        //     return
+        // Validation: Ensure necessary fields are filled
+        // if (!title || !CategoryName) {
+        //     SeterrorFlag(true);
+        //     return;
         // }
-        //
 
         var formdata = new FormData();
         formdata.append("category", CategoryName);
         formdata.append("title", title);
         formdata.append("subcategoryId", TabelId);
-        console.log(imagelist)
-        if (imagelist && isNewImg) {
+
+        // Append image files only if `isNewImg` is true
+        if (isNewImg && imagelist) {
             for (var i = 0; i < imagelist.length; i++) {
-                console.log(imagelist)
-                console.log(imagelist[i])
                 formdata.append("media", imagelist[i]);
             }
         }
 
         var requestOptions = {
-            method: 'Post',
+            method: 'POST',
             headers: {
-                token: Token
+                token: Token,
             },
             body: formdata,
-            redirect: 'follow'
+            redirect: 'follow',
         };
 
         fetch(`${Baseurl.baseUrl}api/childsubcategories/update`, requestOptions)
             .then(response => response.json())
             .then(result => {
-
-                // setloader(false)
-                if (result.status == true) {
-
-
-                    console.log("getcustomerapi ===>", result)
+                if (result.status === true) {
+                    console.log("getcustomerapi ===>", result);
                     Swal.fire({
-                        title: "success",
+                        title: "Success",
                         text: result.message,
                         icon: "success",
                         confirmButtonColor: "#29BF12",
                     });
-                    // setProfileImage('')
-                    // setSelectProfileImage('')
-                    setShow2(false)
-                    GetSubChildCategoryData()
-
-                    // Navigate('/addcustomer')
-
-
-                }
-                else {
+                    setShow2(false);
+                    setIsNewImg(false);
+                    GetSubChildCategoryData();
+                } else {
                     Swal.fire({
                         title: "Oops",
                         text: result.message,
                         icon: "error",
                         confirmButtonColor: "#29BF12",
                     });
-
                 }
-
-            }
-            )
+            })
             .catch(error => {
-                console.log('error', error)
+                console.log('error', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: error,
+                    text: error.message || 'Something went wrong!',
                     confirmButtonColor: "#03bafe",
-                })
+                });
+            });
+    };
 
-            }
-
-            );
-
-    }
 
 
     const DeleteService = (e) => {

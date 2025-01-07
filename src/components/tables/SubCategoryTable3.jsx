@@ -79,6 +79,8 @@ const SubCategoryTable3 = () => {
     const handleClose = () => {
         setShow(false); SeterrorFlag(false); Settitle('');
         setCategoryName("");
+        Setimagelist([]);
+        setImagePreview(null);
     }
     const handleShow = () => setShow(true);
 
@@ -91,7 +93,8 @@ const SubCategoryTable3 = () => {
 
     const handleClose2 = () => {
         setShow2(false); SeterrorFlag(false);
-        setCategoryName("")
+        setCategoryName(""); Setimagelist([]);
+        setImagePreview(null);
     }
     const handleShow2 = () => setShow2(true);
 
@@ -262,6 +265,7 @@ const SubCategoryTable3 = () => {
                     Settitle('')
                     setCategoryName('')
                     setShow(false)
+                    setIsNewImg(false)
                     GetSubChildCategoryData()
                     handleClose()
                     // Navigate('/addcustomer')
@@ -353,6 +357,7 @@ const SubCategoryTable3 = () => {
                     // setProfileImage('')
                     // setSelectProfileImage('')
                     setShow2(false)
+                    setIsNewImg(false)
                     GetSubChildCategoryData()
 
                     // Navigate('/addcustomer')
