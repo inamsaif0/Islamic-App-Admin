@@ -522,12 +522,14 @@ const SubCategoryTable = () => {
         try {
             // Set initial state
             Settitle(rowData.title);
-            const selectedCategory = CategoryDropdown.filter((item) =>
-                item.subcategoryId.some((id) => id === rowData._id)
-            )
+            console.log(rowData)
+            // const selectedCategory = CategoryDropdown.filter((item) =>
+            //     item.subcategoryId.some((id) => id === rowData._id)
+            // )
             // console.log("CategoryDropdown ", CategoryDropdown)
-            console.log("fitler Category ", selectedCategory)
-            setCategoryName(selectedCategory[0]?._id);
+            // console.log("fitler Category ", rowData?.category[0]?.title)
+            // console.log("fitler Category ", rowData?.category[0]?._id)
+            setCategoryName(rowData?.category[0]?._id);
 
             console.log(rowData)
             console.log(Baseurl.baseUrl + rowData.media.file)

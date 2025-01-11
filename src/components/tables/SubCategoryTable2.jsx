@@ -502,9 +502,9 @@ const SubCategoryTable2 = () => {
             // Set initial state
             Settitle(rowData.title);
             console.log(CategoryDropdown)
-            const filterCategory = CategoryDropdown.filter((item) => item.subcategoryId.some((id) => id === rowData?._id))
-            console.log("filter cateogr", filterCategory)
-            setCategoryName(filterCategory[0]?._id);
+            // const filterCategory = CategoryDropdown.filter((item) => item.subcategoryId.some((id) => id === rowData?._id))
+            console.log("filter cateogr", rowData)
+            setCategoryName(rowData?.subcategory[0]?._id);
 
             console.log(rowData)
             console.log(Baseurl.baseUrl + rowData.media[0].file)
