@@ -206,7 +206,7 @@ const SubCategoryTable = () => {
 
             );
     }
-
+    const [isNewImg, setIsNewImg] = useState(false)
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -219,7 +219,7 @@ const SubCategoryTable = () => {
 
             console.log('Files:', event.target.files);
             Setimagelist(event.target.files);
-
+            setIsNewImg(true)
         }
     };
 
@@ -269,6 +269,7 @@ const SubCategoryTable = () => {
                     Settitle('')
                     setCategoryName('')
                     setShow(false)
+                    setIsNewImg(false);
                     GetSubCategoryData()
                     handleClose()
                     // Navigate('/addcustomer')
@@ -326,11 +327,11 @@ const SubCategoryTable = () => {
         formdata.append("title", title);
         formdata.append("subcategoryId", TabelId);
 
-        // if (imagelist !=null) {
-        for (var i = 0; i < imagelist.length; i++) {
-            formdata.append("media", imagelist[i]);
+        if (isNewImg && imagelist) {
+            for (var i = 0; i < imagelist.length; i++) {
+                formdata.append("media", imagelist[i]);
+            }
         }
-        // }
 
         var requestOptions = {
             method: 'Post',
@@ -358,6 +359,7 @@ const SubCategoryTable = () => {
                     });
                     // setProfileImage('')
                     // setSelectProfileImage('')
+                    setIsNewImg(false);
                     setShow2(false)
                     GetSubCategoryData()
 
