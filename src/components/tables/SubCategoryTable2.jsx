@@ -93,7 +93,7 @@ const SubCategoryTable2 = () => {
     const handleClose2 = () => {
         setShow2(false); SeterrorFlag(false);
         setCategoryName("")
-            Setimagelist([]);
+        Setimagelist([]);
         setImagePreview(null);
     }
     const handleShow2 = () => setShow2(true);
@@ -352,6 +352,7 @@ const SubCategoryTable2 = () => {
                     setShow2(false);
                     setIsNewImg(false);
                     GetSubChildCategoryData();
+                    handleClose2()
                 } else {
                     Swal.fire({
                         title: "Oops",

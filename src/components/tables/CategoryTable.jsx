@@ -72,6 +72,7 @@ const CategoryTable = () => {
 
     const handleClose = () => {
         setShow(false); SeterrorFlag(false); Settitle('');
+        setImagePreview(null); Setimagelist([]);
     }
     const handleShow = () => setShow(true);
 
@@ -82,6 +83,7 @@ const CategoryTable = () => {
 
     const handleClose2 = () => {
         setShow2(false); SeterrorFlag(false);
+        Settitle(""); Setimagelist([]); setImagePreview(null);
     }
     const handleShow2 = () => setShow2(true);
 
@@ -283,6 +285,7 @@ const CategoryTable = () => {
                     // setProfileImage('')
                     // setSelectProfileImage('')
                     setShow2(false)
+                    handleClose2()
                     GetCategoryData()
 
                     // Navigate('/addcustomer')

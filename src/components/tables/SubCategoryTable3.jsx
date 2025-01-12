@@ -356,9 +356,10 @@ const SubCategoryTable3 = () => {
                     });
                     // setProfileImage('')
                     // setSelectProfileImage('')
-                    setShow2(false)
-                    setIsNewImg(false)
-                    GetSubChildCategoryData()
+                    setShow2(false);
+                    setIsNewImg(false);
+                    GetSubChildCategoryData();
+                    handleClose2();
 
                     // Navigate('/addcustomer')
 
@@ -710,7 +711,7 @@ const SubCategoryTable3 = () => {
                                 }}
                             // value={categoryid}
                             >
-                                <option value="selectcatgory">Select Sub-Sub Catogery</option>
+                                <option value="selectcatgory">Select Sub-Sub Category</option>
                                 {
                                     CategoryDropdown?.map((a) => {
                                         // console.log("safdar",a.name)

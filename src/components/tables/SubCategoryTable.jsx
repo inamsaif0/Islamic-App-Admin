@@ -361,6 +361,7 @@ const SubCategoryTable = () => {
                     // setSelectProfileImage('')
                     setIsNewImg(false);
                     setShow2(false)
+                    handleClose2()
                     GetSubCategoryData()
 
                     // Navigate('/addcustomer')
