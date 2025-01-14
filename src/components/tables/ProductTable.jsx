@@ -263,11 +263,11 @@ const ProductTable = () => {
         if (files.length > 0) {
             // Generate previews for all selected files
             const previewUrls = [];
-            files.forEach((file) => {
+            files.forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
-                    previewUrls.push(reader.result);
-
+                    previewUrls.push({ id: ++index, preview: reader.result });
+                    console.log("previewUrls", previewUrls);
                     // Ensure the previews are updated after all files are read
                     if (previewUrls.length === files.length) {
                         setImagePreview([...imagePreview || [], ...previewUrls]); // Update all previews
@@ -277,11 +277,11 @@ const ProductTable = () => {
             });
 
             // Update the imagelist state
-            Setimagelist(files);
+            Setimagelist((prev) => [...prev || [], ...files]); // Update imagelist state
         }
     };
 
-    console.log(errorFlag, "else")
+    // console.log(errorFlag, "else")
     console.log(name, price, imagelist.length > 0, CategoryName, CategoryName2, Quantity)
     // console.log(name, Quantity)
 
@@ -293,11 +293,45 @@ const ProductTable = () => {
         console.log("sub category ", CategoryName2)
         console.log("sub child category ", SubChildCategory)
         console.log("sub re-child category", subReChildCategory)
+        // console.log("(!CategoryName2 && filterSubcategoryData.length != 0)", (!CategoryName2 && filterSubcategoryData.length != 0))
+        // console.log("filterSubChildCategory", filterSubChildCategory)
+        // console.log("(!SubChildCategory && filterSubChildCategory.length != 0)", (!SubChildCategory && filterSubChildCategory.length != 0))
+
+        console.log("imagelist", imagelist)
         if (tabs === "productDetails") {
-            if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName || !CategoryName2 || !selectedLanguage || !dimension || !noofpage || !authorName || !Quantity) {
-                SeterrorFlag(true)
-                return
+            if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName ||
+                (!CategoryName2 && filterSubcategoryData.length !== 0) ||
+                (!SubChildCategory && filterSubChildCategory.length !== 0) ||
+                (!subReChildCategory && filterSubReChildCategory.length !== 0) ||
+                !selectedLanguage || !dimension || !noofpage || !authorName || !Quantity) {
+
+                console.log("Validation failed due to the following reasons:");
+
+                console.log("name:", name);
+                console.log("brandname:", brandname);
+                console.log("price:", price);
+                console.log("sku:", sku);
+                console.log("longdescription:", longdescription);
+                console.log("ProductType:", ProductType);
+                console.log("imagelist:", imagelist);
+                console.log("imagelist.length > 0:", imagelist.length > 0);
+                console.log("CategoryName:", CategoryName);
+                console.log("CategoryName2 or filterSubcategoryData check:", !(!CategoryName2 && filterSubcategoryData.length !== 0));
+                console.log("SubChildCategory or filterSubChildCategory check:", (!SubChildCategory && filterSubChildCategory.length !== 0));
+                console.log("subReChildCategory or filterSubReChildCategory check:", (!subReChildCategory && filterSubReChildCategory.length !== 0));
+                console.log("selectedLanguage:", selectedLanguage);
+                console.log("dimension:", dimension);
+                console.log("noofpage:", noofpage);
+                console.log("authorName:", authorName);
+                console.log("Quantity:", Quantity);
+
+                SeterrorFlag(true);
+                return;
             }
+
+            // Proceed if validation passes
+            console.log("Validation passed!");
+
 
             formdata.append("type", "book");
             formdata.append("title", name);
@@ -458,7 +492,7 @@ const ProductTable = () => {
         formdata.append("dimension", dimension);
         formdata.append("author", authorName);
         formdata.append("noofpages", noofpage);
-
+        console.log("deletedImageIds", deletedImageIds)
         for (var i = 0; i < deletedImageIds.length; i++) {
             formdata.append(`deleteImages[${i}]`, deletedImageIds[i]);
         }
@@ -711,8 +745,9 @@ const ProductTable = () => {
 
                 if (result.status == true) {
                     console.log('resultget==>of==>images', result?.data)
+                    console.log('resultget==>of==>images', result?.data?.media)
                     setImageLoader(false)
-                    SetViewimagelistData(result?.data)
+                    SetViewimagelistData(result?.data?.media)
                 }
                 else {
                     // setLoader(true)
@@ -1022,6 +1057,10 @@ const ProductTable = () => {
         } else {
             // Reset state if no category is selected
             setFilterSubcategoryData([]);
+            setCategoryName2(null)
+            setSubChildCategory(null)
+            setsubReChildCategory(null)
+
         }
     }, [CategoryName, CategoryDropdown, subCategories]);
 
@@ -1047,6 +1086,9 @@ const ProductTable = () => {
         } else {
             // Reset state if no subcategory is selected
             setFilterSubChildCategory([]);
+            setSubChildCategory(null)
+            setsubReChildCategory(null)
+
         }
     }, [CategoryName2, SubCategoryDropdown, subCategories, childsubcategories]);
 
@@ -1073,6 +1115,7 @@ const ProductTable = () => {
         } else {
             // Reset state if no subchild category is selected
             setFilterSubReChildCategory([]);
+            setsubReChildCategory(null)
         }
     }, [SubChildCategory, subChildCategoryDropdown, childsubcategories, reChildSubcategories]);
     // console.log('dropdownSub child category==>State', filterSubChildCategory);
@@ -1107,6 +1150,7 @@ const ProductTable = () => {
     const handleEdit2 = async (rowData) => {
         try {
             console.log('rowData==>', rowData);
+            console.log('rowData?.price==>', rowData?.price);
             setLoading2(true);  // Start loading
 
             // Set product details
@@ -1115,9 +1159,9 @@ const ProductTable = () => {
             Setbrandname(rowData?.brandName);
             SetAuthorName(rowData?.author);
             Setlongdescription(rowData?.description);
-            Setnoofpage(rowData?.noofpages)
-            Setdimension(rowData?.dimension)
-            Setprice(rowData?.price);
+            Setnoofpage(rowData?.noofpages);
+            Setdimension(rowData?.dimension);
+            Setprice(Number(rowData?.price?.replace(/,/g, '')));
             SetQuantity(rowData?.quantity);
             Setsku(rowData?.sku);
             console.log(rowData?.sku)
@@ -1163,9 +1207,10 @@ const ProductTable = () => {
             // const filesArray = uniqueImages.map(item => item.file);
             // console.log(filesArray)
             // setImagePreview(`${Baseurl.baseUrl}${rowData.media.file}`);
-            setImagePreview(rowData.media.map((mediaItem) =>
-                `${Baseurl.baseUrl}${mediaItem.file}`
-            ));
+            console.log("rowData.media", rowData.media)
+            setImagePreview(rowData.media.map((mediaItem) => {
+                return { id: mediaItem._id, preview: `${Baseurl.baseUrl}${mediaItem.file}` }
+            }));
             rowData.media.map((mediaItem) => {
                 // `${Baseurl.baseUrl}${mediaItem.file}`
                 console.log(`${Baseurl.baseUrl}${mediaItem.file}`)
@@ -1609,10 +1654,17 @@ const ProductTable = () => {
                                         onChange={e => {
                                             console.log("e.target.value", e.target.value);
                                             setCategoryName(e.target.value);
+                                            // Reset all dependent states
+                                            setCategoryName2(null);
+                                            setSubChildCategory(null);
+                                            setsubReChildCategory(null);
+                                            setFilterSubcategoryData([]);
+                                            setFilterSubChildCategory([]);
+                                            setFilterSubReChildCategory([]);
                                         }}
                                     // value={categoryid}
                                     >
-                                        <option value="selectcatgory">Select Category</option>
+                                        <option value={null}>Select Category</option>
                                         {
                                             CategoryDropdown?.map((a) => {
                                                 // console.log("safdar",a.name)
@@ -1624,7 +1676,7 @@ const ProductTable = () => {
                                             })
                                         }
                                     </Form.Control>
-                                    {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+                                    {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Category Id is Required'}</p>)}
 
                                 </Form.Group>
 
@@ -1639,7 +1691,7 @@ const ProductTable = () => {
                                         }}
                                     // value={categoryid}
                                     >
-                                        <option value="selectcatgory">Select Sub Category</option>
+                                        <option value={null}>Select Sub Category</option>
                                         {
                                             filterSubcategoryData?.map((a) => {
                                                 // console.log("safdar",a.name)
@@ -1653,7 +1705,7 @@ const ProductTable = () => {
 
 
                                     </Form.Control>
-                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub category is Required'}</p>)}
+                                    {errorFlag && !CategoryName2 && filterSubcategoryData.length != 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub category is Required'}</p>)}
 
                                 </Form.Group>
 
@@ -1668,7 +1720,7 @@ const ProductTable = () => {
                                         }}
                                     // value={categoryid}
                                     >
-                                        <option value="selectcatgory">Select Sub-Child Category</option>
+                                        <option value={null}>Select Sub-Child Category</option>
                                         {
                                             filterSubChildCategory?.map((a) => {
                                                 // console.log("safdar",a.name)
@@ -1682,7 +1734,7 @@ const ProductTable = () => {
 
 
                                     </Form.Control>
-                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Child Category is Required'}</p>)}
+                                    {errorFlag && !SubChildCategory && filterSubChildCategory.length != 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Child Category is Required'}</p>)}
 
                                 </Form.Group>
 
@@ -1698,7 +1750,7 @@ const ProductTable = () => {
                                         }}
                                     // value={categoryid}
                                     >
-                                        <option value="selectcatgory">Select Sub Re-child Category</option>
+                                        <option value={null}>Select Sub Re-child Category</option>
                                         {
                                             filterSubReChildCategory?.map((a) => {
                                                 // console.log("safdar",a.name)
@@ -1709,10 +1761,8 @@ const ProductTable = () => {
                                                 )
                                             })
                                         }
-
-
                                     </Form.Control>
-                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Re-child category is Required'}</p>)}
+                                    {errorFlag && !subReChildCategory && filterSubReChildCategory.length != 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Re-child category is Required'}</p>)}
 
                                 </Form.Group>
 
@@ -1800,23 +1850,71 @@ const ProductTable = () => {
                                                         }}
                                                     >
                                                         {imagePreview.map((preview, index) => (
-                                                            <img
+                                                            // console.log("imagePreview", preview),
+                                                            <div
                                                                 key={index}
-                                                                src={preview}
-                                                                alt={`Preview ${index + 1}`}
                                                                 style={{
-                                                                    maxWidth: "150px",
-                                                                    maxHeight: "100px",
-                                                                    border: "2px solid #ccc",
-                                                                    padding: "10px",
-                                                                    backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                                                    borderRadius: "10px",
+                                                                    position: "relative", // Allows absolute positioning for the close icon
+                                                                    display: "inline-block",
                                                                 }}
-                                                            />
+                                                            >
+                                                                <img
+                                                                    src={preview.preview}
+                                                                    alt={`Preview ${index + 1}`}
+                                                                    style={{
+                                                                        maxWidth: "150px",
+                                                                        maxHeight: "100px",
+                                                                        border: "2px solid #ccc",
+                                                                        padding: "10px",
+                                                                        backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                                        borderRadius: "10px",
+                                                                    }}
+                                                                />
+                                                                {/* Close Icon */}
+                                                                <span
+                                                                    onClick={() => {
+                                                                        // Remove the image from the array
+                                                                        const updatedPreviews = [...imagePreview];
+                                                                        const updatedFiles = [...imagelist];
+
+                                                                        const removedImage = updatedPreviews.splice(index, 1)[0]; // Remove the preview
+                                                                        console.log(removedImage)
+                                                                        updatedFiles.splice(index, 1)
+                                                                        // const fileIndex = updatedFiles.findIndex(
+                                                                        //     (file) => file === removedImage.file
+                                                                        // ); // Find the corresponding file
+                                                                        // if (fileIndex !== -1) {
+                                                                        //     updatedFiles.splice(fileIndex, 1); // Remove the file
+                                                                        // }
+
+                                                                        setImagePreview(updatedPreviews); // Update imagePreview state
+                                                                        Setimagelist(updatedFiles); // Update imagelist state
+
+                                                                        console.log("Updated Previews:", updatedPreviews);
+                                                                        console.log("Updated imagelist:", updatedFiles);
+
+                                                                    }}
+                                                                    style={{
+                                                                        position: "absolute",
+                                                                        top: "5px",
+                                                                        right: "2px",
+                                                                        cursor: "pointer",
+                                                                        backgroundColor: "rgba(0, 0, 0, 0.6)",
+                                                                        color: "white",
+                                                                        padding: "5px 10px",
+                                                                        borderRadius: "50%",
+                                                                        fontSize: "16px",
+                                                                        display: "flex",
+                                                                        justifyContent: "center",
+                                                                        alignItems: "center",
+                                                                    }}
+                                                                >
+                                                                    &times;
+                                                                </span>
+                                                            </div>
                                                         ))}
                                                     </div>
                                                 )}
-
 
 
                                                 {errorFlag && !imagelist.length > 0 && (
@@ -1880,10 +1978,17 @@ const ProductTable = () => {
                                         onChange={e => {
                                             console.log("e.target.value", e.target.value);
                                             setCategoryName(e.target.value);
+                                            // Reset all dependent states
+                                            setCategoryName2(null);
+                                            setSubChildCategory(null);
+                                            setsubReChildCategory(null);
+                                            setFilterSubcategoryData([]);
+                                            setFilterSubChildCategory([]);
+                                            setFilterSubReChildCategory([]);
                                         }}
                                     // value={categoryid}
                                     >
-                                        <option value="selectcatgory">Select Category</option>
+                                        <option value={null}>Select Category</option>
                                         {
                                             CategoryDropdown?.map((a) => {
                                                 // console.log("safdar",a.name)
@@ -1895,7 +2000,7 @@ const ProductTable = () => {
                                             })
                                         }
                                     </Form.Control>
-                                    {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+                                    {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Category Id is Required'}</p>)}
 
                                 </Form.Group>
 
@@ -1910,7 +2015,7 @@ const ProductTable = () => {
                                         }}
                                     // value={categoryid}
                                     >
-                                        <option value="selectcatgory">Select Sub Category</option>
+                                        <option value={null}>Select Sub Category</option>
                                         {
                                             filterSubcategoryData?.map((a) => {
                                                 // console.log("safdar",a.name)
@@ -1924,7 +2029,7 @@ const ProductTable = () => {
 
 
                                     </Form.Control>
-                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub category is Required'}</p>)}
+                                    {errorFlag && !CategoryName2 && filterSubcategoryData.length != 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub category is Required'}</p>)}
 
                                 </Form.Group>
 
@@ -1939,7 +2044,7 @@ const ProductTable = () => {
                                         }}
                                     // value={categoryid}
                                     >
-                                        <option value="selectcatgory">Select Sub-Child Category</option>
+                                        <option value={null}>Select Sub-Child Category</option>
                                         {
                                             filterSubChildCategory?.map((a) => {
                                                 // console.log("safdar",a.name)
@@ -1953,7 +2058,7 @@ const ProductTable = () => {
 
 
                                     </Form.Control>
-                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Child Category is Required'}</p>)}
+                                    {errorFlag && !SubChildCategory && filterSubChildCategory.length != 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Child Category is Required'}</p>)}
 
                                 </Form.Group>
 
@@ -1969,7 +2074,7 @@ const ProductTable = () => {
                                         }}
                                     // value={categoryid}
                                     >
-                                        <option value="selectcatgory">Select Sub Re-child Category</option>
+                                        <option value={null}>Select Sub Re-child Category</option>
                                         {
                                             filterSubReChildCategory?.map((a) => {
                                                 // console.log("safdar",a.name)
@@ -1980,10 +2085,8 @@ const ProductTable = () => {
                                                 )
                                             })
                                         }
-
-
                                     </Form.Control>
-                                    {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Re-child category is Required'}</p>)}
+                                    {errorFlag && !subReChildCategory && filterSubReChildCategory.length != 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Re-child category is Required'}</p>)}
 
                                 </Form.Group>
 
@@ -2088,6 +2191,7 @@ const ProductTable = () => {
                                                     </label>
                                                 </div>
                                                 {/* Image Previews */}
+                                                {/* Image Previews */}
                                                 {imagePreview?.length > 0 && (
                                                     <div
                                                         style={{
@@ -2099,24 +2203,71 @@ const ProductTable = () => {
                                                         }}
                                                     >
                                                         {imagePreview.map((preview, index) => (
-                                                            <img
+                                                            // console.log("imagePreview", preview),
+                                                            <div
                                                                 key={index}
-                                                                src={preview}
-                                                                alt={`Preview ${index + 1}`}
                                                                 style={{
-                                                                    maxWidth: "150px",
-                                                                    maxHeight: "100px",
-                                                                    border: "2px solid #ccc",
-                                                                    padding: "10px",
-                                                                    backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                                                    borderRadius: "10px",
+                                                                    position: "relative", // Allows absolute positioning for the close icon
+                                                                    display: "inline-block",
                                                                 }}
-                                                            />
+                                                            >
+                                                                <img
+                                                                    src={preview.preview}
+                                                                    alt={`Preview ${index + 1}`}
+                                                                    style={{
+                                                                        maxWidth: "150px",
+                                                                        maxHeight: "100px",
+                                                                        border: "2px solid #ccc",
+                                                                        padding: "10px",
+                                                                        backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                                        borderRadius: "10px",
+                                                                    }}
+                                                                />
+                                                                {/* Close Icon */}
+                                                                <span
+                                                                    onClick={() => {
+                                                                        // Remove the image from the array
+                                                                        const updatedPreviews = [...imagePreview];
+                                                                        const updatedFiles = [...imagelist];
+
+                                                                        const removedImage = updatedPreviews.splice(index, 1)[0]; // Remove the preview
+                                                                        console.log(removedImage)
+                                                                        updatedFiles.splice(index, 1)
+                                                                        // const fileIndex = updatedFiles.findIndex(
+                                                                        //     (file) => file === removedImage.file
+                                                                        // ); // Find the corresponding file
+                                                                        // if (fileIndex !== -1) {
+                                                                        //     updatedFiles.splice(fileIndex, 1); // Remove the file
+                                                                        // }
+
+                                                                        setImagePreview(updatedPreviews); // Update imagePreview state
+                                                                        Setimagelist(updatedFiles); // Update imagelist state
+
+                                                                        console.log("Updated Previews:", updatedPreviews);
+                                                                        console.log("Updated imagelist:", updatedFiles);
+
+                                                                    }}
+                                                                    style={{
+                                                                        position: "absolute",
+                                                                        top: "5px",
+                                                                        right: "2px",
+                                                                        cursor: "pointer",
+                                                                        backgroundColor: "rgba(0, 0, 0, 0.6)",
+                                                                        color: "white",
+                                                                        padding: "5px 10px",
+                                                                        borderRadius: "50%",
+                                                                        fontSize: "16px",
+                                                                        display: "flex",
+                                                                        justifyContent: "center",
+                                                                        alignItems: "center",
+                                                                    }}
+                                                                >
+                                                                    &times;
+                                                                </span>
+                                                            </div>
                                                         ))}
                                                     </div>
                                                 )}
-
-
 
                                                 {errorFlag && !imagelist.length > 0 && (
                                                     <p style={{ color: "red", marginTop: "10px" }}>
@@ -2256,18 +2407,7 @@ const ProductTable = () => {
                             />
                             {errorFlag && !sku && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sku is Required'}</p>)}
                         </Form.Group>
-                        {/* <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Description"
-                                autoFocus
-                                // onChange={(e) => handleEdited(e, setLname2)}
-                                onChange={(e) => Setlongdescription(e.target.value)}
-                                value={longdescription}
-                            />
 
-                        </Form.Group> */}
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Dimension</Form.Label>
                             <Form.Control
@@ -2333,6 +2473,7 @@ const ProductTable = () => {
                             />
                             {errorFlag && !ProductType && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
                         </Form.Group>
+
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Category ID</Form.Label>
                             <Form.Control
@@ -2341,10 +2482,17 @@ const ProductTable = () => {
                                 onChange={e => {
                                     console.log("e.target.value", e.target.value);
                                     setCategoryName(e.target.value);
+                                    // Reset all dependent states
+                                    setCategoryName2(null);
+                                    setSubChildCategory(null);
+                                    setsubReChildCategory(null);
+                                    setFilterSubcategoryData([]);
+                                    setFilterSubChildCategory([]);
+                                    setFilterSubReChildCategory([]);
                                 }}
                             // value={categoryid}
                             >
-                                <option value="selectcatgory">Select Category</option>
+                                <option value={null}>Select Category</option>
                                 {
                                     CategoryDropdown?.map((a) => {
                                         // console.log("safdar",a.name)
@@ -2356,7 +2504,7 @@ const ProductTable = () => {
                                     })
                                 }
                             </Form.Control>
-                            {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Product Type is Required'}</p>)}
+                            {errorFlag && !CategoryName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Category Id is Required'}</p>)}
 
                         </Form.Group>
 
@@ -2371,7 +2519,7 @@ const ProductTable = () => {
                                 }}
                             // value={categoryid}
                             >
-                                <option value="selectcatgory">Select Sub Category</option>
+                                <option value={null}>Select Sub Category</option>
                                 {
                                     filterSubcategoryData?.map((a) => {
                                         // console.log("safdar",a.name)
@@ -2385,7 +2533,7 @@ const ProductTable = () => {
 
 
                             </Form.Control>
-                            {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub category is Required'}</p>)}
+                            {errorFlag && !CategoryName2 && filterSubcategoryData.length != 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub category is Required'}</p>)}
 
                         </Form.Group>
 
@@ -2400,7 +2548,7 @@ const ProductTable = () => {
                                 }}
                             // value={categoryid}
                             >
-                                <option value="selectcatgory">Select Sub-Child Category</option>
+                                <option value={null}>Select Sub-Child Category</option>
                                 {
                                     filterSubChildCategory?.map((a) => {
                                         // console.log("safdar",a.name)
@@ -2414,7 +2562,7 @@ const ProductTable = () => {
 
 
                             </Form.Control>
-                            {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Child Category is Required'}</p>)}
+                            {errorFlag && !SubChildCategory && filterSubChildCategory.length != 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Child Category is Required'}</p>)}
 
                         </Form.Group>
 
@@ -2430,7 +2578,7 @@ const ProductTable = () => {
                                 }}
                             // value={categoryid}
                             >
-                                <option value="selectcatgory">Select Sub Re-child Category</option>
+                                <option value={null}>Select Sub Re-child Category</option>
                                 {
                                     filterSubReChildCategory?.map((a) => {
                                         // console.log("safdar",a.name)
@@ -2441,10 +2589,8 @@ const ProductTable = () => {
                                         )
                                     })
                                 }
-
-
                             </Form.Control>
-                            {errorFlag && !CategoryName2 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Re-child category is Required'}</p>)}
+                            {errorFlag && !subReChildCategory && filterSubReChildCategory.length != 0 && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sub Re-child category is Required'}</p>)}
 
                         </Form.Group>
 
@@ -2519,6 +2665,7 @@ const ProductTable = () => {
                                             </label>
                                         </div>
                                         {/* Image Previews */}
+                                        {/* Image Previews */}
                                         {imagePreview?.length > 0 && (
                                             <div
                                                 style={{
@@ -2530,19 +2677,71 @@ const ProductTable = () => {
                                                 }}
                                             >
                                                 {imagePreview.map((preview, index) => (
-                                                    <img
+                                                    // console.log("imagePreview", preview),
+                                                    <div
                                                         key={index}
-                                                        src={preview}
-                                                        alt={`Preview ${index + 1}`}
                                                         style={{
-                                                            maxWidth: "150px",
-                                                            maxHeight: "100px",
-                                                            border: "2px solid #ccc",
-                                                            padding: "10px",
-                                                            backgroundColor: "rgba(255, 255, 255, 0.7)",
-                                                            borderRadius: "10px",
+                                                            position: "relative", // Allows absolute positioning for the close icon
+                                                            display: "inline-block",
                                                         }}
-                                                    />
+                                                    >
+                                                        <img
+                                                            src={preview.preview}
+                                                            alt={`Preview ${index + 1}`}
+                                                            style={{
+                                                                maxWidth: "150px",
+                                                                maxHeight: "100px",
+                                                                border: "2px solid #ccc",
+                                                                padding: "10px",
+                                                                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                                                borderRadius: "10px",
+                                                            }}
+                                                        />
+                                                        {/* Close Icon */}
+                                                        <span
+                                                            onClick={() => {
+                                                                // Remove the image from the array
+                                                                const updatedPreviews = [...imagePreview];
+                                                                const updatedFiles = [...imagelist];
+                                                                const updatedImgsList = ViewimagelistData;
+                                                                console.log("ViewimagelistData", ViewimagelistData)
+                                                                const removedImage = updatedPreviews.splice(index, 1)[0]; // Remove the preview
+                                                                console.log(removedImage)
+                                                                const deletedImgs = []
+                                                                deletedImgs.push(removedImage.id)
+                                                                console.log("deletedImgs", deletedImgs)
+                                                                // console.log(deletedImageIds)
+                                                                updatedFiles.splice(index, 1)
+                                                                updatedImgsList.splice(index, 1)
+
+                                                                setImagePreview(updatedPreviews); // Update imagePreview state
+                                                                // Setimagelist(updatedImgsList); // Update imagelist state
+                                                                setDeletedImageIds((prev) => [...prev, ...deletedImgs])
+
+                                                                // SetViewimagelistData(updatedImgsList)
+                                                                console.log("Updated Previews:", updatedPreviews);
+                                                                console.log("Updated imagelist:", updatedFiles);
+                                                                console.log("Updated view imglist:", updatedImgsList);
+
+                                                            }}
+                                                            style={{
+                                                                position: "absolute",
+                                                                top: "5px",
+                                                                right: "2px",
+                                                                cursor: "pointer",
+                                                                backgroundColor: "rgba(0, 0, 0, 0.6)",
+                                                                color: "white",
+                                                                padding: "5px 10px",
+                                                                borderRadius: "50%",
+                                                                fontSize: "16px",
+                                                                display: "flex",
+                                                                justifyContent: "center",
+                                                                alignItems: "center",
+                                                            }}
+                                                        >
+                                                            &times;
+                                                        </span>
+                                                    </div>
                                                 ))}
                                             </div>
                                         )}
@@ -2593,8 +2792,8 @@ const ProductTable = () => {
                         (<Loader fullPage loading />) : (
                             <div className="row">
                                 {
-                                    ViewimagelistData?.media?.length > 0 ? (
-                                        ViewimagelistData.media.map((item, itemIndex) => (
+                                    ViewimagelistData?.length > 0 ? (
+                                        ViewimagelistData?.map((item, itemIndex) => (
                                             <div className='col-md-6' key={itemIndex}>
                                                 <img
                                                     style={{ marginBottom: 20 }}
