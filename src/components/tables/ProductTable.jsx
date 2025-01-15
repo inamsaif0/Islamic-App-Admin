@@ -217,6 +217,9 @@ const ProductTable = () => {
     //         );
     // }
 
+
+    console.log("type",ProductType)
+
     const GetproductData = () => {
         var requestOptions = {
             method: 'GET',
@@ -302,7 +305,7 @@ const ProductTable = () => {
         // console.log("(!SubChildCategory && filterSubChildCategory.length != 0)", (!SubChildCategory && filterSubChildCategory.length != 0))
 
         console.log("imagelist", imagelist)
-
+        if (ProductType === "book") {
             if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName ||
                 (!CategoryName2 && filterSubcategoryData.length !== 0) ||
                 (!SubChildCategory && filterSubChildCategory.length !== 0) ||
@@ -367,7 +370,35 @@ const ProductTable = () => {
 
             console.log("value of image list is ", imagelist)
 
-        
+        }
+        else {
+
+            if (!name || !brandname || !price || !sku || !longdescription || !ProductType || !imagelist.length > 0 || !CategoryName ||  !Quantity) {
+                SeterrorFlag(true)
+                return
+            }
+
+            formdata.append("type", "others");
+            formdata.append("title", name);
+            formdata.append("price", price);
+            formdata.append("quantity", Quantity);
+            formdata.append("category", CategoryName);
+            {CategoryName2 !== null &&  formdata.append("subCategory", CategoryName2);}
+            {SubChildCategory !== null && formdata.append("childSubCategory", SubChildCategory);}
+            {subReChildCategory !== null &&  formdata.append("reChildSubCategory", subReChildCategory);}
+            formdata.append("productType", ProductType);
+            formdata.append("description", longdescription);
+            formdata.append("sku", sku);
+            formdata.append("brandName", brandname);
+
+            // formdata.append("language", selectedLanguage);
+            // formdata.append("image", image);
+            for (var i = 0; i < imagelist.length; i++) {
+                formdata.append("media", imagelist[i]);
+
+            }
+            console.log("value of image list is ", imagelist)
+        }
 
         var requestOptions = {
             method: 'POST',
@@ -1949,7 +1980,6 @@ const ProductTable = () => {
                     <Form onSubmit={(e) => e.preventDefault()}>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            
                             <Form.Label>Title</Form.Label>
                             <Form.Control
                                 type="text"
