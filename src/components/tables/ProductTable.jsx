@@ -2006,7 +2006,7 @@ const ProductTable = () => {
                             {errorFlag && !brandname && (<p style={{ color: 'red', marginTop: '10px' }} >{'Brand Name is Required'}</p>)}
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                        {ProductType === "book" && <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Author Name</Form.Label>
                             <Form.Control
                                 type="text"
@@ -2017,7 +2017,7 @@ const ProductTable = () => {
                                 value={authorName}
                             />
                             {errorFlag && !authorName && (<p style={{ color: 'red', marginTop: '10px' }} >{'Author Name is Required'}</p>)}
-                        </Form.Group>
+                        </Form.Group>}
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Price</Form.Label>
@@ -2048,7 +2048,7 @@ const ProductTable = () => {
                             />
                             {errorFlag && !Quantity && (<p style={{ color: 'red', marginTop: '10px' }} >{'Quantity is Required'}</p>)}
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                       {ProductType === "book" && <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>No of Page</Form.Label>
                             <Form.Control
                                 type="number"
@@ -2060,7 +2060,7 @@ const ProductTable = () => {
                                 value={noofpage}
                             />
                             {errorFlag && !noofpage && (<p style={{ color: 'red', marginTop: '10px' }} >{'No of Pages is Required'}</p>)}
-                        </Form.Group>
+                        </Form.Group>}
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>sku</Form.Label>
@@ -2263,7 +2263,7 @@ const ProductTable = () => {
                         </Form.Group>
 
                         {/* Language Dropdown */}
-                        <Form.Group className="mb-3" controlId="languageDropdown">
+                        {ProductType === "book" && <Form.Group className="mb-3" controlId="languageDropdown">
                             <Form.Label>Language</Form.Label>
                             <Form.Control
                                 as="select"
@@ -2284,7 +2284,7 @@ const ProductTable = () => {
                                     {'Language is Required'}
                                 </p>
                             )}
-                        </Form.Group>
+                        </Form.Group>}
                         {/* Existing form fields */}
                         <div className="row">
                             {Loading2 ? (
