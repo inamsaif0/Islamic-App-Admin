@@ -148,7 +148,7 @@ const Simplelogin = () => {
                                                             <label htmlFor="remember-me"> Remember Me</label>
                                                         </fieldset> */}
                                                         </div>
-                                                        <div className="col-md-6 col-12 text-center text-md-right"><Link to="/forgetpassword" className="card-link">Forgot Password?</Link></div>
+                                                        {/* <div className="col-md-6 col-12 text-center text-md-right"><Link to="/forgetpassword" className="card-link">Forgot Password?</Link></div> */}
                                                     </div>
                                                     <button type="button" onClick={loginUser} className="btn btn-info btn-lg btn-block mt-5"><i className="ft-unlock" /> Login </button>
                                                 </form>

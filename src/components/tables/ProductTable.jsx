@@ -500,7 +500,7 @@ const ProductTable = () => {
         {subReChildCategory !== null &&  formdata.append("reChildSubCategory", subReChildCategory);}
         formdata.append("category", CategoryName);
         formdata.append("productId", TabelId);
-        formdata.append("dimension", dimension);
+        {ProductType === "book" && formdata.append("dimension", dimension);}
         formdata.append("author", authorName);
         formdata.append("noofpages", noofpage);
         console.log("deletedImageIds", deletedImageIds)
@@ -1631,7 +1631,7 @@ const ProductTable = () => {
                                     {errorFlag && !sku && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sku is Required'}</p>)}
                                 </Form.Group>
 
-                                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                                {ProductType === "book" &&<Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                                     <Form.Label>Dimension</Form.Label>
                                     <Form.Control
                                         as="textarea"
@@ -1642,7 +1642,7 @@ const ProductTable = () => {
                                     />
 
                                     {errorFlag && !dimension && (<p style={{ color: 'red', marginTop: '10px' }} >{'Dimension is Required'}</p>)}
-                                </Form.Group>
+                                </Form.Group>}
 
                                 <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                                     <Form.Label>Description</Form.Label>
@@ -2076,7 +2076,7 @@ const ProductTable = () => {
                             {errorFlag && !sku && (<p style={{ color: 'red', marginTop: '10px' }} >{'Sku is Required'}</p>)}
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                        {ProductType === "book" && <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Dimension</Form.Label>
                             <Form.Control
                                 type="text"
@@ -2087,7 +2087,7 @@ const ProductTable = () => {
                             />
 
                             {errorFlag && !dimension && (<p style={{ color: 'red', marginTop: '10px' }} >{'Dimension is Required'}</p>)}
-                        </Form.Group>
+                        </Form.Group>}
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Description</Form.Label>
                             <Form.Control
